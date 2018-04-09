@@ -3,6 +3,7 @@
           ;;  [clojure.string :refer :all]))
 
 (def valor_cero 0)
+(def cero_inicial [0])
 (def estado [])
 (def contadores {});; {:counter-name [valores almacenados]}
 (def sennales '());; reglas tipo signal
@@ -17,23 +18,69 @@
 (defn actualizar_Estado []
   ;;autoincremental en una unidad según el ultimo estado almacenado
   (def estado ( conj estado  (inc (last estado)))))
-
-(defn incrementar_Contador [counter-name argFN]
+  
+(defn incrementar [contador argFN]
+	(conj contador (argFN(last contador)))
+)
+         
+(defn incrementar_Contador_simple [counter-name argFN]
   ;;incrementa el contador una unidad a partir de su ultimo valor almacenado
-    (let [clave (keyword counter-name)
-          ultimo_valor_incrementado (argFN (last (clave contadores)))]
-         (def contadores (merge  contadores { clave (conj ( clave contadores []) ultimo_valor_incrementado)}))))
+    (let [clave (keyword counter-name)]
+		(def DatosNuevos  [(first(clave contadores)) (second(clave contadores)) (incrementar (last(clave contadores)) argFN)])
+         (def contadores (merge  contadores {clave DatosNuevos}))
+          (println "incrementado:" (last(clave contadores)))
+         ))
+  
+(defn incrementar_Contador_mapa [counter-name new-data argFN]
+		 (def flag true)
+		 (def condicion (second((keyword counter-name) contadores)))
+		 (def parametros (first((keyword counter-name) contadores)))
+		 (def TablaSalida (last((keyword counter-name) contadores)))
+		 (def tipo "nada")
+		 (def clave [])
+		 (mapv (fn [x]
+			(if (= (get new-data (last x)) nil) (def flag false) (def clave (conj clave (get new-data (last x)))))
+			) parametros)
+		 (if (= flag true)
+			()
+			(def argFN +)
+		 )
+		 (def claves_tabla (keys TablaSalida)) 
+		 (def noTengoLaClave true)
+		 (if (not= (count claves_tabla) 0)
+			(mapv (fn [x]
+				(if (= x clave) (def noTengoLaClave false))
+			)claves_tabla)
+			)
+		 (if (= noTengoLaClave true) 
+			(def TablaSalida (merge  TablaSalida {clave cero_inicial}))
+			)			
+		 (def claves_tabla (keys TablaSalida)) 
+		 
+	     (def aux cero_inicial)
+		 (mapv (fn [x]
+			(def contador (TablaSalida x))
+			 (if (= x clave) (def aux (incrementar contador argFN)) (def aux(incrementar contador +)))
+			 (def TablaSalida (merge  TablaSalida {x aux}))
+     	 )claves_tabla)	  
+		 (def DatosNuevos  [parametros condicion TablaSalida])
+		 (def contadores (merge  contadores {counter-name DatosNuevos}))
+		 (println "Tabla:" TablaSalida)	 
+)	  
+         
+(defn incrementar_Contador [counter-name new-data argFN]
+   (def parametros (first((keyword counter-name) contadores)))
+   (if (= (count parametros) 0)
+		(incrementar_Contador_simple counter-name argFN)
+		(incrementar_Contador_mapa counter-name new-data argFN)		
+    )
+)              
 
-(defn actualizar_Contadores [counter-name valor]
-  ;;agrega un nuevo valor especificado por parametro al contador respectivo
-  ;;counter-name es tipo String
-  ;;si la clave no existe, se agrega con valor []
-  ;;NotaPersonal: Si counter-name es symbol o String, con 'keyword' se convierte en
-  ;; ':counter-name', es decir, una clave (Key).
-  ;;(clave contadores []) : si no encuentra la clave retorna [].
-  ;(println (type counter-name))
+(defn actualizar_Contadores [counter-name valor] ;;Agregar Contador
+	;;mete dentro de un mapa
   (let [clave (keyword counter-name)]
-       (def contadores (merge  contadores { clave (conj ( clave contadores []) valor)}))))
+       (def contadores (merge  contadores { clave (conj  valor)})))
+       (println contadores))
 
    ;;signal-name es tipo String
    ;;si la clave no existe, se agrega con valor []
@@ -47,16 +94,13 @@
   ;sucede en los test.
   (def contadores {})
   (def sennales [])
-  (map #(let [[ a b & resto] %]
+  (map #(let [[ a nombre parametros condicion & resto] %]
              (if (= (str a) "define-counter")
                  (do
-                     ;(println "Es un contador")
-                     ;(println b)
-                     (actualizar_Contadores (str b) valor_cero))
-
+                     (if (= (count parametros) 0)
+						(actualizar_Contadores (str nombre) [parametros condicion cero_inicial])
+						(actualizar_Contadores (str nombre) [parametros condicion {}])))
                  (do
-                     (println "Es una sennal")
-                     (println b)
                      (def sennales (conj sennales %)))))
 
         rules));;map
@@ -73,8 +117,6 @@
     ;;se inicializa estado a 0.
 (defn initialize-processor [rules]
 
-  (println "INICIALIZANDO PROCESAMIENTO DE REGLAS...")
-  ;reinicializo vector estados
   (def estado [valor_cero])
 
   (let [  etapa1 (identificar-reglas rules)
@@ -85,59 +127,46 @@
        etapa2))
 ;end-defn
 
-(defn localizar-Contador [clave_dato new-data]
-  ;; name: convierte :contador en "contador"
-  ;;incremento contador si aparece su nombre en new-data
-  ;(println (str "Localizando contador para clave:" clave_dato))
+(defn validarCondiciones [clave_contador new-data]
+		 (def condiciones (second((keyword clave_contador) contadores)))
+		 (def flag true)
+		 (def claves (keys new-data))
+		 (def tipo "nada")
+		 (mapv (fn [x]
+			(if (= (str tipo) "current") 
+				(if (= (get new-data x) true) () (def flag false)))
+			(if (= (str x) "current") (def tipo "current") (def tipo "nada"))
+			) condiciones)
+		 (if (= flag true)
+			(incrementar_Contador clave_contador new-data inc)
+			(incrementar_Contador clave_contador new-data +))
+		)
 
-  (mapv (fn [clave_contador]
-
-          ( if (clojure.string/includes? clave_contador clave_dato)
-              ;;si encuentra que hay una counter-name que tiene una substring que es keyword en el new-data, entonces se incrementa esa clave.
-             (do
-               (println (str "Encontrado contador para clave...." clave_dato))
-               ;si el valor asociado es true incrementa contador.
-               ;sino no se incrementa y se agrega el ultimo valor que tenia.
-               (println (get new-data clave_dato))
-               (if (true? (get new-data clave_dato))
-                   (incrementar_Contador clave_contador inc)
-                   (incrementar_Contador clave_contador +)))
-                ;end-if
-               ;end-do
-               ;*****************************************
-               ;SOLO PARA TESTS HASTA CONSULTAR PROFESORES
-               ;PORQUE SINO NO SE INCREMENTA SI LAS REGLAS SON CIEGAS
-               ;Y SOLO SE VALIDA FORMATO:
-               ;unconditional-counter-test
-             (incrementar_Contador "email-count" inc)))
-               ;se incrementa para todo nuevo dato en test
-               ;*****************************************
-              ;if
-          ;fn interna
-       (into [] (keys contadores))));;de map interno
-;end-defn
-
+(defn validarContador [clave_contador new-data]
+		 (def condiciones (second((keyword clave_contador) contadores)))
+		 (if (= condiciones true) 
+				(incrementar_Contador clave_contador new-data inc)
+				(validarCondiciones clave_contador new-data))
+	)
+	
+	
 (defn aplicar-reglas-Contador [new-data]
-  ;;aplico reglas tipo counter.
-  ;;**********************************************************
-  ;; obtengo un mapa de las claves del dato entrante
-  (def claves_de_dato (keys new-data))
-  (println (str "Aplicando reglas Keys nuevo dato.." claves_de_dato))
-
-  (println (str "Contadores disponibles" contadores))
-  ;NotaPersonal: (map #(let ...)coll) o (map (fn [...]) coll) funciona perfecto en repl por consola pero al ejecutar los test, NO ejecuta, a veces si (y parece que sigue funcionando como en otras funciones implementadas), y otras no. ???? Por eso cambio por mapv
+;;recorre todo los contadores y le "aplica" el dato
+  (def claves_de_count (keys contadores))
+  ;(println (str "Aplicando contadores.." claves_de_count))
   (mapv (fn [x]
          (println x)
-         (localizar-Contador x new-data) ) claves_de_dato));;mapv porque map funciona perfecto en
-
+         (validarContador x new-data) ) claves_de_count);;mapv porque map funciona perfecto en
+	)
   ;;end-defn
+  
 
 (defn aplicar-reglas-Sennales [new-data]
     ;;**********************************************************
     ;;aplico reglas tipo signal.
     ;;************************************************************
   (def datos_generados []);inicio vector.
-  (println "Aplicando reglas signal...")
+  ;;(println "Aplicando reglas signal...")
   (def datos_generados
     (mapv #(let [[ tipo_regla dato condicion & resto] %] ;;porque es [(signal_1)...(signal_n)] y me quedo con (signal...)
 
@@ -160,7 +189,7 @@
 
                  ;???????
                  ;*************************************
-                 ;(println "DATOS GENERADOS SIGNAL..." datos_obtenidos)
+                 (println "DATOS GENERADOS SIGNAL..." datos_obtenidos)
                  )))))
 
     sennales))
@@ -169,7 +198,7 @@
 
 (defn process-data [state new-data]
 
-  (println estado)
+  (println "estado.......:" estado)
   ;;se incrementa el estado por cada ejecución
   (actualizar_Estado)
   (if (empty? new-data)
@@ -185,9 +214,14 @@
   ;;fn [state counter-name counter-args]
   ;;por lo pronto puedo retornar el estado actual de ese contador ignorando el resto de los argumentos
   ;;el estado correspondería con el indice del vector que tiene valor para esa clave.
+  
 (defn query-counter [state counter-name  counter-args]
-  (println (str contadores))
-  (println (str estado))
-  (let [numero ( get ((keyword counter-name) contadores) state "No existe valor para ese estado")]
-  ;;let [numero 0]
-   numero))
+  (def salida ((keyword counter-name) contadores))  
+  (if (= salida nil) 
+	(def salida 0)
+	(if (= (count (first salida)) 0)
+	    (def salida (last(last salida)))
+	    (def salida (last(get (last salida) counter-args))))
+   )
+  salida
+)
