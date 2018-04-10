@@ -1,8 +1,36 @@
-(ns demo-proyect-repl.utiles.funcionesRecursivas-test
+(ns utiles.funcionesRecursivas-test
   (:require [clojure.test :refer :all]
-            [demo-proyect-repl.utiles.funcionesRecursivas :refer :all]))
+            [utiles.funcionesRecursivas :refer :all]))
 (def test1 '(+ 5 3))
 (def test2  '(5 3))
+
+(deftest funcion_counter_value-00-test
+  (testing "funciones de reglas de sennales."
+        (is (= 0 (f5 '(counter-value "HOLA" []))))))
+
+(deftest funcion_counter_value-01-test
+  (testing "funciones de reglas de sennales."
+        (is (= 0 (f5 '(/ (counter-value "HOLA" [])
+                    (counter-value "HOLA" [])))))))
+
+(deftest funcion_counter_value-02-test
+  (testing "funciones de reglas de sennales."
+        (is (= 0 (f5 '(+ 1 (/ (+ (counter-value "HOLA" [])(counter-value "HOLA" []))
+            (counter-value "HOLA" []))))))))
+
+(deftest funcion_counter_value-03-test
+  (testing "funciones de reglas de sennales."
+        (is (= 0 (f5 '(/ (counter-value "HOLA" [])  0 ))))))
+
+(deftest funcion_counter_value-04-test
+  (testing "funciones de reglas de sennales."
+        (is (= 0 (f5 '(/ (+ (counter-value "HOLA" [])(counter-value "HOLA" []))
+              (counter-value "HOLA" [])))))))
+
+
+(deftest funcion_COUNTER_VALUE_operacion-00-test
+  (testing "funciones de reglas de sennales."
+        (is (= 0 (f5 '(+  50 (counter-value "HOLA" [])(counter-value "HOLA" [])))))))
 
 (deftest funcion_operar_con_AND-00-test
   (testing "funcionesRecursivas."
@@ -41,6 +69,9 @@
 (deftest funcion_compara-02-test
   (testing "funcionesRecursivas aritmEtica."
         (is (= false (f5 '(= (<= (mod 10 6) (mod (+ 3 5)(/ 6 4 3)) ) 0))))))
+(deftest funcion_compara-02-bis-test
+  (testing "funcionesRecursivas aritmEtica."
+        (is (= nil (f5 '(-(+ (mod 10 6) (mod (/ 6 4 3) 0))))))))      
 (deftest funcion_compara-03-test
   (testing "funcionesRecursivas aritmEtica."
         (is (= true (f5 '(= nil (/ 7 0)))))))

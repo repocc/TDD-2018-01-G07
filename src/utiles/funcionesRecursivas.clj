@@ -1,8 +1,13 @@
-(ns demo-proyect-repl.utiles.funcionesRecursivas
+(ns utiles.funcionesRecursivas
   (:require [clojure.core :refer :all]))
 ;estos funcionan con multiples argumentos
 (declare operar_con_AND)
-
+(declare counter-value)
+(declare f4)
+(declare f5)
+(declare f6)
+(declare determinar_operacion_matematica)
+(declare operacion_mod)
 ;____________________________________________________
 ;(starts-with? s substr)
 ;(ends-with? s substr)
@@ -18,6 +23,12 @@
 (defn convertAND [x & args]
    (def sale (and x args))
    sale)
+;funcion de prueba de ejecucion
+(defn counter-value
+  "ESTO ES LA SALIDA DE COUNTER VALUE.UN NUMERO DE PRUEBA"
+  [x & args]
+
+  1234)
 
 (def diccionario_para_strings {'concat str 'includes? clojure.string/includes? 'starts-with? clojure.string/starts-with? 'ends-with? clojure.string/ends-with?})
 ;NOTA personal:(Insolitos resultados) no se comporta igual en las pruebas and, or.
@@ -25,19 +36,34 @@
 ;(or 5 true) retorna 5.El caso directo en Lein REPL.
 ;(#'or true 5) retorna true.Inversion del caso anterior.
 ;(#'clojure.core/and true false) retorna true. (and true false) retorna OK en REPL.
-(def diccionario_aritmetica_comparacion {'+ + '- - '* * '/ / 'quot quot  '< < '> > '<= <= '>= >= 'or #'or 'and #'operar_con_AND '= = 'not= not= 'mod mod})
+(def diccionario_aritmetica_comparacion {'+ + '- - '* * '/ / 'quot quot  '< < '> > '<= <= '>= >= 'or #'or 'and #'operar_con_AND '= = 'not= not= 'mod mod 'counter-value #'counter-value})
 
 (def diccionario_oper_mono_argumentos {'not not})
+(def diccionario_de_Var_a_Symbol_Func_especiales {#'counter-value 'counter-value})
 
-(def diccionario_oper_bi_argumentos {'mod mod})
 
-(def diccionario_valor_retorno {'+ 0 '- 0 '* 1 '/ 1 'quot 1 '< 7N '> -7N '<= 7N  '>= -7N 'or false 'and true 'mod 1})
+(def diccionario_valor_retorno {'+ 0 '- 0 '* 1 '/ 1 'quot 1 '< 7N '> -7N '<= 7N  '>= -7N 'or false 'and true 'mod 1 'counter-value 1 })
 
 (def resultado [])
 (def repetir [])
 (def valor_retorno 0)
 (def delimitador_izq "(" )
+(def w_contValores "counter-value")
+(def w_corriente  "current")
+(def w_pasado "past")
 
+(defn obtener_Valor_Retorno
+  "Se obtiene el valor de retorno para el calculo recursivo, según el tipo de operación matematica.Ejemplo + es 0; / es 1.Si no lo encuentra retorna nil."
+  [valor_retorno]
+
+  (get diccionario_valor_retorno valor_retorno)
+  )
+(defn obtener_Operador_No_simbolico
+  "Se recupera el caracter var de un operador symbol.Si no lo encuentra retorna nil."
+  [operador_symbol]
+
+  (get diccionario_aritmetica_comparacion operador_symbol)
+  )
 (defn es_numero_o_booleano [x]
   ;retorna true si es numero o booleano. boolean retorna true excepto:nil,false.
   (or (number? x )(= true x) (= false x))
@@ -102,36 +128,62 @@
     ;(println "Esta vacia resto de coleccion?" (empty? resto_coleccion))
     (if (or (empty? coleccion)(not (first coleccion)))
       valor_retorno
-      (if (empty? resto_coleccion)
+      (if (and (not (coll? prim_arg))(empty? resto_coleccion))
          (do
             ;(println "Realizando operacion comparacion final.." prim_arg)
             prim_arg
          )
-             (operador prim_arg
-                 (operar_comparando + valor_retorno resto_coleccion))
+         (if (and (not (coll? prim_arg))(boolean prim_arg))
+           (operador prim_arg
+             (operar_comparando + valor_retorno resto_coleccion))
+
+           (operador
+             (determinar_operacion_matematica (first prim_arg)
+                (obtener_Operador_No_simbolico (first prim_arg))
+                (obtener_Valor_Retorno (first prim_arg)) (rest prim_arg))
+              (operar_comparando + valor_retorno resto_coleccion))
+                 );if
+
          ))))
 
 (defn operacion_aritmetica [operador valor_retorno coleccion]
   ;recursion  para operacion matematica a partir de una coleccion.
   ;recibe la funcion aritmEtica como primer Argumento.
   ;recibe el valor de retorno, al estar vacIa la coleccion, que depende de la funcion:0,1.
+  ;si no es numero el primer elemento,entonces es un operando y es una expresion.
+ ;(println "Recibe operacion_aritmetica :" operador valor_retorno coleccion)
+
  (let [  a                coleccion
        resto_coleccion    (rest a);sacando el primer argumento.
        prim_arg           (first a)
+
       ]
+     ;(println "tipo operador" (type operador) valor_retorno )
      ;(println "Resto de coleccion" resto_coleccion prim_arg )
      ;(println "Esta vacia resto de coleccion?" (empty? resto_coleccion))
 
  (if (or (empty? coleccion)(not (first coleccion)))
-   valor_retorno
-   (if (empty? resto_coleccion)
+    (do
+      ;(println "Determinar operacion matematica entra valor retorno" valor_retorno)
+   valor_retorno)
+   (if (and (not (coll? prim_arg))(empty? resto_coleccion))
       (do
          ;(println "Realizando operacion aritmetica final..." "operador"operador " argumento" prim_arg)
          prim_arg
       )
-          (operador (first coleccion)
-              (operacion_aritmetica operador valor_retorno (rest coleccion)))
-      ))))
+      (if  (and (not (coll? prim_arg))(number? prim_arg))
+       (do
+
+          ;(println "esta ingresando aqui para calculo" prim_arg resto_coleccion)
+          (operador prim_arg (operacion_aritmetica operador valor_retorno resto_coleccion))
+
+        )
+(do
+
+          (operador (determinar_operacion_matematica (first prim_arg) (obtener_Operador_No_simbolico (first prim_arg)) (obtener_Valor_Retorno (first prim_arg)) (rest prim_arg))
+              (operacion_aritmetica operador valor_retorno resto_coleccion))
+    )
+)))))
 
       ;NOTA personal: el valor de retorno se calcula mientras la operacion sea symbol.
       ;sino encuentra retorna nil.
@@ -156,20 +208,31 @@
 
   (if (or (empty? coleccion)(and (not (first coleccion))(not (second coleccion))))
     valor_retorno
-    (if (empty? resto_coleccion)
+    (if (and (not (coll? prim_arg))(not (coll? seg_arg))(empty? resto_coleccion))
       (do
-        ;(println "Realizando operacion mod.............." )
+        ;(println "Realizando operacion mod..............RTA"  (operador prim_arg seg_arg) )
         (operador prim_arg seg_arg)
         )
-        (operador (first coleccion) (second coleccion)
-            (operacion_mod operador valor_retorno (resto_coleccion)))))))
+      (if (and (not (coll? prim_arg))(not (coll? seg_arg))
+        (number? prim_arg)(number? seg_arg))
+
+        (operador prim_arg seg_arg
+            (operacion_mod operador valor_retorno (resto_coleccion)))
+
+
+        (operador
+            (determinar_operacion_matematica (first prim_arg) (obtener_Operador_No_simbolico (first prim_arg))
+            (obtener_Valor_Retorno (first prim_arg)) (rest prim_arg))
+              (determinar_operacion_matematica (first seg_arg) (obtener_Operador_No_simbolico (first seg_arg))
+              (obtener_Valor_Retorno (first seg_arg)) (rest seg_arg))
+                (operacion_mod operador valor_retorno resto_coleccion)))))))
 
 (defn determinar_operacion_matematica
   "Determina que operacion matematica continua ejecutandose segun el operador recibidos por parametro. ademas de los otros argumentos requeridos por las funciones"
   [operador_symbol operador valor_retorno coleccion]
 
   (let [op operador_symbol]
-    ;(println "coleccion que llega a la operacion:" coleccion)
+    ;(println "coleccion que llega a la operacion determinar_operacion_matematica:" coleccion)
 
     (cond
       (or (= op '=)(= op 'not=)(= op '>=)(= op '<=)(= op '>)(= op '<))
@@ -180,8 +243,8 @@
             (operar_con_AND coleccion )
       (= op 'mod)
             (operacion_mod operador valor_retorno coleccion)
-
-      :else "Falta algo por resolver.")))
+        :else "Falta algo por resolver."
+      )))
 
 (defn f4 [x]
   ;(println "Esto recibe f4 " x)
@@ -192,7 +255,6 @@
          d             (first c)
          e             (rest c)
          valor_retorno (get diccionario_valor_retorno b)
-
          operador      (get diccionario_aritmetica_comparacion b)  ]
 
    ;(println "valor de retorno f4" valor_retorno)
@@ -200,17 +262,16 @@
    (if (empty? a)
        valor_retorno
        (try
-         ;(if (not= b 'mod )
-            ;(operacion_aritmetica operador valor_retorno c)
-            ;(operacion_mod operador valor_retorno c))
-            ;El parametro b es el operador formato symbol.
-          (determinar_operacion_matematica b operador valor_retorno c)
 
+      (do      ;El parametro b es el operador formato symbol.
+          (determinar_operacion_matematica b operador valor_retorno c)
+        )
         (catch ArithmeticException e
           (println "Probable division por cero [f4]...")
           nil)
         (catch ClassCastException e
           (println "Es probable que el problema sea con un string, coleccion vacia [f4].")
+
           nil)
         (catch Exception e
           (println "Alguna otra excepcion no capturada [f4]...")
@@ -218,82 +279,169 @@
         )
 
     )))
-
+(defn recursar_f6 [operador  coleccion]
+    ;llama f6 .parte de operacion recursiva de la misma funcion.
+    ;Desesctrutura la expresion separando el operador del resto de la coleccion.
+    (let [op   (get diccionario_aritmetica_comparacion operador)
+        vr    (get diccionario_valor_retorno operador)
+        col   coleccion]
+    (f6 op vr col);expresion anidada
+    ))
 (defn f6 [operador valor_retorno coleccion]
   ;actua sobre colecciones de funciones , no sobre una llamada a funcion concreta.
   ;Dicho de otra manera, actua funcion aplicada sobre otras expresiones.
-
-  ;Desestructurando expresion:separo operador del resto de la coleccion.
+  ;Desestructurando expresion:separo operador del resto de la expresion.
   ;(println "Esto recibe f6 " operador valor_retorno coleccion)
   (let [  a             coleccion
           b             (first a); es una llamada a funcion. EJ: "(+ 5 3)"
           c             (rest a); el resto de la coleccion.
         ]
-       ;(println "El ultimo de la coleccion" (last a))
-       ;(println "El primero del resto de la coleccion " (first c))
-       ;(println "La cantidad de elementos en la coleccion " (count a))
-       ;(println "b " b)
-       ;(println "c " c)
-       ;(println "valor de retorno f6 " valor_retorno)
+     ;(println "El ultimo de la coleccion" (last a))
+     ;(println "El primero del resto de la coleccion " (first c))
+     ;(println "La cantidad de elementos en la coleccion " (count a))
+     ;(println "b " b)
+     ;(println "c " c)
+     ;(println "valor de retorno f6 " valor_retorno)
  ;empty funciona en colecciones.Si una llamada a funcion es () anula toda la operatoria.
-       (if (empty? a)
-           (do
-             (println "Entro aqui por valor_retorno [f6]" valor_retorno)
-           valor_retorno)
-           (try
+  (if (empty? a)
+    (do
+       ;(println "Entro aqui por valor_retorno [f6]" valor_retorno)
+     valor_retorno)
+  (try
+;*****************************************************************************
+       ;CASOS PARTICULARES-FUNCIONES ESPECIFICAS
+       ;si es una expresion de funcion particular como counter-value.
+    (cond
+      ;condicion
+      (not= nil (get diccionario_de_Var_a_Symbol_Func_especiales operador))
+        ;en este caso es var.
+        (operador coleccion)
+        ;condicion
+      (and (not (es_numero_o_booleano b)) (coll? b)
+      (not= nil (get diccionario_aritmetica_comparacion (first b)))
+      (or (= (first b) 'counter-value )
+        (= (first b) 'current )
+        (= (first b) 'past)))
+        ;en este caso es un symbol.Hay que convertirlo.
+        (do
+          ;(println "Entro en ultima expresion" b )
+          ;(println "El calculo da: "((get diccionario_aritmetica_comparacion (first b))(rest b)) )
+        (operador ((get diccionario_aritmetica_comparacion (first b))(rest b))
+          (if (and (coll? c)(not (empty? c)))
+            (f6 operador valor_retorno c)valor_retorno))
+              )
+      ;condicion: si es numero o bool ,funcion apply no compila.
+      (and (coll? b) (not (es_numero_o_booleano (first c))) (not (empty? c))
+      (or  (clojure.string/includes?(apply str (first c)) w_contValores)
+           (clojure.string/includes?(apply str (first c)) w_corriente)
+           (clojure.string/includes?(apply str (first c)) w_pasado)))
+           ;Tiene funciones especiales entonces deben resolverse en esta funcion;expresion anidada.
 
-            (if (and (= (count a) 2) (= (first c) (last a))
-             (if (es_numero_o_booleano (first c))
-              true
-              (not (clojure.string/includes? (apply str (first c)) delimitador_izq ))))
-              ;la expresion (apply str x), excepcion si x es true, false.
-             ;si el proximo es el ultimo de la coleccion y son los dos ultimos elementos.
-            ;no funciona, parece que esta 'deprecated' boolean?
-            ;si es un numero o booleano que no aplique funcion.
-            ;(5) es error compilacion :imposible resolver un nro como funcion.
-                  (if (es_numero_o_booleano b)
+            (operador (recursar_f6 (first b) (rest b));Ejemplo operador(+ ()())
+            (recursar_f6 (first (first c)) (rest (first c))))
+              ;esta dentro de la coleccion '((c)).
 
-                    (if (and (= 1 (count c)) (es_numero_o_booleano (first c)))
-                        ;caso b= 5 c= 8
-                      (do
-                        ;(println "Esto es el resultado " operador b (first c) (operador b (first c)))
-                        (operador b (first c))
-                        )
-                        ;caso b=5 c= '((+7 8)) .c es una operacion.
-                        (operador b (f4 (first c))))
+;****************************************************************************
+      ;condicion:el segundo y el primero son numeros.
+      (= true (and  (= (count a) 2) (= (first c) (last a))
+              (es_numero_o_booleano b)
+              (es_numero_o_booleano (first c))))
 
-                    (if (and (= 1 (count c)) (es_numero_o_booleano (first c)))
-                        ;caso b=(+ 5 3) c=(true) o (numero)
-                        (operador (f4 b) (first c))
-                        ;caso b=(+ 5 3) c=(+ 2 1)
-                        (operador (f4 b)(f4 (first c))))
-                    )
-              (if (es_numero_o_booleano b)
-                  ;si resulta que llegan operaciones anidadas
-                  (operador b (if (and (= (count a) 2) (= (first c) (last a))                        (clojure.string/includes? (apply str (first c)) delimitador_izq ))
-                        (f6 (get diccionario_aritmetica_comparacion (first (first c)))(get diccionario_valor_retorno (first (first c)))                        (rest (first c)));expresion anidada
-                        (f6 operador valor_retorno c))
-                        )
+              (operador b  (first c))
+      ;condicion
+      (= true (and (= (count a) 2) (= (first c) (last a))
+        (if (es_numero_o_booleano (first c)) true
+        (not(clojure.string/includes?(apply str (first c)) delimitador_izq )))))
 
-                  (operador (f4 b) (if (and (= (count a) 2) (= (first c) (last a))                          (clojure.string/includes? (apply str (first c)) delimitador_izq ))
-                          (f6 (get diccionario_aritmetica_comparacion (first (first c))) (get diccionario_valor_retorno (first (first c)))                          (rest (first c)));expresion anidada
-                          (f6 operador valor_retorno c))
-                          )))
+        (if (es_numero_o_booleano b)
 
-            (catch ArithmeticException e
-              (println "Probable division por cero.[f6]...")
-              nil)
-            (catch NullPointerException e
-                ;caso  b=(+ 5 3) c=(/ 2 0)=nil
-                (println "Probable division por cero [f6]...")
-                nil));end-try-catch
-        )))
-    ;(operador b (f6 operador valor_retorno c))
-    ;(operador (f4 b) (f6 operador valor_retorno c))))
+          (operador b
+          (if (and (= 1 (count c))(es_numero_o_booleano (first c)))
+            (first c)(f4 (first c))))
+
+          (operador (f4 b)
+          (if (and (= 1 (count c))(es_numero_o_booleano (first c)))
+            (first c)(f4 (first c)))))
+;*************************Expresiones anidadas*****************************
+      ;quedan dos elementos de la coleccion completa.
+
+      ;condicion
+      (= false (and (= (count a) 2) (= (first c) (last a))
+        (if (es_numero_o_booleano (first c)) true
+        (not (clojure.string/includes?(apply str (first c)) delimitador_izq )))))
+
+        (if (es_numero_o_booleano b)
+
+          (operador b
+            (if (and (= (count a) 2)(= (first c)(last a))
+              (clojure.string/includes? (apply str (first c)) delimitador_izq ))
+              (recursar_f6  (first (first c)) (rest (first c)));expresion anidada
+              (f6 operador valor_retorno c)))
+
+          (operador (f4 b)
+            (if (and (= (count a) 2)(= (first c)(last a))
+              (clojure.string/includes? (apply str (first c)) delimitador_izq ))
+              (recursar_f6  (first (first c)) (rest (first c)));expresion anidada
+              (f6 operador valor_retorno c))))
+
+        :else "Caso no resuelto para los parametros pasados");end-cond
+
+  (catch ArithmeticException e
+    (println "Probable division por cero.[f6]...")
+    nil)
+  (catch NullPointerException e
+      ;caso  b=(+ 5 3) c=(/ 2 0)=nil
+    (println "Probable division por cero [f6]...")
+    nil));end-try-catch
+  )))
 
 
+(def f_temporal_anulada '(
+  (if (get diccionario_de_Var_a_Symbol_Func_especiales operador)
+          (get diccionario_de_Var_a_Symbol_Func_especiales (first b)))
+    (do (println "Entro funcion especial " operador)
+      (operador coleccion)
+      (if (and (coll? c)(not (empty? c)))(f6 operador valor_retorno c)
+
+    (if (and (= (count a) 2) (= (first c) (last a))
+      (if (es_numero_o_booleano (first c))
+      true
+      (not (clojure.string/includes?(apply str (first c)) delimitador_izq ))))
+    ;la expresion (apply str x), excepcion si x es true, false.
+    ;si el proximo es el ultimo de la coleccion y son los dos ultimos elementos.
+    ;no funciona, parece que esta 'deprecated' boolean?
+    ;si es un numero o booleano que no aplique funcion.
+    ;(5) es error compilacion :imposible resolver un nro como funcion.
+
+      (if (es_numero_o_booleano b)
+
+        (operador b
+        (if (and (= 1 (count c))(es_numero_o_booleano (first c)))
+          (first c)(f4 (first c))))
+
+        (operador (f4 b)
+        (if (and (= 1 (count c))(es_numero_o_booleano (first c)))
+          (first c)(f4 (first c)))))
+
+      (if (es_numero_o_booleano b)
+
+        (operador b
+          (if (and (= (count a) 2)(= (first c)(last a))
+          (clojure.string/includes? (apply str (first c)) delimitador_izq ))
+            (f6 (get diccionario_aritmetica_comparacion (first (first c)))
+                (get diccionario_valor_retorno (first (first c)))
+                (rest (first c)));expresion anidada
+            (f6 operador valor_retorno c)))
+
+        (operador (f4 b)
+        (if (and (= (count a) 2)(= (first c)(last a))
+        (clojure.string/includes? (apply str (first c)) delimitador_izq ))
+            (f6 (get diccionario_aritmetica_comparacion (first (first c)))
+              (get diccionario_valor_retorno (first (first c)))
+              (rest (first c)));expresion anidada
+            (f6 operador valor_retorno c)))))))))
 (defn f5 [x]
-  (println "Esto recibe f5 " x)
+  ;(println "Esto recibe f5 " x)
   (let [  a             x
        b             (first a); es operador
        c             (rest a); lo que no es el primer operador
@@ -312,6 +460,9 @@
        (if (empty? a)
            valor_retorno
            (try
+              ;Determinando si es una expresion de una funcion particular
+              ;Ejemplo signal.
+
               (if (es_Operacion_Simple a)
                 (f4 a)
                 (f6 operador valor_retorno c))
@@ -319,7 +470,7 @@
               (println "Probable division por cero f5...")
               nil)
             (catch ClassCastException e
-              (println "Es probable que el problema sea con un string?")
+              (println "Es probable que el problema sea con un string? [f5]")
               nil)
         ;    (catch Exception e
         ;      (println "Alguna otra excepcion no capturada...")
