@@ -1,20 +1,21 @@
 (ns data-processor
-  (:require [clojure.core :refer :all]))
+  (:require [clojure.core :refer :all]
+   :use [utiles.funcionesRecursivas :refer :all]))
           ;;  [clojure.string :refer :all]))
 
 (def valor_cero 0)
 (def cero_inicial [0])
 (def estado [])
 (def contadores {});; {:counter-name [valores almacenados]}
-(def sennales '());; reglas tipo signal
+(def sennales {});; reglas tipo signal
 
 (defn counter-value [counter-name & argumentos]
-      (if (empty? argumentos)
-          ;retorna el Ultimo valor del contador solicitado
-          (last (keyword counter-name) contadores)
-          nil))
-      ;end-if
-  ;end-defn
+	(if (empty? argumentos)
+		;retorna el Ultimo valor del contador solicitado
+		(last (keyword counter-name) contadores)
+		nil))
+
+
 (defn actualizar_Estado []
   ;;autoincremental en una unidad según el ultimo estado almacenado
   (def estado ( conj estado  (inc (last estado)))))
@@ -28,7 +29,6 @@
     (let [clave (keyword counter-name)]
 		(def DatosNuevos  [(first(clave contadores)) (second(clave contadores)) (incrementar (last(clave contadores)) argFN)])
          (def contadores (merge  contadores {clave DatosNuevos}))
-          (println "incrementado:" (last(clave contadores)))
          ))
   
 (defn incrementar_Contador_mapa [counter-name new-data argFN]
@@ -64,8 +64,7 @@
 			 (def TablaSalida (merge  TablaSalida {x aux}))
      	 )claves_tabla)	  
 		 (def DatosNuevos  [parametros condicion TablaSalida])
-		 (def contadores (merge  contadores {counter-name DatosNuevos}))
-		 (println "Tabla:" TablaSalida)	 
+		 (def contadores (merge  contadores {counter-name DatosNuevos})) 
 )	  
          
 (defn incrementar_Contador [counter-name new-data argFN]
@@ -77,23 +76,21 @@
 )              
 
 (defn actualizar_Contadores [counter-name valor] ;;Agregar Contador
-	;;mete dentro de un mapa
   (let [clave (keyword counter-name)]
        (def contadores (merge  contadores { clave (conj  valor)})))
-       (println contadores))
+)
 
-   ;;signal-name es tipo String
-   ;;si la clave no existe, se agrega con valor []
-(defn actualizar_Sennales [signal-name valor]
-
-   (let [clave (keyword signal-name)]
-        (def sennales (merge  sennales { clave (conj ( clave sennales []) valor)}))))
+(defn actualizar_Sennales [nameSennales valor]
+  (let [clave (keyword nameSennales)]
+	(def sennales (merge  sennales { clave (conj  valor)}))
+  )
+)
 
 (defn identificar-reglas [rules]
   ;se reinician todas las colecciones de reglas a vacias para reprocesamiento
   ;sucede en los test.
   (def contadores {})
-  (def sennales [])
+  (def sennales {})
   (map #(let [[ a nombre parametros condicion & resto] %]
              (if (= (str a) "define-counter")
                  (do
@@ -101,7 +98,7 @@
 						(actualizar_Contadores (str nombre) [parametros condicion cero_inicial])
 						(actualizar_Contadores (str nombre) [parametros condicion {}])))
                  (do
-                     (def sennales (conj sennales %)))))
+                     (actualizar_Sennales (first (keys nombre)) [(first (vals nombre)) parametros]))))
 
         rules));;map
 
@@ -143,69 +140,73 @@
 		)
 
 (defn validarContador [clave_contador new-data]
-		 (def condiciones (second((keyword clave_contador) contadores)))
-		 (if (= condiciones true) 
-				(incrementar_Contador clave_contador new-data inc)
-				(validarCondiciones clave_contador new-data))
-	)
+	(def condiciones (second((keyword clave_contador) contadores)))
+	(if (= condiciones true) 
+		(incrementar_Contador clave_contador new-data inc)
+		(validarCondiciones clave_contador new-data))
+)
 	
 	
 (defn aplicar-reglas-Contador [new-data]
-;;recorre todo los contadores y le "aplica" el dato
   (def claves_de_count (keys contadores))
-  ;(println (str "Aplicando contadores.." claves_de_count))
   (mapv (fn [x]
-         (println x)
-         (validarContador x new-data) ) claves_de_count);;mapv porque map funciona perfecto en
+         (validarContador x new-data) ) claves_de_count
+  )
+)
+
+
+(defn call [this & that]
+  (cond 
+   (string? this) (apply (resolve (symbol this)) that)
+   (fn? this)     (apply this that)
+   :else          (conj that this)))
+
+(defn ejecutarFuncionRecursiva [funcion]
+	;(println "inicio" funcion)
+	(def funciones #{"/" "counter-value"})
+	(def operador (first funcion))
+	(def parametroA (second funcion))
+	(def parametroB (last funcion))
+	(def salida "error")
+	;(println operador parametroA parametroB)	
+	;(println (contains? funciones (str operador)))
+	(if (= (contains? funciones (str (first funcion))) true)
+		;(println "salida:" (first funcion) (ejecutarFuncionRecursiva (second funcion)) (ejecutarFuncionRecursiva (last funcion)))
+		(call (first funcion) (ejecutarFuncionRecursiva (second funcion)) (ejecutarFuncionRecursiva (last funcion)))
+		funcion
 	)
-  ;;end-defn
-  
+) 
+
+(defn ejecutarSenneal [clave_Sennales new-data]
+   (def parametros (first((keyword clave_Sennales) sennales)))
+   (def salida (f5 parametros))
+   ;(println "opcion2:")
+   ;(println (ejecutarFuncionRecursiva parametros))
+)
+
+(defn validarSennales [clave_Sennales new-data]
+	(def condiciones (second((keyword clave_Sennales) sennales)))
+	(if (= condiciones true) 
+		(ejecutarSenneal clave_Sennales new-data)
+		;(validarCondiciones clave_Sennales new-data)
+	)
+)
 
 (defn aplicar-reglas-Sennales [new-data]
-    ;;**********************************************************
-    ;;aplico reglas tipo signal.
-    ;;************************************************************
-  (def datos_generados []);inicio vector.
-  ;;(println "Aplicando reglas signal...")
-  (def datos_generados
-    (mapv #(let [[ tipo_regla dato condicion & resto] %] ;;porque es [(signal_1)...(signal_n)] y me quedo con (signal...)
-
-         (if (= (str tipo_regla) "define-signal")
-             (do
-               (println tipo_regla "esto es una signal." %)
-               (println "Este es el dato: " dato )
-               (println "Esta es la condicion: " condicion)
-               ;;si se cumple la condicion:bool
-               (if (= condicion true)
-                ;lo siguiente retorna un Map segun pruebas en repl y no vector.
-                ;haría falta lo siguiente tal vez:
-                ;(into [] dato)
-                (  do
-                 (def datos_obtenidos (first dato))
-                 datos_obtenidos
-                 ;****************TEMPORAL*************
-                 ;Solo a los fines de resolver la conversion
-                 ;de symbol a funcion para el caso de signal-launch-test
-
-                 ;???????
-                 ;*************************************
-                 (println "DATOS GENERADOS SIGNAL..." datos_obtenidos)
-                 )))))
-
-    sennales))
-    (println "DATOS GENERADOS SIGNAL..." datos_generados)
-  datos_generados);end-defn
+  (def claves_de_Sennales (keys sennales))
+  (mapv (fn [x]
+         (validarSennales x new-data) ) claves_de_Sennales)
+)
 
 (defn process-data [state new-data]
 
-  (println "estado.......:" estado)
   ;;se incrementa el estado por cada ejecución
   (actualizar_Estado)
   (if (empty? new-data)
     [(last estado) '()] ;porque hay un signal-skip-on-error-test
     (do
       (aplicar-reglas-Contador new-data)
-      [(last estado) (aplicar-reglas-Sennales new-data)])))
+      (aplicar-reglas-Sennales new-data))))
 
 ;end-defn;;[nil []])
 
