@@ -8,12 +8,47 @@
 (def estado [])
 (def contadores {});; {:counter-name [valores almacenados]}
 (def sennales {});; reglas tipo signal
+(def salidaSennales {})
+(def listaPast {})
+(def LaX 0)
+(def newData 0)
 
-(defn counter-value [counter-name & argumentos]
-	(if (empty? argumentos)
-		;retorna el Ultimo valor del contador solicitado
-		(last (keyword counter-name) contadores)
-		nil))
+(defn past [clave]
+	clave LaX
+)
+
+(defn current [clave]
+	(println "datos:" newData)
+	(println "keys:" (keys newData))
+	(println clave)
+	(println ((first(keys newData)) newData))
+	(first(keys newData)) newData
+)
+
+(defn CargarPast [dato]
+	(def listaPast (merge listaPast {dato true}))
+)
+
+(defn counter-value [counter-name counter-args]
+  (def salidaCV ((keyword counter-name) contadores))  
+  (if (= salidaCV nil) 
+	(def salida 0)
+	(if (= (count (first salidaCV)) 0)
+	    (def salidaCV (last(last salidaCV)))
+	    (def salidaCV (last(get (last salidaCV) counter-args))))
+   )  salidaCV
+)
+
+
+(defn counter-value [counter-name counter-args]
+  (def salidaCV ((keyword counter-name) contadores))  
+  (if (= salidaCV nil) 
+	(def salida 0)
+	(if (= (count (first salidaCV)) 0)
+	    (def salidaCV (last(last salidaCV)))
+	    (def salidaCV (last(get (last salidaCV) counter-args))))
+   )  salidaCV
+)
 
 
 (defn actualizar_Estado []
@@ -100,18 +135,10 @@
                  (do
                      (actualizar_Sennales (first (keys nombre)) [(first (vals nombre)) parametros]))))
 
-        rules));;map
+        rules)
+    );;map
 
 
-    ;;se inicializan los CONTADORES y ESTADOS en cero. No hace falta ya que al ejecutarse
-    ;;inicialmente, estan predefinidos vacios.
-    ;;Nota personal: a es un symbol, por lo tanto al comparar con el nombre del contador
-    ;;que es tipo String, falla, por eso (str a).
-    ;;Se propone filtrar las reglas (contadores y señales).
-    ;;Nota personal: En las pruebas de consola 'b' (o lo que sea) es un symbol y (str b) no funciona, a menos que se lo exprese como tal: (str 'b). De esta manera funciona indistintamente para symbol/string.
-    ;;Se almacenan los estados en vector def estado
-    ;;Nota personal: conj: adiciona en VECTORES el elemento al final, que es lo querido.
-    ;;se inicializa estado a 0.
 (defn initialize-processor [rules]
 
   (def estado [valor_cero])
@@ -125,19 +152,19 @@
 ;end-defn
 
 (defn validarCondiciones [clave_contador new-data]
-		 (def condiciones (second((keyword clave_contador) contadores)))
-		 (def flag true)
-		 (def claves (keys new-data))
-		 (def tipo "nada")
-		 (mapv (fn [x]
-			(if (= (str tipo) "current") 
-				(if (= (get new-data x) true) () (def flag false)))
-			(if (= (str x) "current") (def tipo "current") (def tipo "nada"))
-			) condiciones)
-		 (if (= flag true)
-			(incrementar_Contador clave_contador new-data inc)
-			(incrementar_Contador clave_contador new-data +))
-		)
+	(def condiciones (second((keyword clave_contador) contadores)))
+	(def flag true)
+	(def claves (keys new-data))
+	(def tipo "nada")
+	(mapv (fn [x]
+		(if (= (str tipo) "current") 
+			(if (= (get new-data x) true) () (def flag false)))
+		(if (= (str x) "current") (def tipo "current") (def tipo "nada"))
+	) condiciones)
+	(if (= flag true)
+		(incrementar_Contador clave_contador new-data inc)
+		(incrementar_Contador clave_contador new-data +))
+)
 
 (defn validarContador [clave_contador new-data]
 	(def condiciones (second((keyword clave_contador) contadores)))
@@ -155,15 +182,26 @@
 )
 
 
-(defn call [this & that]
-  (cond 
-   (string? this) (apply (resolve (symbol this)) that)
-   (fn? this)     (apply this that)
-   :else          (conj that this)))
+   
+(defn ejecutar [fn A B]
+	(def funciones2 #{ "counter-value"})
+	(def RSalida nil)	
+	(if (= "counter-value" (str fn)) (def RSalida (counter-value A B)))
+	(if (= "current" (str fn)) (def RSalida (current A)))	
+	(if (= "past" (str fn)) (def RSalida (past A)))			
+	(if (= "=" (str fn)) (def RSalida (= A B)))	
+	(if (= "/" (str fn))
+		(if (= B 0)
+			(println "divide por cero")
+			(def RSalida(/ A B))
+		)
+	)
+	RSalida
+)
 
 (defn ejecutarFuncionRecursiva [funcion]
 	;(println "inicio" funcion)
-	(def funciones #{"/" "counter-value"})
+	(def funciones #{"/" "counter-value" "=" "current" "past"})
 	(def operador (first funcion))
 	(def parametroA (second funcion))
 	(def parametroB (last funcion))
@@ -171,42 +209,75 @@
 	;(println operador parametroA parametroB)	
 	;(println (contains? funciones (str operador)))
 	(if (= (contains? funciones (str (first funcion))) true)
-		;(println "salida:" (first funcion) (ejecutarFuncionRecursiva (second funcion)) (ejecutarFuncionRecursiva (last funcion)))
-		(call (first funcion) (ejecutarFuncionRecursiva (second funcion)) (ejecutarFuncionRecursiva (last funcion)))
-		funcion
+		(def salida (ejecutar (first funcion) (ejecutarFuncionRecursiva (second funcion)) (ejecutarFuncionRecursiva (last funcion))))
+		(def salida funcion)
 	)
+	;(println salida)
+	salida
 ) 
 
 (defn ejecutarSenneal [clave_Sennales new-data]
-   (def parametros (first((keyword clave_Sennales) sennales)))
-   (def salida (f5 parametros))
-   ;(println "opcion2:")
-   ;(println (ejecutarFuncionRecursiva parametros))
+	(def parametros (first((keyword clave_Sennales) sennales)))
+	(def newData new-data)
+	(def salida (ejecutarFuncionRecursiva parametros))
+	(if (= salida nil)
+		()
+		(def salidaSennales (merge  salidaSennales {clave_Sennales salida}))
+	)
+    (println salida)
+    (println new-data "/" listaPast)    
+    (println "final" salidaSennales)
+	
+	salidaSennales
+)
+
+(defn validarCondicionesSennales [clave_Sennales new-data]
+	(def funcion (clave_Sennales sennales))
+	(def flag false)
+	(def claves_past (keys listaPast))
+	(def newData new-data)
+	(mapv (fn [x]
+		(def LaX x)
+		(if (ejecutarFuncionRecursiva funcion)
+		(def flag true))
+	) claves_past)
+
+	(if (= flag true)
+		(ejecutarSenneal clave_Sennales new-data)
+	)
 )
 
 (defn validarSennales [clave_Sennales new-data]
 	(def condiciones (second((keyword clave_Sennales) sennales)))
 	(if (= condiciones true) 
 		(ejecutarSenneal clave_Sennales new-data)
-		;(validarCondiciones clave_Sennales new-data)
+		(validarCondicionesSennales clave_Sennales new-data)
 	)
 )
 
 (defn aplicar-reglas-Sennales [new-data]
-  (def claves_de_Sennales (keys sennales))
-  (mapv (fn [x]
-         (validarSennales x new-data) ) claves_de_Sennales)
+	(def salidaSennales {})
+	(def claves_de_Sennales (keys sennales))
+	(mapv (fn [x]
+		(validarSennales x new-data) ) claves_de_Sennales)
 )
 
 (defn process-data [state new-data]
-
   ;;se incrementa el estado por cada ejecución
-  (actualizar_Estado)
-  (if (empty? new-data)
-    [(last estado) '()] ;porque hay un signal-skip-on-error-test
-    (do
-      (aplicar-reglas-Contador new-data)
-      (aplicar-reglas-Sennales new-data))))
+	(actualizar_Estado)
+	(if (empty? new-data)
+		[(last estado) '()] ;porque hay un signal-skip-on-error-test
+		(do
+			(aplicar-reglas-Sennales new-data)
+			(aplicar-reglas-Contador new-data)
+			(CargarPast new-data)
+		))
+	(if (= (count salidaSennales) 0)
+		(def salida [contadores []])	
+		(def salida [contadores [salidaSennales]])
+	)
+	salida
+)
 
 ;end-defn;;[nil []])
 
