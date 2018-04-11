@@ -14,15 +14,11 @@
 (def newData 0)
 
 (defn past [clave]
-	clave LaX
+	(get LaX clave)	
 )
 
 (defn current [clave]
-	(println "datos:" newData)
-	(println "keys:" (keys newData))
-	(println clave)
-	(println ((first(keys newData)) newData))
-	(first(keys newData)) newData
+	(get newData clave)
 )
 
 (defn CargarPast [dato]
@@ -38,7 +34,6 @@
 	    (def salidaCV (last(get (last salidaCV) counter-args))))
    )  salidaCV
 )
-
 
 (defn counter-value [counter-name counter-args]
   (def salidaCV ((keyword counter-name) contadores))  
@@ -181,8 +176,6 @@
   )
 )
 
-
-   
 (defn ejecutar [fn A B]
 	(def funciones2 #{ "counter-value"})
 	(def RSalida nil)	
@@ -200,19 +193,11 @@
 )
 
 (defn ejecutarFuncionRecursiva [funcion]
-	;(println "inicio" funcion)
 	(def funciones #{"/" "counter-value" "=" "current" "past"})
-	(def operador (first funcion))
-	(def parametroA (second funcion))
-	(def parametroB (last funcion))
-	(def salida "error")
-	;(println operador parametroA parametroB)	
-	;(println (contains? funciones (str operador)))
 	(if (= (contains? funciones (str (first funcion))) true)
 		(def salida (ejecutar (first funcion) (ejecutarFuncionRecursiva (second funcion)) (ejecutarFuncionRecursiva (last funcion))))
 		(def salida funcion)
 	)
-	;(println salida)
 	salida
 ) 
 
@@ -222,17 +207,14 @@
 	(def salida (ejecutarFuncionRecursiva parametros))
 	(if (= salida nil)
 		()
-		(def salidaSennales (merge  salidaSennales {clave_Sennales salida}))
+		(def salidaSennales (merge  salidaSennales {(name clave_Sennales) salida}))
 	)
-    (println salida)
-    (println new-data "/" listaPast)    
-    (println "final" salidaSennales)
 	
 	salidaSennales
 )
 
 (defn validarCondicionesSennales [clave_Sennales new-data]
-	(def funcion (clave_Sennales sennales))
+	(def funcion (second(clave_Sennales sennales)))	
 	(def flag false)
 	(def claves_past (keys listaPast))
 	(def newData new-data)
@@ -265,10 +247,10 @@
 (defn process-data [state new-data]
   ;;se incrementa el estado por cada ejecución
 	(actualizar_Estado)
+	(aplicar-reglas-Sennales new-data)
 	(if (empty? new-data)
 		[(last estado) '()] ;porque hay un signal-skip-on-error-test
 		(do
-			(aplicar-reglas-Sennales new-data)
 			(aplicar-reglas-Contador new-data)
 			(CargarPast new-data)
 		))

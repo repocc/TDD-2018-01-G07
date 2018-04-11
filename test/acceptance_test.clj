@@ -84,6 +84,7 @@
         [st1 sg1] (process-data st0 {"spam" true})
         [st2 sg2] (process-data st1 {"spam" false})
         [st3 sg3] (process-data st2 {})]
+
     (is (= 0
            (count sg1)))
     (is (= 1
@@ -104,6 +105,7 @@
         [st3 sg3] (process-data st2 {"value" 1})
         [st4 sg4] (process-data st3 {"value" 1})
         [st5 sg5] (process-data st4 {"value" 2})]
+
     (is (= 0
            (count sg1)))
     (is (= 0
