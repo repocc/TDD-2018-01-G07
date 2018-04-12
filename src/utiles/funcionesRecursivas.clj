@@ -1,5 +1,5 @@
 (ns utiles.funcionesRecursivas
-  (:require [clojure.core :refer :all]))
+  (:require [clojure.core :refer :all]))  
 ;estos funcionan con multiples argumentos
 (declare operar_con_AND)
 (declare counter-value)
@@ -396,50 +396,6 @@
   )))
 
 
-(def f_temporal_anulada '(
-  (if (get diccionario_de_Var_a_Symbol_Func_especiales operador)
-          (get diccionario_de_Var_a_Symbol_Func_especiales (first b)))
-    (do (println "Entro funcion especial " operador)
-      (operador coleccion)
-      (if (and (coll? c)(not (empty? c)))(f6 operador valor_retorno c)
-
-    (if (and (= (count a) 2) (= (first c) (last a))
-      (if (es_numero_o_booleano (first c))
-      true
-      (not (clojure.string/includes?(apply str (first c)) delimitador_izq ))))
-    ;la expresion (apply str x), excepcion si x es true, false.
-    ;si el proximo es el ultimo de la coleccion y son los dos ultimos elementos.
-    ;no funciona, parece que esta 'deprecated' boolean?
-    ;si es un numero o booleano que no aplique funcion.
-    ;(5) es error compilacion :imposible resolver un nro como funcion.
-
-      (if (es_numero_o_booleano b)
-
-        (operador b
-        (if (and (= 1 (count c))(es_numero_o_booleano (first c)))
-          (first c)(f4 (first c))))
-
-        (operador (f4 b)
-        (if (and (= 1 (count c))(es_numero_o_booleano (first c)))
-          (first c)(f4 (first c)))))
-
-      (if (es_numero_o_booleano b)
-
-        (operador b
-          (if (and (= (count a) 2)(= (first c)(last a))
-          (clojure.string/includes? (apply str (first c)) delimitador_izq ))
-            (f6 (get diccionario_aritmetica_comparacion (first (first c)))
-                (get diccionario_valor_retorno (first (first c)))
-                (rest (first c)));expresion anidada
-            (f6 operador valor_retorno c)))
-
-        (operador (f4 b)
-        (if (and (= (count a) 2)(= (first c)(last a))
-        (clojure.string/includes? (apply str (first c)) delimitador_izq ))
-            (f6 (get diccionario_aritmetica_comparacion (first (first c)))
-              (get diccionario_valor_retorno (first (first c)))
-              (rest (first c)));expresion anidada
-            (f6 operador valor_retorno c)))))))))
 (defn f5 [x]
   ;(println "Esto recibe f5 " x)
   (let [  a             x
