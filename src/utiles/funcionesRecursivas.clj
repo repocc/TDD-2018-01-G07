@@ -1,5 +1,5 @@
 (ns utiles.funcionesRecursivas
-  (:require [clojure.core :refer :all]))  
+  (:require [clojure.core :refer :all]))
 ;estos funcionan con multiples argumentos
 (declare operar_con_AND)
 (declare counter-value)

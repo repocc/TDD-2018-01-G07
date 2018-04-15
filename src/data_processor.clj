@@ -1,11 +1,17 @@
 (ns data-processor
+<<<<<<< HEAD
   (:require [clojure.core :refer :all]))
+=======
+  (:require [clojure.core :refer :all]
+   :use [utiles.funcionesRecursivas :refer :all]))
+>>>>>>> 9178b3d9092d953da3f2cbdd7707a155acd5b074
           ;;  [clojure.string :refer :all]))
 
 (def valor_cero 0)
 (def cero_inicial [0])
 (def estado [])
 (def contadores {});; {:counter-name [valores almacenados]}
+<<<<<<< HEAD
 (def sennales '());; reglas tipo signal
 
 (defn counter-value [counter-name & argumentos]
@@ -15,6 +21,47 @@
           nil))
       ;end-if
   ;end-defn
+=======
+(def sennales {});; reglas tipo signal
+(def salidaSennales {})
+(def listaPast {})
+(def LaX 0)
+(def newData 0)
+
+(defn past [clave]
+	(get LaX clave)	
+)
+
+(defn current [clave]
+	(get newData clave)
+)
+
+(defn CargarPast [dato]
+	(def listaPast (merge listaPast {dato true}))
+)
+
+(defn counter-value [counter-name counter-args]
+  (def salidaCV ((keyword counter-name) contadores))  
+  (if (= salidaCV nil) 
+	(def salida 0)
+	(if (= (count (first salidaCV)) 0)
+	    (def salidaCV (last(last salidaCV)))
+	    (def salidaCV (last(get (last salidaCV) counter-args))))
+   )  salidaCV
+)
+
+(defn counter-value [counter-name counter-args]
+  (def salidaCV ((keyword counter-name) contadores))  
+  (if (= salidaCV nil) 
+	(def salida 0)
+	(if (= (count (first salidaCV)) 0)
+	    (def salidaCV (last(last salidaCV)))
+	    (def salidaCV (last(get (last salidaCV) counter-args))))
+   )  salidaCV
+)
+
+
+>>>>>>> 9178b3d9092d953da3f2cbdd7707a155acd5b074
 (defn actualizar_Estado []
   ;;autoincremental en una unidad según el ultimo estado almacenado
   (def estado ( conj estado  (inc (last estado)))))
@@ -28,7 +75,10 @@
     (let [clave (keyword counter-name)]
 		(def DatosNuevos  [(first(clave contadores)) (second(clave contadores)) (incrementar (last(clave contadores)) argFN)])
          (def contadores (merge  contadores {clave DatosNuevos}))
+<<<<<<< HEAD
           (println "incrementado:" (last(clave contadores)))
+=======
+>>>>>>> 9178b3d9092d953da3f2cbdd7707a155acd5b074
          ))
   
 (defn incrementar_Contador_mapa [counter-name new-data argFN]
@@ -64,8 +114,12 @@
 			 (def TablaSalida (merge  TablaSalida {x aux}))
      	 )claves_tabla)	  
 		 (def DatosNuevos  [parametros condicion TablaSalida])
+<<<<<<< HEAD
 		 (def contadores (merge  contadores {counter-name DatosNuevos}))
 		 (println "Tabla:" TablaSalida)	 
+=======
+		 (def contadores (merge  contadores {counter-name DatosNuevos})) 
+>>>>>>> 9178b3d9092d953da3f2cbdd7707a155acd5b074
 )	  
          
 (defn incrementar_Contador [counter-name new-data argFN]
@@ -77,6 +131,7 @@
 )              
 
 (defn actualizar_Contadores [counter-name valor] ;;Agregar Contador
+<<<<<<< HEAD
 	;;mete dentro de un mapa
   (let [clave (keyword counter-name)]
        (def contadores (merge  contadores { clave (conj  valor)})))
@@ -88,12 +143,27 @@
 
    (let [clave (keyword signal-name)]
         (def sennales (merge  sennales { clave (conj ( clave sennales []) valor)}))))
+=======
+  (let [clave (keyword counter-name)]
+       (def contadores (merge  contadores { clave (conj  valor)})))
+)
+
+(defn actualizar_Sennales [nameSennales valor]
+  (let [clave (keyword nameSennales)]
+	(def sennales (merge  sennales { clave (conj  valor)}))
+  )
+)
+>>>>>>> 9178b3d9092d953da3f2cbdd7707a155acd5b074
 
 (defn identificar-reglas [rules]
   ;se reinician todas las colecciones de reglas a vacias para reprocesamiento
   ;sucede en los test.
   (def contadores {})
+<<<<<<< HEAD
   (def sennales [])
+=======
+  (def sennales {})
+>>>>>>> 9178b3d9092d953da3f2cbdd7707a155acd5b074
   (map #(let [[ a nombre parametros condicion & resto] %]
              (if (= (str a) "define-counter")
                  (do
@@ -101,6 +171,7 @@
 						(actualizar_Contadores (str nombre) [parametros condicion cero_inicial])
 						(actualizar_Contadores (str nombre) [parametros condicion {}])))
                  (do
+<<<<<<< HEAD
                      (def sennales (conj sennales %)))))
 
         rules));;map
@@ -115,6 +186,14 @@
     ;;Se almacenan los estados en vector def estado
     ;;Nota personal: conj: adiciona en VECTORES el elemento al final, que es lo querido.
     ;;se inicializa estado a 0.
+=======
+                     (actualizar_Sennales (first (keys nombre)) [(first (vals nombre)) parametros]))))
+
+        rules)
+    );;map
+
+
+>>>>>>> 9178b3d9092d953da3f2cbdd7707a155acd5b074
 (defn initialize-processor [rules]
 
   (def estado [valor_cero])
@@ -128,6 +207,7 @@
 ;end-defn
 
 (defn validarCondiciones [clave_contador new-data]
+<<<<<<< HEAD
 		 (def condiciones (second((keyword clave_contador) contadores)))
 		 (def flag true)
 		 (def claves (keys new-data))
@@ -206,6 +286,121 @@
     (do
       (aplicar-reglas-Contador new-data)
       [(last estado) (aplicar-reglas-Sennales new-data)])))
+=======
+	(def condiciones (second((keyword clave_contador) contadores)))
+	(def flag true)
+	(def claves (keys new-data))
+	(def tipo "nada")
+	(mapv (fn [x]
+		(if (= (str tipo) "current") 
+			(if (= (get new-data x) true) () (def flag false)))
+		(if (= (str x) "current") (def tipo "current") (def tipo "nada"))
+	) condiciones)
+	(if (= flag true)
+		(incrementar_Contador clave_contador new-data inc)
+		(incrementar_Contador clave_contador new-data +))
+)
+
+(defn validarContador [clave_contador new-data]
+	(def condiciones (second((keyword clave_contador) contadores)))
+	(if (= condiciones true) 
+		(incrementar_Contador clave_contador new-data inc)
+		(validarCondiciones clave_contador new-data))
+)
+	
+	
+(defn aplicar-reglas-Contador [new-data]
+  (def claves_de_count (keys contadores))
+  (mapv (fn [x]
+         (validarContador x new-data) ) claves_de_count
+  )
+)
+
+(defn ejecutar [fn A B]
+	(def funciones2 #{ "counter-value"})
+	(def RSalida nil)	
+	(if (= "counter-value" (str fn)) (def RSalida (counter-value A B)))
+	(if (= "current" (str fn)) (def RSalida (current A)))	
+	(if (= "past" (str fn)) (def RSalida (past A)))			
+	(if (= "=" (str fn)) (def RSalida (= A B)))	
+	(if (= "/" (str fn))
+		(if (= B 0)
+			(println "divide por cero")
+			(def RSalida(/ A B))
+		)
+	)
+	RSalida
+)
+
+(defn ejecutarFuncionRecursiva [funcion]
+	(def funciones #{"/" "counter-value" "=" "current" "past"})
+	(if (= (contains? funciones (str (first funcion))) true)
+		(def salida (ejecutar (first funcion) (ejecutarFuncionRecursiva (second funcion)) (ejecutarFuncionRecursiva (last funcion))))
+		(def salida funcion)
+	)
+	salida
+) 
+
+(defn ejecutarSenneal [clave_Sennales new-data]
+	(def parametros (first((keyword clave_Sennales) sennales)))
+	(def newData new-data)
+	(def salida (ejecutarFuncionRecursiva parametros))
+	(if (= salida nil)
+		()
+		(def salidaSennales (merge  salidaSennales {(name clave_Sennales) salida}))
+	)
+	
+	salidaSennales
+)
+
+(defn validarCondicionesSennales [clave_Sennales new-data]
+	(def funcion (second(clave_Sennales sennales)))	
+	(def flag false)
+	(def claves_past (keys listaPast))
+	(def newData new-data)
+	(mapv (fn [x]
+		(def LaX x)
+		(if (ejecutarFuncionRecursiva funcion)
+		(def flag true))
+	) claves_past)
+
+	(if (= flag true)
+		(ejecutarSenneal clave_Sennales new-data)
+	)
+)
+
+(defn validarSennales [clave_Sennales new-data]
+	(def condiciones (second((keyword clave_Sennales) sennales)))
+	(if (= condiciones true) 
+		(ejecutarSenneal clave_Sennales new-data)
+		(validarCondicionesSennales clave_Sennales new-data)
+	)
+)
+
+(defn aplicar-reglas-Sennales [new-data]
+	(def salidaSennales {})
+	(def claves_de_Sennales (keys sennales))
+	(mapv (fn [x]
+		(validarSennales x new-data) ) claves_de_Sennales)
+)
+
+(defn process-data [state new-data]
+  ;;se incrementa el estado por cada ejecución
+	(actualizar_Estado)
+	(aplicar-reglas-Sennales new-data)
+	(if (empty? new-data)
+		[(last estado) '()] ;porque hay un signal-skip-on-error-test
+		(do
+			(aplicar-reglas-Contador new-data)
+			(CargarPast new-data)
+		))
+	(if (= (count salidaSennales) 0)
+		(def salida [contadores []])	
+		(def salida [contadores [salidaSennales]])
+	)
+	salida
+)
+>>>>>>> 9178b3d9092d953da3f2cbdd7707a155acd5b074
 
 ;end-defn;;[nil []])
 
