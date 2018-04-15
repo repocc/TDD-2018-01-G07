@@ -6,13 +6,6 @@
 (declare current)
 (declare past)
 
-;***********TEMPORAL para pruebas************
-(defn counter-value
-  "ESTO ES LA SALIDA DE COUNTER VALUE.UN NUMERO DE PRUEBA"
-  [x & args]
-
-  1234)
-;*******************************************
 
 (defn operar_con_AND [coleccion]
   (every? boolean coleccion)
@@ -38,9 +31,7 @@
             false
         :else retorno
 )));end-defn
-(defn oppp [coleccion]
-  (println " Estoy en oppp" coleccion)
-)
+
 ;**********************Diccionarios********************************
 
 (def diccionario_op_igualdades {'= = 'not= not=})
@@ -228,14 +219,12 @@
   [coleccion]
 
    (let [	desestructurada         (desestructurar coleccion)
-          ;operador 		             (first coleccion)
-      		resto_coleccion 	       (:resto_coleccion desestructurada)
+          resto_coleccion 	       (:resto_coleccion desestructurada)
       		operador_var		         (:operador_var desestructurada)
-      		;primer_operando 	       (second coleccion)
       		resultado_recursion	     (flatten
             (iniciar_recursion_en_operaciones_igualdad resto_coleccion ))
   	    ]
-
+        
   		(apply operador_var resultado_recursion	);end-apply
     );end-let
 );end-funcion
@@ -248,24 +237,13 @@
         operador 			       (:operador desestructurada)
     		resto_coleccion 	   (:resto_coleccion desestructurada)
     		operador_var		         (:operador_var desestructurada)
-    	;	primer_operando 	(second coleccion)
-    		resultado_recursion 	(flatten
+    	  resultado_recursion 	(flatten
           (iniciar_recursion_en_operaciones_logicas  resto_coleccion));end-flatten
 		]
 
 
       (operador_var resultado_recursion	);end-apply
-    ;	(cond
-    ;      	(= operador 'and)
-    ;      		(every? boolean
-    ;      				resultado_recursion
-    ;      		);end-every
-    ;      	(= operador 'or)
-    ;      		(some boolean
-    ;      	 			resultado_recursion
-    ;      		);end-some
-    ;	      :else (str "Operador logico no reconocido:  " operador)
-    ;	);end-cond
+
  );end-let
 );end-funcion
 ;******************************************************************
@@ -275,21 +253,17 @@
   [coleccion]
 
  (let [	desestructurada         (desestructurar coleccion)
-        ;operador 				        (first coleccion)
         resto_coleccion 	      (:resto_coleccion desestructurada)
         operador_var		        (:operador_var desestructurada)
       	primer_operando 			  (second coleccion)
       	cantidad_operandos			(:cantidad_operandos desestructurada)
-      	;segundo_operando			  (second resto_coleccion)
       	resultado_recursion			(flatten
           (iniciar_recursion_en_operaciones_mod resto_coleccion));end-flatten
 	    ]
 
          (cond
       	(= 2 cantidad_operandos)
-      		;(println "Resultado recursion" resultado_recursion)
-      		;(if (some nil? resultado_recursion)
-      		;	nil
+
       			(apply operador_var resultado_recursion	);end-apply
       		;);end-if
       	:else nil ;Retorna nil si no son dos argumentos entonces la operacion mod no se puede realizar (ArityException)
@@ -301,15 +275,12 @@
   "Desestructura la coleccion en operador, operandos y resto de la coleccion."
   [coleccion]
  (let [	desestructurada         (desestructurar coleccion)
-        ;operador 		          (first coleccion)
         resto_coleccion 	      (:resto_coleccion desestructurada)
         operador_var		        (:operador_var desestructurada)
-    		;primer_operando 	    (second coleccion)
     		resultado_recursion	(flatten
           (iniciar_recursion_en_operaciones_comparativas resto_coleccion))
       ]
-	  ;(if (some nil? resultado_recursion)
-		;	nil
+
 			(apply operador_var resultado_recursion	);end-apply
 		;);end-if
   );end-let
@@ -321,21 +292,18 @@
 ;****************************************************************************
 
 (defn desestructurar_coleccion_y_calcular_funciones_aritmeticas
- ;"Desestructura la coleccion en operador, operandos y resto de la coleccion.Control de la division por cero"
+ "Desestructura la coleccion en operador, operandos y resto de la coleccion.Control de la division por cero"
  [coleccion]
 
  (let [		desestructurada         (desestructurar coleccion)
-          ;operador 			        (first coleccion)
           resto_coleccion 	      (:resto_coleccion desestructurada)
           operador_var		        (:operador_var desestructurada)
-      		;primer_operando 	    (second coleccion)
       		resultado_recursion	  (flatten
             (iniciar_recursion_en_operaciones_aritmeticas resto_coleccion
 						))
       ]
 
-		;(if (some nil? resultado_recursion)
-		;		nil
+
 			(apply operador_var resultado_recursion	);end-apply
 		;	);end-if
 	);end-let
@@ -346,14 +314,13 @@
 	[coleccion]
 
  (let [	desestructurada         (desestructurar coleccion)
-        ;operador 				       (first coleccion)
         resto_coleccion 	      (:resto_coleccion desestructurada)
         operador_var		        (:operador_var desestructurada)
-      	;primer_operando 			 (second coleccion)
       	cantidad_operandos			(:cantidad_operandos desestructurada)
       	resultado_recursion		 (flatten
-          (iniciar_recursion_en_operaciones_comparativas resto_coleccion));end-flatten
+          (iniciar_recursion_en_operaciones_igualdad resto_coleccion));end-flatten
 	    ]
+
        (cond
 	       (= 1 cantidad_operandos)
 		       (apply operador_var resultado_recursion	);end-apply
@@ -394,44 +361,39 @@
 ;****************************METODOS************************************
 
 (defmethod ejecutar_operacion :Igualdad resolver_operaciones_de_igualdad [coleccion]
-  	;(println "Esta es una operacion de igualdad." "Operador:	"(first coleccion) "	Coleccion:	" coleccion )
 
 	(desestructurar_coleccion_y_calcular_funciones_de_igualdad coleccion));end-metodo
 (defmethod ejecutar_operacion :Aritmetica resolver_operacion_aritmetica [coleccion]
-  	;(println "Esta es una operacion aritmetica." "Operador:	"(first coleccion) "	Coleccion:	" coleccion )
 
 	(desestructurar_coleccion_y_calcular_funciones_aritmeticas coleccion));end-metodo
 (defmethod ejecutar_operacion :Comparativa resolver_operacion_comparativa [coleccion]
-  ;	(println "Esta es una operacion aritmetica_comparativa" "Operador:	"(first coleccion) "	Coleccion:	" coleccion )
 
 	(desestructurar_coleccion_y_calcular_funciones_comparativas coleccion));end-metodo
 (defmethod ejecutar_operacion :Logica resolver_operacion_logica [coleccion]
-  ;(println "Esta es una operacion logica AND OR. " "Operador: "(first coleccion) " Coleccion: " coleccion)
 
 	(desestructurar_coleccion_y_calcular_funciones_logicas coleccion));end-metodo
 (defmethod ejecutar_operacion :MOD resolver_operacion_mod [coleccion]
- ;(str "Esta es una operacion Mod. " " Operador: "(first coleccion) "Coleccion: " coleccion )
+
 
 	(desestructurar_coleccion_y_calcular_Funcion_MOD coleccion));end-metodo
 (defmethod ejecutar_operacion :NOT resolver_operacion_not [coleccion]
- ;(print "Esta es una operacion NOT." " Operador: "(first coleccion) " Coleccion: " coleccion )
 
 	(desestructurar_coleccion_y_calcular_Funcion_NOT coleccion));end-metodo
 (defmethod ejecutar_operacion :Funcion_Especial resolver_operaciones_especiales
   ;"Funciones de trabajo practico.Ej: counter-value, current, past"
    [coleccion]
- (println "Esta es una operacion especial tipo counter-value. "" Operador: "(first coleccion) " Coleccion: " coleccion )
+
       ((get diccionario_op_Func_especiales (first coleccion)) (rest coleccion))
  );end-metodo
 (defmethod ejecutar_operacion :Funcion_Para_Strings resolver_operaciones_en_strings
   ;"Funciones requeridas para strings. Abarca: includes?, starts-with?, ends-with?"
    [coleccion]
-   (println "Esta es una operacion tipo includes?. "" Operador: "(first coleccion) " Coleccion: " coleccion )
+
      ((get diccionario_op_strings (first coleccion)) (rest coleccion))
  )
 (defmethod ejecutar_operacion :Coleccion_Vacia retornar_coleccion_Vacia [coleccion]
   ;"Funcion para cuando se recibe una coleccion sin elementos. retorna ()."
- (println "Se retorna coleccion vacia. No hay operador. "" Operador: "(first coleccion) " Coleccion: " coleccion )
+
   ());end-defn
 (defmethod ejecutar_operacion nil operacion_anulada [coleccion]
  (str "OPeracion anulada. operador no reconocido, division por cero?"))

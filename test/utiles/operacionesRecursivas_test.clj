@@ -8,33 +8,7 @@
   (testing "coleccion vacia."
         (is (= '() (resolver_operacion '())))))
 
-(deftest funcion_counter_value-00-test
-  (testing "funciones de reglas de sennales."
-        (is (= 1234 (resolver_operacion '(counter-value "HOLA" []))))))
 
-(deftest funcion_counter_value-01-test
-  (testing "funciones de reglas de sennales."
-        (is (= 1 (resolver_operacion '(/ (counter-value "HOLA" [])
-                    (counter-value "HOLA" [])))))))
-
-(deftest funcion_counter_value-02-test
-  (testing "funciones de reglas de sennales."
-        (is (= 3 (resolver_operacion '(+ 1 (/ (+ (counter-value "HOLA" [])(counter-value "HOLA" []))
-            (counter-value "HOLA" []))))))))
-
-(deftest funcion_counter_value-03-test
-  (testing "funciones de reglas de sennales."
-        (is (= nil (resolver_operacion '(/ (counter-value "HOLA" [])  0 ))))))
-
-(deftest funcion_counter_value-04-test
-  (testing "funciones de reglas de sennales."
-        (is (= 2 (resolver_operacion '(/ (+ (counter-value "HOLA" [])(counter-value "HOLA" []))
-              (counter-value "HOLA" [])))))))
-
-
-(deftest funcion_COUNTER_VALUE_operacion-00-test
-  (testing "funciones de reglas de sennales."
-        (is (= 2518 (resolver_operacion '(+  50 (counter-value "HOLA" [])(counter-value "HOLA" [])))))))
 (deftest funcion_operar_con_AND-00-test
   (testing "funcionesRecursivas."
         (is (= false (resolver_operacion '(and true true false))))))
@@ -199,3 +173,18 @@
 (deftest funcionesDeFuncionesRecursivas-19-test
   (testing "Argumento sencillo a funcionesRecursivas aritmEtica."
         (is (= 24 (resolver_operacion '(+ (+ 5 3) (/ 12 3)(* 4 5)(- 1 9)))))))
+(deftest funcionesDeFuncionesRecursivas-20-test
+  (testing "Probando not=."
+        (is (= true (resolver_operacion '(not= 5 (+ 1 3)))))))
+(deftest funcionesDeFuncionesRecursivas-21-test
+  (testing "Probando not=."
+        (is (= false (resolver_operacion '(not= 5 (+ 1 4)))))))
+(deftest funcionesDeFuncionesRecursivas-22-test
+  (testing "Probando NOT."
+        (is (= false (resolver_operacion '(not true))))))
+(deftest funcionesDeFuncionesRecursivas-23-test
+    (testing "Probando NOT."
+        (is (= true (resolver_operacion '(not false))))))
+(deftest funcionesDeFuncionesRecursivas-24-test
+    (testing "Probando NOT."
+        (is (= false (resolver_operacion '(not (= 5 5)))))))
