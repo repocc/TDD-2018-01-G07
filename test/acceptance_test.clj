@@ -16,14 +16,7 @@
 (defn process-data-dropping-signals [state new-data]
   (first (process-data state new-data)))
 
-(deftest Funciones-00
-    (testing "Funciones-00"
-      (is (= 0
-             (agregar_Reglas {:define-counter {} :define-signal {}} rules)))))
-(deftest Funciones-01
-    (testing "Funciones-00"
-      (is (= 0
-             (identificar_reglas_retornar_estado rules)))))
+
 ;************************************************************
 (deftest initial-state-test
   (testing "Query counter from initial state"
