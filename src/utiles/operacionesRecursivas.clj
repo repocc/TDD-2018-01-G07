@@ -1,10 +1,11 @@
 (ns utiles.operacionesRecursivas
-  (:require [clojure.core :refer :all]))
+  (:require [clojure.core :refer :all]
+  :require [funcionesEspeciales.funcionesEspeciales :refer [past current counter-value]]))
 
 (declare ejecutar_operacion )
-(declare counter-value)
-(declare current)
-(declare past)
+;(declare counter-value)
+;(declare current)
+;(declare past)
 
 
 (defn operar_con_AND [coleccion]
@@ -224,7 +225,7 @@
       		resultado_recursion	     (flatten
             (iniciar_recursion_en_operaciones_igualdad resto_coleccion ))
   	    ]
-        
+
   		(apply operador_var resultado_recursion	);end-apply
     );end-let
 );end-funcion
