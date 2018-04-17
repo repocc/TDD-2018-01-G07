@@ -1,50 +1,10 @@
 (ns utiles.operacionesRecursivas
   (:require [clojure.core :refer :all]
-  :require [funcionesEspeciales.funcionesEspeciales :refer [past current counter-value]]))
+  :require [definiciones.definiciones :refer :all]))
 
 (declare ejecutar_operacion )
-;(declare counter-value)
-;(declare current)
-;(declare past)
 
-
-(defn operar_con_AND [coleccion]
-  (every? boolean coleccion)
-  )
-(defn operar_con_OR [coleccion]
-  ;Nota personal (CASOS):
-    ;;user=> (boolean false)
-    ;;false
-    ;;user=> (or nil false)
-    ;;false
-    ;;user=> (or false nil)
-    ;;nil
-    ;;user=> (#'or false nil)
-    ;;nil
-    ;;user=> (#'or nil false)
-    ;;nil
-    ;;user=> (some boolean '(nil false))
-    ;;nil
-    ;;Se toma el supuesto de retornar false ante la ambigüedad.
-  (let [retorno (some boolean coleccion)]
-      (cond
-        (= nil retorno)
-            false
-        :else retorno
-)));end-defn
-
-;**********************Diccionarios********************************
-
-(def diccionario_op_igualdades {'= = 'not= not=})
-(def diccionario_op_logicas {'and #'operar_con_AND 'or #'operar_con_OR})
-(def diccionario_op_comparativas {'< < '> > '<= <= '>= >=})
-(def diccionario_op_aritmeticas {'+ + '- - '* * '/ / 'quot quot})
-(def diccionario_op_NOT {'not not});casos particulares
-(def diccionario_op_MOD {'mod mod});casos particulares
-(def diccionario_op_Func_especiales {'counter-value #'counter-value 'current #'current 'past #'past})
-(def diccionario_op_strings {'concat str 'includes? clojure.string/includes? 'starts-with? clojure.string/starts-with? 'ends-with? clojure.string/ends-with?})
-
-;*****************Funciones para diccionarios**********************************
+;**************Funciones para diccionarios*************************
 
 (defn obtener_operador_var_de_symbol
   "Se recupera el caracter var de un operador symbol.Si no lo encuentra retorna nil."
@@ -133,9 +93,9 @@
         	);or
               	(list
               		  (if (coll? primer_operando)
-              			       (ejecutar_operacion primer_operando)
-              			        primer_operando
-              		    );end-if
+                       (ejecutar_operacion primer_operando)
+                        primer_operando
+                      );end-if
               		      resultado_recursion
               		);end-first-list
         	:else nil
@@ -384,7 +344,13 @@
   ;"Funciones de trabajo practico.Ej: counter-value, current, past"
    [coleccion]
 
-      ((get diccionario_op_Func_especiales (first coleccion)) (rest coleccion))
+   (let [ coll      coleccion
+          operador  (get diccionario_op_Func_especiales (first coleccion))
+          resto_argumentos (rest coll)
+          resultado     ( operador resto_argumentos)
+     ]
+    resultado
+      );end-let
  );end-metodo
 (defmethod ejecutar_operacion :Funcion_Para_Strings resolver_operaciones_en_strings
   ;"Funciones requeridas para strings. Abarca: includes?, starts-with?, ends-with?"

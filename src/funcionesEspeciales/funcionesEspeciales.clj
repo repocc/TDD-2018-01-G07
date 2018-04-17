@@ -1,24 +1,29 @@
 (ns funcionesEspeciales.funcionesEspeciales
   (:require [clojure.core :refer :all]
-    :require [definiciones.definiciones :refer :all]))
+    ))
 
-
-(defn past [clave]
-    (get LaX clave))
-
-
-(defn current [clave]
-    (get newData clave))
-
-(defn counter-value [counter-name counter-args]
-    (let [ salidaCV ((keyword counter-name) contadores)]
-
-        (if (= salidaCV nil)
-            valor_cero
-            (if (= (count (first salidaCV)) valor_cero)
-                 (last(last salidaCV))
-                 (last(get (last salidaCV) counter-args))
-              );end-if
-        );end-if
-    );end-let
-);end-defn
+(defn operar_con_AND [coleccion]
+  (every? boolean coleccion)
+  )
+(defn operar_con_OR [coleccion]
+  ;Nota personal (CASOS):
+    ;;user=> (boolean false)
+    ;;false
+    ;;user=> (or nil false)
+    ;;false
+    ;;user=> (or false nil)
+    ;;nil
+    ;;user=> (#'or false nil)
+    ;;nil
+    ;;user=> (#'or nil false)
+    ;;nil
+    ;;user=> (some boolean '(nil false))
+    ;;nil
+    ;;Se toma el supuesto de retornar false ante la ambigüedad.
+  (let [retorno (some boolean coleccion)]
+      (cond
+        (= nil retorno)
+            false
+        :else retorno
+)));end-defn
+;***************************************************************

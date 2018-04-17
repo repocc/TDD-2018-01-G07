@@ -1,8 +1,6 @@
 (ns data-processor
   (:require [clojure.core :refer :all]
-   :require [utiles.operacionesRecursivas :refer [resolver_operacion]]
-   ;:require [definiciones.definiciones :refer :all]
-   :require [funcionesEspeciales.funcionesEspeciales :refer :all]))
+   :require [utiles.operacionesRecursivas :refer [resolver_operacion]]))
 
 ;(ns data-processor
 ;  (:require [clojure.core :refer :all]
@@ -19,37 +17,69 @@
 (def LaX 0)
 (def newData 0)
 
-;(defn past [clave]
-	;(get LaX clave)
-;)
-
-;(defn current [clave]
-;	(get newData clave)
-;)
-;
-(defn CargarPast [dato]
-	(def listaPast (merge listaPast {dato true}))
+(defn past [clave]
+ (get LaX clave)
 )
 
-;(defn counter-value [counter-name counter-args]
-;  (def salidaCV ((keyword counter-name) contadores))
-;  (if (= salidaCV nil)
-;	(def salida 0)
-;	(if (= (count (first salidaCV)) 0)
-;	    (def salidaCV (last(last salidaCV)))
-;	    (def salidaCV (last(get (last salidaCV) counter-args))))
-;   )  salidaCV
-;)
+(defn current [clave]
+ (get newData clave)
+)
 
-;(defn counter-value [counter-name counter-args]
-;  (def salidaCV ((keyword counter-name) contadores))
-;  (if (= salidaCV nil)
-;	(def salida 0)
-;	(if (= (count (first salidaCV)) 0)
-;	    (def salidaCV (last(last salidaCV)))
-;	    (def salidaCV (last(get (last salidaCV) counter-args))))
-;   )  salidaCV
-;)
+(defn CargarPast [dato]
+ (def listaPast (merge listaPast {dato true}))
+)
+
+(defn counter-value
+  "SOBRECARGA counter-value"
+    ([counter-name counter-args]
+      ;derivando a sobrecarga
+      (counter-value counter-name counter-args contadores "nuevoDato" "datoViejo")
+        ;(def salidaCV ((keyword counter-name) contadores))
+        ;(if (= salidaCV nil)
+        ;    (def salida 0)
+        ;    (if (= (count (first salidaCV)) 0)
+        ;      (def salidaCV (last(last salidaCV)))
+        ;      (def salidaCV (last(get (last salidaCV) counter-args))))
+         ;)
+     ;salidaCV
+
+    );end-sobrecarga-DOS-argumentos-funcion
+  ;****************SOBRECARGA*****************************************
+    ([counter-name counter-args mapContadores nuevoDato viejoDato]
+    (let
+      [ nombre_contador     counter-name
+        args_contador       counter-args
+        contador_map       mapContadores
+        n_Dato             nuevoDato
+        v_Dato             viejoDato
+        contenedor        {:nombre_contador nombre_contador
+                            :argumentos args_contador
+                            :contadores contador_map
+                            :nuevoDato n_Dato :viejoDato v_Dato}
+        saleCV     ((keyword
+                                (get-in contenedor [:nombre_contador]))
+                                    (get-in contenedor [:contadores]))
+        ]
+    (println "Contenedor:." contenedor)
+    (println "Extrayendo counter-name" (get-in contenedor [:nombre_contador]))
+    (println "SOY COUNTER VALUE " counter-name counter-args)
+
+        (def salidaCV saleCV)
+
+        (if (= salidaCV nil)
+            (def salida 0)
+            (if (= (count (first salidaCV)) 0)
+                (def salidaCV
+                  (last(last salidaCV)))
+                (def salidaCV
+                  (last(get (last salidaCV)
+                    (get-in contenedor [:argumentos])))))
+         );end-if
+      salidaCV
+      );end-let
+    );end-sobrecarga-DOS-argumentos-funcion
+);end-defn
+;***************************************************
 
 
 (defn actualizar_Estado []
@@ -198,17 +228,64 @@
 	RSalida
 )
 
-(defn ejecutarFuncionRecursiva [funcion]
-  (println "LLEGADA ejecutarFuncionRecursiva******" funcion)
-  ;(resolver_operacion funcion)
-  (def funciones #{"/" "counter-value" "=" "current" "past"})
-	(if (= (contains? funciones (str (first funcion))) true)
-		(def salida (ejecutar (first funcion) (ejecutarFuncionRecursiva (second funcion)) (ejecutarFuncionRecursiva (last funcion))))
-		(def salida funcion)
-	)
+(defn ejecutarFuncionRecursiva
+  "SOBRECARGA de parametros"
+  ([funcion]
+    ;******************************
+    ;DERIVANDO A LA SOBRECARGA CON MAPA PARA RESOLVER
+    (ejecutarFuncionRecursiva funcion contadores "nuevoDato" "viejoDato")
+    ;******************************
 
-	salida
-)
+
+  ;  (def funciones #{"/" "counter-value" "=" "current" "past"})
+	;   (if (= (contains? funciones (str (first funcion))) true)
+  ;    		(def salida
+  ;          (ejecutar (first funcion)
+  ;          (ejecutarFuncionRecursiva (second funcion))
+  ;          (ejecutarFuncionRecursiva (last funcion))))
+	;	      (def salida funcion))
+  ;salida
+);end-sobrecarga-un-argumento-funcion
+
+;*************************SOLICITADO******************************
+ ([funcion mapContadores nuevoDato viejoDato]
+   ;el resto de los argumentos son mapa de contadores,nuevo dato y dato viejo
+  (println "Esto se ejecuta derivado de ejecutarFuncionRecursiva [funcion]")
+
+(let
+[ op_calculable      funcion
+  cont_struct        {:funcion 0 :contadores {} :nuevoDato 0 :viejoDato 0}
+  contador_map       mapContadores
+  n_Dato             nuevoDato
+  v_Dato             viejoDato
+  cont_contadores    (assoc-in cont_struct[:contadores] contador_map)
+  cont_nuevoDato     (assoc-in cont_contadores[:nuevoDato] n_Dato)
+  cont_funcion       (assoc-in cont_nuevoDato[:funcion] op_calculable)
+  contenedor         (assoc-in cont_funcion[:viejoDato] v_Dato)
+  ]
+
+    (println "Contenedor:." contenedor)
+    (println "Extrayendo funcion" (get-in contenedor [:funcion]))
+    ;****************************************************
+      ;(resolver_operacion (get-in contenedor [:funcion]))
+
+     ;antigua manera(resolver_operacion funcion) No se puede aplicar hasta
+     ;;resolver la dependencia ciclica, esto es cuando no haya mas def, del que dependan las funciones counter y otras. Asi se ajustan
+     ;los require
+    ;**********************************************************
+     (def funciones #{"/" "counter-value" "=" "current" "past"})
+   	 (if (= (contains? funciones (str (first funcion))) true)
+   		  (def salida
+         (ejecutar (first funcion)
+          (ejecutarFuncionRecursiva (second funcion)) (ejecutarFuncionRecursiva (last funcion))))
+   		  (def salida funcion))
+   	salida
+    );end-let
+  );end-sobrecarga-un-argumento-funcion
+);end-defn
+
+
+
 
 (defn ejecutarSenneal [clave_Sennales new-data]
 	(def parametros (first((keyword clave_Sennales) sennales)))
