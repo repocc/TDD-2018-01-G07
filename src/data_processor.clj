@@ -1,7 +1,7 @@
 (ns data-processor
   (:require [clojure.core :refer :all]
     :require [utiles.operacionesRecursivas :refer :all]
-   
+
    ))
 
 
@@ -26,7 +26,8 @@
 (defn ejecutarFuncionRecursiva [funcion state pasdo actual]
 	;(def funciones #{"/" "counter-value" "=" "current" "past"})
   ;(println "?" funcion)
-  (resolver_operacion funcion)
+  (resolver_operacion (list funcion {:estado state :dato_pasado pasdo :dato_actual actual}))
+  
   ;(println "final" (number? funcion))
 
 	;(if (= (contains? funciones (str (first funcion))) true)
@@ -181,7 +182,7 @@
                 :ContadorSteps (into (sorted-map) salidaContadoresSteps),
                 :Sennales (:Sennales state),
                 :DatosPasados pasado}]
-   (println "salida" salida)
+  ; (println "salida" salida)
    (if (= (count salidaNueva) 0)
 		[salida []]
 		[salida [salidaNueva]]))
@@ -189,14 +190,16 @@
 )
 
 (defn query-counter [state counter-name counter-args]
+
+
   (let [operador               'counter-value
-     nombre_contador        counter-name
-     argumentos_contador    counter-args
-     estado                 state
-     expresion              (list operador nombre_contador argumentos_contador estado)
-     ;retorno                (resolver_operacion expresion)
+        nombre_contador        counter-name
+        argumentos_contador    counter-args
+        estado                 state
+        expresion              (list operador nombre_contador argumentos_contador {:estado state} )
+
      ]
-     ;(println " Esta es la expresion :"expresion"*****************")
+     (println "query-counter expresion :"expresion"*****************")
      (resolver_operacion expresion)
   );end-let
       ;(counter-value counter-name counter-args state)

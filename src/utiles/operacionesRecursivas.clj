@@ -345,19 +345,43 @@
 (defmethod ejecutar_operacion :Funcion_Especial resolver_operaciones_especiales
   ;"Funciones de trabajo practico.Ej: counter-value, current, past"
    [coleccion]
-   (println "MULTIMETODO******************ENTRA AQUI COUNTER VALUE_OPERACIONES RECURSIVAS coleccion" coleccion)
+   ;(println "MULTIMETODO********coleccion:" coleccion)
+   (println "MULTIMETODO contar argumentos ===" (count coleccion))
+   (let [ colec               coleccion
+          operador_symbol     (first colec)
+          operador            (get diccionario_op_Func_especiales
+                                  (first colec))
+          primer_arg_expresion  (second colec)
+          argumentos_map (last colec)
 
-   (let [ expresion      coleccion
-          operador    (get diccionario_op_Func_especiales (first expresion))
-          resto_argumentos (rest expresion)
-        ;  resultado     ( operador resto_argumentos)
-     ]
+          estado          (:estado argumentos_map)
 
+             ]
+             (println "MULTIMETODO PRIMER ARGUMENTO "primer_arg_expresion)
+             (println "MULTIMETODO Segundo ARGUMENTO" (second (rest colec)))
+
+             ;(println "MAPA " argumentos_map)
+
+     (cond
+
+     (= 'counter-value operador_symbol)
+          ;counter-value nombre args estado
+          (operador primer_arg_expresion (second (rest colec)) estado )
+      (= 'current operador_symbol)
+        (let [ dato_actual      (:dato_actual argumentos_map)]
+              (println "MULTIMETODO current dato actual"dato_actual)
+              ( operador primer_arg_expresion dato_actual)
+
+        );end-let
+      (= 'past operador_symbol )
+        (let [ dato_pasado      (:dato_pasado argumentos_map)]
+          (println "MULTIMETODO past dato actual"dato_pasado)
+              ( operador primer_arg_expresion dato_pasado)
+        );end-let
+      :else "No hay funcion implementada para esa expresion"
+      );end-cond
     ; (println "CONTAR resto argumentos " (count resto_argumentos))
-     (apply operador resto_argumentos)
 
-
-    ;resultado
       );end-let
  );end-metodo
 (defmethod ejecutar_operacion :Funcion_Para_Strings resolver_operaciones_en_strings
