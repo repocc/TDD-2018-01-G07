@@ -21,7 +21,7 @@
 (deftest initial-state-test
   (testing "Query counter from initial state"
     (is (= 0
-           (query-counter (initialize-processor rules) "spam-count" [])))))
+           (query-counter (initialize-processor rules) "spam" [])))))
 
 (deftest unconditional-counter-test
   (let [st0 (initialize-processor rules)

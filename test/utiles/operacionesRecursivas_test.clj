@@ -7,8 +7,9 @@
 (deftest funcion_multimetodo-00-test
   (testing "coleccion vacia."
         (is (= '() (resolver_operacion '())))))
-
-
+(deftest funcion_con_estado
+          (testing "coleccion vacia."
+                (is (= 8 (resolver_operacion '((+ 5 3) {:soyUnMapa "ALGO"}))))))
 (deftest funcion_operar_con_AND-00-test
   (testing "funcionesRecursivas."
         (is (= false (resolver_operacion '(and true true false))))))

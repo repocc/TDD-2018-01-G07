@@ -32,6 +32,7 @@
 )
 
 (defn current [clave actual]
+  (println "Esto en current" clave actual)
 	(get actual clave)
 )
 

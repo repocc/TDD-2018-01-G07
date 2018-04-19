@@ -5,9 +5,9 @@
    ]
    ))
    ;*****************TEMPORAL************************************
-   ;(declare counter-value);solo para compilar.Hasta resolver dependencia ciclica.
-   ;(declare current);solo para compilar.Hasta resolver dependencia ciclica.
-   ;(declare past);solo para compilar.Hasta resolver dependencia ciclica.
+
+ ;(println '((/ (counter-value spam-count []) (counter-value email-count [])) {:estado {:Contadores {:email-count [[] true [1]], :spam-count [[] (current spam) [0]], :spam-important-table [[(current spam) (current important)] true {}]}, :ContadorSteps {}, :Sennales {:spam-fraction [(/ (counter-value spam-count []) (counter-value email-count [])) true]}, :DatosPasados {{spam true} true}}, :dato_pasado nil, :dato_actual {spam false}}))
+  ; (println '(counter-value spam-count [] {:estado {:Contadores {:email-count [[] true [3]], :spam-count [[] (current spam) [0]], :spam-important-table [[(current spam) (current important)] true {}]}, :ContadorSteps {}, :Sennales {:spam-fraction [(/ (counter-value spam-count []) (counter-value email-count [])) true]}, :DatosPasados {{spam true} true, {spam false} true}}, :dato_pasado nil, :dato_actual nil}) )
 
   ;**********************Diccionarios********************************
 

@@ -25,9 +25,11 @@
 
 (defn ejecutarFuncionRecursiva [funcion state pasdo actual]
 	;(def funciones #{"/" "counter-value" "=" "current" "past"})
-  ;(println "?" funcion)
+  (println "?" funcion)
+  ;(println "dato_pasado" pasdo)
+  ;(println "dato_actual" actual)
   (resolver_operacion (list funcion {:estado state :dato_pasado pasdo :dato_actual actual}))
-  
+
   ;(println "final" (number? funcion))
 
 	;(if (= (contains? funciones (str (first funcion))) true)
@@ -182,7 +184,7 @@
                 :ContadorSteps (into (sorted-map) salidaContadoresSteps),
                 :Sennales (:Sennales state),
                 :DatosPasados pasado}]
-  ; (println "salida" salida)
+   ;(println "salida" salida)
    (if (= (count salidaNueva) 0)
 		[salida []]
 		[salida [salidaNueva]]))
@@ -196,10 +198,15 @@
         nombre_contador        counter-name
         argumentos_contador    counter-args
         estado                 state
-        expresion              (list operador nombre_contador argumentos_contador {:estado state} )
+        expresion              (list (list operador
+                                    nombre_contador
+                                    argumentos_contador)
+                                    {:estado state
+                                    :dato_pasado nil
+                                    :dato_actual nil} )
 
      ]
-     (println "query-counter expresion :"expresion"*****************")
+     (println "query-counter expresion :expresion*****************")
      (resolver_operacion expresion)
   );end-let
       ;(counter-value counter-name counter-args state)

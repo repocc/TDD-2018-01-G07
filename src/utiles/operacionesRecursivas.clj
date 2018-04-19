@@ -25,12 +25,12 @@
 ;*********Funciones recursivas requeridas para MULTIMETODO*********
 (defn iniciar_recursion_en_operaciones_logicas
 	"Ocurre la recursion de la funcion."
-	[coleccion]
+	[coleccion estado_condicionado]
  (if (empty? coleccion) ()
    (let [
 	        primer_operando 	  (first coleccion)
 	        resto_coleccion 	  (rest coleccion)
-	        resultado_recursion	(list (iniciar_recursion_en_operaciones_logicas resto_coleccion))
+	        resultado_recursion	(list (iniciar_recursion_en_operaciones_logicas resto_coleccion estado_condicionado))
 	      ]
 
         (cond ;condicion
@@ -43,7 +43,8 @@
     	        );or
                   	  (list
                           (if (coll? primer_operando)
-                              (ejecutar_operacion primer_operando)
+                              (ejecutar_operacion
+                                primer_operando estado_condicionado)
                   			       primer_operando
                             );end-if
                   		      resultado_recursion
@@ -57,18 +58,18 @@
 
 (defn iniciar_recursion_en_operaciones_igualdad
 	"Ocurre la recursion de la funcion.Para todo valor.Caso = y not=."
-	[coleccion]
+	[coleccion estado_condicionado]
 
    (if (empty? coleccion) ()
      (let [
           	primer_operando 	  (first coleccion)
           	resto_coleccion 	  (rest coleccion)
-          	resultado_recursion	(list (iniciar_recursion_en_operaciones_igualdad resto_coleccion))
+          	resultado_recursion	(list (iniciar_recursion_en_operaciones_igualdad resto_coleccion estado_condicionado))
   	      ]
 
         	(list
         		(if (coll? primer_operando)
-        			     (ejecutar_operacion primer_operando)
+        			     (ejecutar_operacion primer_operando estado_condicionado)
         			      primer_operando
         		  );end-if
         		        resultado_recursion
@@ -80,12 +81,12 @@
 
 (defn iniciar_recursion_en_operaciones_aritmeticas
 	"Ocurre la recursion de la funcion.Operaciones aritmeticas."
-	[coleccion]
+	[coleccion estado_condicionado]
    (if (empty? coleccion) ()
      (let [
           	primer_operando 	(first coleccion)
           	resto_coleccion 	(rest coleccion)
-          	resultado_recursion 	(list (iniciar_recursion_en_operaciones_aritmeticas resto_coleccion))
+          	resultado_recursion 	(list (iniciar_recursion_en_operaciones_aritmeticas resto_coleccion estado_condicionado))
           	]
         (cond
         	(or 	(and  (number? primer_operando) (boolean primer_operando))
@@ -95,7 +96,8 @@
         	);or
               	(list
               		  (if (coll? primer_operando)
-                       (ejecutar_operacion primer_operando)
+                       (ejecutar_operacion
+                         primer_operando estado_condicionado)
                         primer_operando
                       );end-if
               		      resultado_recursion
@@ -109,13 +111,13 @@
 
 (defn iniciar_recursion_en_operaciones_comparativas
 	"Ocurre la recursion de la funcion."
-	[coleccion]
+	[coleccion estado_condicionado]
   (if (empty? coleccion) ()
     (let [
         	primer_operando      (first coleccion)
         	resto_coleccion      (rest coleccion)
           resultado_recursion  (list(iniciar_recursion_en_operaciones_comparativas
-              resto_coleccion))
+              resto_coleccion estado_condicionado))
       	  ]
       (cond
       	(or	(number? primer_operando)
@@ -125,7 +127,7 @@
       	);or
           	 (list
           		   (if (coll? primer_operando)
-          			       (ejecutar_operacion primer_operando)
+          			       (ejecutar_operacion primer_operando estado_condicionado)
           			        primer_operando
           		    );end-if
           		      resultado_recursion
@@ -139,13 +141,13 @@
 
 (defn iniciar_recursion_en_operaciones_mod
 	"Ocurre la recursion de la funcion mod"
-	[coleccion]
+	[coleccion estado_condicionado]
    (if (empty? coleccion) ()
      (let [
           	primer_operando 	  (first coleccion)
           	resto_coleccion 	  (rest coleccion)
           	cantidad_operandos	(count coleccion)
-            resultado_recursion (list (iniciar_recursion_en_operaciones_mod  resto_coleccion))
+            resultado_recursion (list (iniciar_recursion_en_operaciones_mod  resto_coleccion estado_condicionado))
   	      ]
 
 
@@ -158,7 +160,7 @@
   			);or
       			(list
       				(if (coll? primer_operando)
-      					(ejecutar_operacion primer_operando)
+      					(ejecutar_operacion primer_operando estado_condicionado)
       					primer_operando
       				);end-if
               resultado_recursion
@@ -172,20 +174,21 @@
 
 (defn desestructurar
   "Desestructura coleccion en  algunos elementos utiles para otras funciones."
-  [coleccion]
+  [coleccion estado_condicionado]
 
-  {:operador (first coleccion) :resto_coleccion (rest coleccion) :operador_var (obtener_operador_var_de_symbol (first coleccion)) :primer_operando (second coleccion) :cantidad_operandos (count (rest coleccion))}
+  {:operador (first coleccion) :resto_coleccion (rest coleccion) :operador_var (obtener_operador_var_de_symbol (first coleccion)) :primer_operando (second coleccion) :cantidad_operandos (count (rest coleccion)) :estado_cond estado_condicionado}
 );end-defn
 ;******************************************************************
 (defn desestructurar_coleccion_y_calcular_funciones_de_igualdad
   "Desestructura la colección en operador, operandos y resto de la colección."
-  [coleccion]
+  [coleccion estado_condicionado]
 
-   (let [	desestructurada         (desestructurar coleccion)
+   (let [	desestructurada         (desestructurar coleccion estado_condicionado)
           resto_coleccion 	       (:resto_coleccion desestructurada)
       		operador_var		         (:operador_var desestructurada)
       		resultado_recursion	     (flatten
-            (iniciar_recursion_en_operaciones_igualdad resto_coleccion ))
+            (iniciar_recursion_en_operaciones_igualdad
+              resto_coleccion estado_condicionado))
   	    ]
 
   		(apply operador_var resultado_recursion	);end-apply
@@ -195,13 +198,14 @@
 
 (defn desestructurar_coleccion_y_calcular_funciones_logicas
   "Desestructura la coleccion en operador, operandos y resto de la colección. Para operaciones lógicas."
-  [coleccion]
- (let [	desestructurada      (desestructurar coleccion)
+  [coleccion estado_condicionado]
+ (let [	desestructurada      (desestructurar coleccion estado_condicionado)
         operador 			       (:operador desestructurada)
     		resto_coleccion 	   (:resto_coleccion desestructurada)
     		operador_var		         (:operador_var desestructurada)
     	  resultado_recursion 	(flatten
-          (iniciar_recursion_en_operaciones_logicas  resto_coleccion));end-flatten
+          (iniciar_recursion_en_operaciones_logicas
+            resto_coleccion estado_condicionado));end-flatten
 		]
 
 
@@ -213,15 +217,16 @@
 
 (defn desestructurar_coleccion_y_calcular_Funcion_MOD
   "Desestructura la coleccion en operador, operandos y resto de la coleccion.Operador mod que recibe dos argumentos."
-  [coleccion]
+  [coleccion estado_condicionado]
 
- (let [	desestructurada         (desestructurar coleccion)
+ (let [	desestructurada         (desestructurar coleccion estado_condicionado)
         resto_coleccion 	      (:resto_coleccion desestructurada)
         operador_var		        (:operador_var desestructurada)
       	primer_operando 			  (second coleccion)
       	cantidad_operandos			(:cantidad_operandos desestructurada)
       	resultado_recursion			(flatten
-          (iniciar_recursion_en_operaciones_mod resto_coleccion));end-flatten
+          (iniciar_recursion_en_operaciones_mod
+            resto_coleccion estado_condicionado));end-flatten
 	    ]
 
          (cond
@@ -236,12 +241,12 @@
 ;*****************************************************************************
 (defn desestructurar_coleccion_y_calcular_funciones_comparativas
   "Desestructura la coleccion en operador, operandos y resto de la coleccion."
-  [coleccion]
- (let [	desestructurada         (desestructurar coleccion)
+  [coleccion estado_condicionado]
+ (let [	desestructurada         (desestructurar coleccion estado_condicionado)
         resto_coleccion 	      (:resto_coleccion desestructurada)
         operador_var		        (:operador_var desestructurada)
     		resultado_recursion	(flatten
-          (iniciar_recursion_en_operaciones_comparativas resto_coleccion))
+          (iniciar_recursion_en_operaciones_comparativas resto_coleccion estado_condicionado))
       ]
 
 			(apply operador_var resultado_recursion	);end-apply
@@ -256,13 +261,14 @@
 
 (defn desestructurar_coleccion_y_calcular_funciones_aritmeticas
  "Desestructura la coleccion en operador, operandos y resto de la coleccion.Control de la division por cero"
- [coleccion]
-
- (let [		desestructurada         (desestructurar coleccion)
+ [coleccion estado_condicionado]
+ (println "estoy en desestructurar coleccion aritmetica" coleccion)
+ (let [		desestructurada         (desestructurar coleccion estado_condicionado)
           resto_coleccion 	      (:resto_coleccion desestructurada)
           operador_var		        (:operador_var desestructurada)
+
       		resultado_recursion	  (flatten
-            (iniciar_recursion_en_operaciones_aritmeticas resto_coleccion
+            (iniciar_recursion_en_operaciones_aritmeticas resto_coleccion estado_condicionado
 						))
       ]
 
@@ -274,14 +280,14 @@
 ;****************************************************************************
 (defn desestructurar_coleccion_y_calcular_Funcion_NOT
 	"Desestructura la coleccion en operador, operandos y resto de la coleccion.Operador NOT que recibe UN argumento."
-	[coleccion]
+	[coleccion estado_condicionado]
 
- (let [	desestructurada         (desestructurar coleccion)
+ (let [	desestructurada         (desestructurar coleccion estado_condicionado)
         resto_coleccion 	      (:resto_coleccion desestructurada)
         operador_var		        (:operador_var desestructurada)
       	cantidad_operandos			(:cantidad_operandos desestructurada)
       	resultado_recursion		 (flatten
-          (iniciar_recursion_en_operaciones_igualdad resto_coleccion));end-flatten
+          (iniciar_recursion_en_operaciones_igualdad resto_coleccion estado_condicionado));end-flatten
 	    ]
 
        (cond
@@ -294,8 +300,9 @@
 ;************************************************************************
 ;************************MULTIMETODO*************************************
 ;************************************************************************
-(defn determinar_operacion [colec]
+(defn determinar_operacion [colec estado_condicionado]
 
+ (println "*********************Determinar operacion" (first colec) colec)
   (let [operador_symbol   (first colec)
         op_igualdad       (get diccionario_op_igualdades operador_symbol)
         op_logica         (get diccionario_op_logicas operador_symbol)
@@ -323,51 +330,53 @@
 
 ;****************************METODOS************************************
 
-(defmethod ejecutar_operacion :Igualdad resolver_operaciones_de_igualdad [coleccion]
+(defmethod ejecutar_operacion :Igualdad resolver_operaciones_de_igualdad [coleccion estado_condicionado]
 
-	(desestructurar_coleccion_y_calcular_funciones_de_igualdad coleccion));end-metodo
-(defmethod ejecutar_operacion :Aritmetica resolver_operacion_aritmetica [coleccion]
+	(desestructurar_coleccion_y_calcular_funciones_de_igualdad
+    coleccion estado_condicionado));end-metodo
+(defmethod ejecutar_operacion :Aritmetica resolver_operacion_aritmetica [coleccion estado_condicionado]
 
-	(desestructurar_coleccion_y_calcular_funciones_aritmeticas coleccion));end-metodo
-(defmethod ejecutar_operacion :Comparativa resolver_operacion_comparativa [coleccion]
+	(desestructurar_coleccion_y_calcular_funciones_aritmeticas
+    coleccion estado_condicionado));end-metodo
+(defmethod ejecutar_operacion :Comparativa resolver_operacion_comparativa [coleccion estado_condicionado]
 
-	(desestructurar_coleccion_y_calcular_funciones_comparativas coleccion));end-metodo
-(defmethod ejecutar_operacion :Logica resolver_operacion_logica [coleccion]
+	(desestructurar_coleccion_y_calcular_funciones_comparativas
+    coleccion estado_condicionado));end-metodo
+(defmethod ejecutar_operacion :Logica resolver_operacion_logica [coleccion estado_condicionado]
+	(desestructurar_coleccion_y_calcular_funciones_logicas
+    coleccion estado_condicionado));end-metodo
+(defmethod ejecutar_operacion :MOD resolver_operacion_mod [coleccion estado_condicionado]
 
-	(desestructurar_coleccion_y_calcular_funciones_logicas coleccion));end-metodo
-(defmethod ejecutar_operacion :MOD resolver_operacion_mod [coleccion]
+	(desestructurar_coleccion_y_calcular_Funcion_MOD
+     coleccion estado_condicionado));end-metodo
+(defmethod ejecutar_operacion :NOT resolver_operacion_not [coleccion estado_condicionado]
 
-
-	(desestructurar_coleccion_y_calcular_Funcion_MOD coleccion));end-metodo
-(defmethod ejecutar_operacion :NOT resolver_operacion_not [coleccion]
-
-	(desestructurar_coleccion_y_calcular_Funcion_NOT coleccion));end-metodo
-(defmethod ejecutar_operacion :Funcion_Especial resolver_operaciones_especiales
-  ;"Funciones de trabajo practico.Ej: counter-value, current, past"
-   [coleccion]
+	(desestructurar_coleccion_y_calcular_Funcion_NOT
+    coleccion estado_condicionado));end-metodo
+(defmethod ejecutar_operacion :Funcion_Especial resolver_operaciones_especiales [coleccion estado_condicionado]
    ;(println "MULTIMETODO********coleccion:" coleccion)
    (println "MULTIMETODO contar argumentos ===" (count coleccion))
-   (let [ colec               coleccion
-          operador_symbol     (first colec)
-          operador            (get diccionario_op_Func_especiales
+   (let [ colec                 coleccion
+          operador_symbol       (first colec)
+          operador              (get diccionario_op_Func_especiales
                                   (first colec))
           primer_arg_expresion  (second colec)
-          argumentos_map (last colec)
+          argumentos_map        estado_condicionado
 
-          estado          (:estado argumentos_map)
+          estado                (:estado argumentos_map)
 
              ]
              (println "MULTIMETODO PRIMER ARGUMENTO "primer_arg_expresion)
              (println "MULTIMETODO Segundo ARGUMENTO" (second (rest colec)))
-
-             ;(println "MAPA " argumentos_map)
+             (println "OPERADOR SYMBOL" operador_symbol)
+             ;(println "MAPA-ESTADO " estado)
 
      (cond
 
      (= 'counter-value operador_symbol)
           ;counter-value nombre args estado
           (operador primer_arg_expresion (second (rest colec)) estado )
-      (= 'current operador_symbol)
+      (= 'current   operador_symbol)
         (let [ dato_actual      (:dato_actual argumentos_map)]
               (println "MULTIMETODO current dato actual"dato_actual)
               ( operador primer_arg_expresion dato_actual)
@@ -386,17 +395,17 @@
  );end-metodo
 (defmethod ejecutar_operacion :Funcion_Para_Strings resolver_operaciones_en_strings
   ;"Funciones requeridas para strings. Abarca: includes?, starts-with?, ends-with?"
-   [coleccion]
+   [coleccion estado_condicionado]
 
      ((get diccionario_op_strings (first coleccion)) (rest coleccion))
  )
-(defmethod ejecutar_operacion :Coleccion_Vacia retornar_coleccion_Vacia [coleccion]
+(defmethod ejecutar_operacion :Coleccion_Vacia retornar_coleccion_Vacia [coleccion estado_condicionado]
   ;"Funcion para cuando se recibe una coleccion sin elementos. retorna ()."
 
   ());end-defn
-(defmethod ejecutar_operacion nil operacion_anulada [coleccion]
+(defmethod ejecutar_operacion nil operacion_anulada [coleccion estado_condicionado]
  (str "OPeracion anulada. operador no reconocido, division por cero?"))
-(defmethod ejecutar_operacion :default operacion_Argumentos_Incorrectos [coleccion]
+(defmethod ejecutar_operacion :default operacion_Argumentos_Incorrectos [coleccion estado_condicionado]
  (throw (IllegalArgumentException.
           (str "Argumentos incorrectos " (coleccion "Coleccion") " :probable poblema de aridad?"))))
 ;**********************************FIN-METODOS***********************************
@@ -408,11 +417,37 @@
   '(and true false 5)
   '(<= 10 9 8 (+ 5 2))
   '(str Hola Mundo)
-  '(= 2 (mod 5 3))."
-  [coleccion]
+  '(= 2 (mod 5 3)).
+  Considerando que hay un argumento adicional para ejecutar_operacion:
+  recibe ( arg1 arg2). Donde arg1 es la expresion (coleccion en si misma de operaciones) y arg2 es un valor, 'estado o condicion', de ser necesario como en el caso de funcionesEspeciales (counter, current, etc)."
 
+  [coleccion]
+  (println "resolver_operacion_metodo =="(count coleccion)"***" )
   (try
-     (ejecutar_operacion coleccion)
+    ;;El nuevo pasaje de parametros obliga a considerar el estado
+    ;;por lo tanto se da la dualidad de considerar la ejecutar_operacion
+    ;;de operaciones exclusivas como estaba diseñado e incorporar
+    ;;un nuevo argumento requerido, en principio para calculos de funcionesEspeciales.
+    ;;caso contrario no se utiliza.
+    (let [solo_expresion "NULO_ESTADO"]
+
+      (println "no es un mapa lo ultimo" (not (map?(last coleccion))))
+        (cond
+          (not (map?(last coleccion)));solo expresiones
+                (ejecutar_operacion coleccion solo_expresion)
+          (= 2 (count coleccion))
+          (let [expresion (first coleccion)
+                estado    (second coleccion)]
+
+                (println "EXPRESION:::"expresion (get diccionario_op_Func_especiales (first expresion)))
+                (println "TIPO "(first expresion) (type (first expresion)))
+
+                (ejecutar_operacion expresion estado)
+                );end-let
+
+          :else "NO HACER NADA";(ejecutar_operacion coleccion nil)
+          );end-cond
+      );end-let
    (catch ArithmeticException e
      (println "No se puede dividir por cero ...Ejemplo (/ 7 0); (/ 7 (mod 5 5)).")
      nil)
