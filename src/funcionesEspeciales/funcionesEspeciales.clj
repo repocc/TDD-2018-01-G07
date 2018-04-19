@@ -32,13 +32,11 @@
 )
 
 (defn current [clave actual]
-  (println "Esto en current" clave actual)
 	(get actual clave)
 )
 
 (defn counter-value [counter-name counter-args state]
 
-  (println "SOY COUNTER VALUE*************************")
   (let [contador ((keyword counter-name) (:Contadores state))]
     (if (= contador nil)
         (let [contadorStep ((keyword counter-name) (:ContadoresSteps state))]

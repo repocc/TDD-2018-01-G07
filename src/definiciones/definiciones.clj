@@ -1,13 +1,8 @@
 (ns definiciones.definiciones
   (:require [clojure.core :refer :all]
-   :require [funcionesEspeciales.funcionesEspeciales :refer :all
-   ;[operar_con_AND operar_con_OR counter-value current past]
-   ]
+   :require [funcionesEspeciales.funcionesEspeciales :refer :all]
    ))
-   ;*****************TEMPORAL************************************
 
- ;(println '((/ (counter-value spam-count []) (counter-value email-count [])) {:estado {:Contadores {:email-count [[] true [1]], :spam-count [[] (current spam) [0]], :spam-important-table [[(current spam) (current important)] true {}]}, :ContadorSteps {}, :Sennales {:spam-fraction [(/ (counter-value spam-count []) (counter-value email-count [])) true]}, :DatosPasados {{spam true} true}}, :dato_pasado nil, :dato_actual {spam false}}))
-  ; (println '(counter-value spam-count [] {:estado {:Contadores {:email-count [[] true [3]], :spam-count [[] (current spam) [0]], :spam-important-table [[(current spam) (current important)] true {}]}, :ContadorSteps {}, :Sennales {:spam-fraction [(/ (counter-value spam-count []) (counter-value email-count [])) true]}, :DatosPasados {{spam true} true, {spam false} true}}, :dato_pasado nil, :dato_actual nil}) )
 
   ;**********************Diccionarios********************************
 

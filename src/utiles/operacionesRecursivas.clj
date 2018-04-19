@@ -262,7 +262,7 @@
 (defn desestructurar_coleccion_y_calcular_funciones_aritmeticas
  "Desestructura la coleccion en operador, operandos y resto de la coleccion.Control de la division por cero"
  [coleccion estado_condicionado]
- (println "estoy en desestructurar coleccion aritmetica" coleccion)
+
  (let [		desestructurada         (desestructurar coleccion estado_condicionado)
           resto_coleccion 	      (:resto_coleccion desestructurada)
           operador_var		        (:operador_var desestructurada)
@@ -302,7 +302,7 @@
 ;************************************************************************
 (defn determinar_operacion [colec estado_condicionado]
 
- (println "*********************Determinar operacion" (first colec) colec)
+
   (let [operador_symbol   (first colec)
         op_igualdad       (get diccionario_op_igualdades operador_symbol)
         op_logica         (get diccionario_op_logicas operador_symbol)
@@ -354,8 +354,7 @@
 	(desestructurar_coleccion_y_calcular_Funcion_NOT
     coleccion estado_condicionado));end-metodo
 (defmethod ejecutar_operacion :Funcion_Especial resolver_operaciones_especiales [coleccion estado_condicionado]
-   ;(println "MULTIMETODO********coleccion:" coleccion)
-   (println "MULTIMETODO contar argumentos ===" (count coleccion))
+
    (let [ colec                 coleccion
           operador_symbol       (first colec)
           operador              (get diccionario_op_Func_especiales
@@ -364,12 +363,7 @@
           argumentos_map        estado_condicionado
 
           estado                (:estado argumentos_map)
-
              ]
-             (println "MULTIMETODO PRIMER ARGUMENTO "primer_arg_expresion)
-             (println "MULTIMETODO Segundo ARGUMENTO" (second (rest colec)))
-             (println "OPERADOR SYMBOL" operador_symbol)
-             ;(println "MAPA-ESTADO " estado)
 
      (cond
 
@@ -378,16 +372,16 @@
           (operador primer_arg_expresion (second (rest colec)) estado )
       (= 'current   operador_symbol)
         (let [ dato_actual      (:dato_actual argumentos_map)]
-              (println "MULTIMETODO current dato actual"dato_actual)
+
               ( operador primer_arg_expresion dato_actual)
 
         );end-let
       (= 'past operador_symbol )
         (let [ dato_pasado      (:dato_pasado argumentos_map)]
-          (println "MULTIMETODO past dato actual"dato_pasado)
+
               ( operador primer_arg_expresion dato_pasado)
         );end-let
-      :else "No hay funcion implementada para esa expresion"
+      :else "No hay funcion implementada para esa expresion."
       );end-cond
     ; (println "CONTAR resto argumentos " (count resto_argumentos))
 
@@ -422,7 +416,7 @@
   recibe ( arg1 arg2). Donde arg1 es la expresion (coleccion en si misma de operaciones) y arg2 es un valor, 'estado o condicion', de ser necesario como en el caso de funcionesEspeciales (counter, current, etc)."
 
   [coleccion]
-  (println "resolver_operacion_metodo =="(count coleccion)"***" )
+
   (try
     ;;El nuevo pasaje de parametros obliga a considerar el estado
     ;;por lo tanto se da la dualidad de considerar la ejecutar_operacion
@@ -431,34 +425,29 @@
     ;;caso contrario no se utiliza.
     (let [solo_expresion "NULO_ESTADO"]
 
-      (println "no es un mapa lo ultimo" (not (map?(last coleccion))))
         (cond
-          (not (map?(last coleccion)));solo expresiones
+          (not (map?(last coleccion)));solo expresiones-calculo puro-sin-estado.
                 (ejecutar_operacion coleccion solo_expresion)
           (= 2 (count coleccion))
           (let [expresion (first coleccion)
                 estado    (second coleccion)]
-
-                (println "EXPRESION:::"expresion (get diccionario_op_Func_especiales (first expresion)))
-                (println "TIPO "(first expresion) (type (first expresion)))
-
                 (ejecutar_operacion expresion estado)
                 );end-let
 
-          :else "NO HACER NADA";(ejecutar_operacion coleccion nil)
+          :else "NO HACER NADA, NO ES UNA EXPRESION VALIDA."
           );end-cond
       );end-let
    (catch ArithmeticException e
-     (println "No se puede dividir por cero ...Ejemplo (/ 7 0); (/ 7 (mod 5 5)).")
+     (println "No se puede dividir por cero ...")
      nil)
      (catch IllegalArgumentException e
-       (println "Error en el numero de argumentos pasados a la funcion. Ejemplo (mod 5 3 4)")
+       (println "Error en el numero de argumentos pasados a la funcion.")
        nil)
      (catch ClassCastException e
-     (println "Argumento invalido para la operacion que se intenta realizar.Ejemplo (mod 5 true).")
+     (println "Argumento invalido para la operacion que se intenta realizar.")
      nil)
      (catch NullPointerException e
-       (println "Debido a valor nil por operacion imposible de manejar este argumento.Ejemplo:(mod 5 nil) ")
+       (println "Debido a valor nil por operacion imposible de manejar este argumento.")
      nil)
    (catch Exception e
      (println "Alguna otra excepcion no capturada ...")

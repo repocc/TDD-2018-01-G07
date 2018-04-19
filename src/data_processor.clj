@@ -1,45 +1,19 @@
 (ns data-processor
   (:require [clojure.core :refer :all]
     :require [utiles.operacionesRecursivas :refer :all]
-
-   ))
+ ))
 
 
 (def cero_inicial [0])
 
 
-;(defn ejecutar [fn A B state pasdo actual]
-;	(def RSalida nil)
-;	(if (= "counter-value" (str fn)) (def RSalida (counter-value A B state)))
-;	(if (= "current" (str fn)) (def RSalida (current A actual)))
-;	(if (= "past" (str fn)) (def RSalida (past A pasdo)))
-;	(if (= "=" (str fn)) (def RSalida (= A B)))
-;	(if (= "/" (str fn))
-;		(if (= B 0)
-;			(println "divide por cero")
-;			(def RSalida(/ A B))
-;		)
-;	)
-;	RSalida
-;)
 
 (defn ejecutarFuncionRecursiva [funcion state pasdo actual]
-	;(def funciones #{"/" "counter-value" "=" "current" "past"})
-  (println "?" funcion)
+  ;(println "?" funcion)
   ;(println "dato_pasado" pasdo)
   ;(println "dato_actual" actual)
   (resolver_operacion (list funcion {:estado state :dato_pasado pasdo :dato_actual actual}))
 
-  ;(println "final" (number? funcion))
-
-	;(if (= (contains? funciones (str (first funcion))) true)
-	;	(def salida (ejecutar (first funcion)
-  ;                        (ejecutarFuncionRecursiva (second funcion) state pasdo actual)
-  ;                        (ejecutarFuncionRecursiva (last funcion) state pasdo actual)
-  ;                        state pasdo actual))
-	;	(def salida funcion)
-	;)
-	;salida
 )
 
 (defn CargarPast [dato pasado]
@@ -206,7 +180,7 @@
                                     :dato_actual nil} )
 
      ]
-     (println "query-counter expresion :expresion*****************")
+
      (resolver_operacion expresion)
   );end-let
       ;(counter-value counter-name counter-args state)
