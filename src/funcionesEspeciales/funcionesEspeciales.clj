@@ -27,3 +27,30 @@
         :else retorno
 )));end-defn
 ;***************************************************************
+(defn past [clave pasdo]
+	(get pasdo clave)
+)
+
+(defn current [clave actual]
+	(get actual clave)
+)
+
+(defn counter-value [counter-name counter-args state]
+
+  (println "SOY COUNTER VALUE*************************")
+  (let [contador ((keyword counter-name) (:Contadores state))]
+    (if (= contador nil)
+        (let [contadorStep ((keyword counter-name) (:ContadoresSteps state))]
+          (if (= contadorStep nil)
+            0
+            (if (= (count (first contadorStep)) 0)
+                (last(last contadorStep))
+                (last(get (last contadorStep) counter-args)))
+          )
+        )
+	     (if (= (count (first contador)) 0)
+	         (last(last contador))
+	         (last(get (last contador) counter-args)))
+    )
+  )
+)

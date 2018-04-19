@@ -1,11 +1,13 @@
 (ns definiciones.definiciones
   (:require [clojure.core :refer :all]
-   :require [funcionesEspeciales.funcionesEspeciales :refer [operar_con_AND operar_con_OR]]
+   :require [funcionesEspeciales.funcionesEspeciales :refer :all
+   ;[operar_con_AND operar_con_OR counter-value current past]
+   ]
    ))
    ;*****************TEMPORAL************************************
-   (declare counter-value);solo para compilar.Hasta resolver dependencia ciclica.
-   (declare current);solo para compilar.Hasta resolver dependencia ciclica.
-   (declare past);solo para compilar.Hasta resolver dependencia ciclica.
+   ;(declare counter-value);solo para compilar.Hasta resolver dependencia ciclica.
+   ;(declare current);solo para compilar.Hasta resolver dependencia ciclica.
+   ;(declare past);solo para compilar.Hasta resolver dependencia ciclica.
 
   ;**********************Diccionarios********************************
 

@@ -1,6 +1,8 @@
 (ns utiles.operacionesRecursivas
   (:require [clojure.core :refer :all]
-  :require [definiciones.definiciones :refer :all]))
+  :require [definiciones.definiciones :refer :all]
+  ;:require [funcionesEspeciales.funcionesEspeciales :refer [operar_con_AND operar_con_OR counter-value current past]]
+  ))
 
 (declare ejecutar_operacion )
 
@@ -343,13 +345,19 @@
 (defmethod ejecutar_operacion :Funcion_Especial resolver_operaciones_especiales
   ;"Funciones de trabajo practico.Ej: counter-value, current, past"
    [coleccion]
+   (println "MULTIMETODO******************ENTRA AQUI COUNTER VALUE_OPERACIONES RECURSIVAS coleccion" coleccion)
 
-   (let [ coll      coleccion
-          operador  (get diccionario_op_Func_especiales (first coleccion))
-          resto_argumentos (rest coll)
-          resultado     ( operador resto_argumentos)
+   (let [ expresion      coleccion
+          operador    (get diccionario_op_Func_especiales (first expresion))
+          resto_argumentos (rest expresion)
+        ;  resultado     ( operador resto_argumentos)
      ]
-    resultado
+
+    ; (println "CONTAR resto argumentos " (count resto_argumentos))
+     (apply operador resto_argumentos)
+
+
+    ;resultado
       );end-let
  );end-metodo
 (defmethod ejecutar_operacion :Funcion_Para_Strings resolver_operaciones_en_strings

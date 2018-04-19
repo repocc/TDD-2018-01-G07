@@ -1,367 +1,231 @@
 (ns data-processor
   (:require [clojure.core :refer :all]
-   :require [utiles.operacionesRecursivas :refer [resolver_operacion]]))
+    :require [utiles.operacionesRecursivas :refer :all]
+   
+   ))
 
-;(ns data-processor
-;  (:require [clojure.core :refer :all]
-;   :use [utiles.funcionesRecursivas :refer :all]))
-          ;;  [clojure.string :refer :all]))
 
-(def valor_cero 0)
 (def cero_inicial [0])
-(def estado [])
-(def contadores {});; {:counter-name [valores almacenados]}
-(def sennales {});; reglas tipo signal
-(def salidaSennales {})
-(def listaPast {})
-(def LaX 0)
-(def newData 0)
 
-(defn past [clave]
- (get LaX clave)
+
+;(defn ejecutar [fn A B state pasdo actual]
+;	(def RSalida nil)
+;	(if (= "counter-value" (str fn)) (def RSalida (counter-value A B state)))
+;	(if (= "current" (str fn)) (def RSalida (current A actual)))
+;	(if (= "past" (str fn)) (def RSalida (past A pasdo)))
+;	(if (= "=" (str fn)) (def RSalida (= A B)))
+;	(if (= "/" (str fn))
+;		(if (= B 0)
+;			(println "divide por cero")
+;			(def RSalida(/ A B))
+;		)
+;	)
+;	RSalida
+;)
+
+(defn ejecutarFuncionRecursiva [funcion state pasdo actual]
+	;(def funciones #{"/" "counter-value" "=" "current" "past"})
+  ;(println "?" funcion)
+  (resolver_operacion funcion)
+  ;(println "final" (number? funcion))
+
+	;(if (= (contains? funciones (str (first funcion))) true)
+	;	(def salida (ejecutar (first funcion)
+  ;                        (ejecutarFuncionRecursiva (second funcion) state pasdo actual)
+  ;                        (ejecutarFuncionRecursiva (last funcion) state pasdo actual)
+  ;                        state pasdo actual))
+	;	(def salida funcion)
+	;)
+	;salida
 )
 
-(defn current [clave]
- (get newData clave)
+(defn CargarPast [dato pasado]
+	(merge pasado {dato true})
 )
 
-(defn CargarPast [dato]
- (def listaPast (merge listaPast {dato true}))
+(defn incrementar [contador cuanto]
+  (let [aux (+ cuanto (last contador))]
+	[aux])
 )
 
-(defn counter-value
-  "SOBRECARGA counter-value"
-    ([counter-name counter-args]
-      ;derivando a sobrecarga
-      (counter-value counter-name counter-args contadores "nuevoDato" "datoViejo")
-        ;(def salidaCV ((keyword counter-name) contadores))
-        ;(if (= salidaCV nil)
-        ;    (def salida 0)
-        ;    (if (= (count (first salidaCV)) 0)
-        ;      (def salidaCV (last(last salidaCV)))
-        ;      (def salidaCV (last(get (last salidaCV) counter-args))))
-         ;)
-     ;salidaCV
-
-    );end-sobrecarga-DOS-argumentos-funcion
-  ;****************SOBRECARGA*****************************************
-    ([counter-name counter-args mapContadores nuevoDato viejoDato]
-    (let
-      [ nombre_contador     counter-name
-        args_contador       counter-args
-        contador_map       mapContadores
-        n_Dato             nuevoDato
-        v_Dato             viejoDato
-        contenedor        {:nombre_contador nombre_contador
-                            :argumentos args_contador
-                            :contadores contador_map
-                            :nuevoDato n_Dato :viejoDato v_Dato}
-        saleCV     ((keyword
-                                (get-in contenedor [:nombre_contador]))
-                                    (get-in contenedor [:contadores]))
-        ]
-    (println "Contenedor:." contenedor)
-    (println "Extrayendo counter-name" (get-in contenedor [:nombre_contador]))
-    (println "SOY COUNTER VALUE " counter-name counter-args)
-
-        (def salidaCV saleCV)
-
-        (if (= salidaCV nil)
-            (def salida 0)
-            (if (= (count (first salidaCV)) 0)
-                (def salidaCV
-                  (last(last salidaCV)))
-                (def salidaCV
-                  (last(get (last salidaCV)
-                    (get-in contenedor [:argumentos])))))
-         );end-if
-      salidaCV
-      );end-let
-    );end-sobrecarga-DOS-argumentos-funcion
-);end-defn
-;***************************************************
-
-
-(defn actualizar_Estado []
-  ;;autoincremental en una unidad según el ultimo estado almacenado
-  (def estado ( conj estado  (inc (last estado)))))
-
-(defn incrementar [contador argFN]
-	(conj contador (argFN(last contador)))
+(defn validarCondiciones [condiciones new-data state]
+  (if (= condiciones true)
+    true
+	   (if (= (ejecutarFuncionRecursiva condiciones state nil new-data) true)
+      true
+      (let [NoPasaNunca (every? identity (mapv (fn [x] ;;esto no funciona si no hay pass
+              (not(ejecutarFuncionRecursiva condiciones state x new-data)))(keys (:DatosPasados state))))]
+            (if (= NoPasaNunca false)
+              true
+              false
+            )
+      )
+     )
+  )
 )
 
-(defn incrementar_Contador_simple [counter-name argFN]
-  ;;incrementa el contador una unidad a partir de su ultimo valor almacenado
+(defn incrementar_Contador_simple [counter-name argFN reglas]
     (let [clave (keyword counter-name)]
-		(def DatosNuevos  [(first(clave contadores)) (second(clave contadores)) (incrementar (last(clave contadores)) argFN)])
-         (def contadores (merge  contadores {clave DatosNuevos}))
-         ))
-
-(defn incrementar_Contador_mapa [counter-name new-data argFN]
-		 (def flag true)
-		 (def condicion (second((keyword counter-name) contadores)))
-		 (def parametros (first((keyword counter-name) contadores)))
-		 (def TablaSalida (last((keyword counter-name) contadores)))
-		 (def tipo "nada")
-		 (def clave [])
-		 (mapv (fn [x]
-			(if (= (get new-data (last x)) nil) (def flag false) (def clave (conj clave (get new-data (last x)))))
-			) parametros)
-		 (if (= flag true)
-			()
-			(def argFN +)
-		 )
-		 (def claves_tabla (keys TablaSalida))
-		 (def noTengoLaClave true)
-		 (if (not= (count claves_tabla) 0)
-			(mapv (fn [x]
-				(if (= x clave) (def noTengoLaClave false))
-			)claves_tabla)
-			)
-		 (if (= noTengoLaClave true)
-			(def TablaSalida (merge  TablaSalida {clave cero_inicial}))
-			)
-		 (def claves_tabla (keys TablaSalida))
-
-	     (def aux cero_inicial)
-		 (mapv (fn [x]
-			(def contador (TablaSalida x))
-			 (if (= x clave) (def aux (incrementar contador argFN)) (def aux(incrementar contador +)))
-			 (def TablaSalida (merge  TablaSalida {x aux}))
-     	 )claves_tabla)
-		 (def DatosNuevos  [parametros condicion TablaSalida])
-		 (def contadores (merge  contadores {counter-name DatosNuevos}))
-)
-
-(defn incrementar_Contador [counter-name new-data argFN]
-   (def parametros (first((keyword counter-name) contadores)))
-   (if (= (count parametros) 0)
-		(incrementar_Contador_simple counter-name argFN)
-		(incrementar_Contador_mapa counter-name new-data argFN)
+		    (let [DatosNuevos (conj(pop(clave reglas)) (incrementar (last(clave reglas)) argFN))]
+            {clave DatosNuevos}
+        )
     )
 )
 
-(defn actualizar_Contadores [counter-name valor] ;;Agregar Contador
-  (let [clave (keyword counter-name)]
-       (def contadores (merge  contadores { clave (conj  valor)})))
+(defn incrementar_Contador_mapa [counter-name new-data argFN reglas]
+		(let [condicion (second((keyword counter-name) reglas))
+          parametros (first((keyword counter-name) reglas))
+		      TablaSalida (last((keyword counter-name) reglas))
+          tieneTodosLosParemetros (every? identity(mapv (fn [x]
+     			(not= (get new-data (last x)) nil) ) parametros))
+    	  	claves_tabla (keys TablaSalida)
+          clave  (mapv (fn [x]
+                (get new-data (last x))) parametros)
+          noTengoLaClave (every? identity (mapv (fn [x]
+                  (not= x clave))claves_tabla))
+     ]
+      (if (= tieneTodosLosParemetros true)
+       		(if (= noTengoLaClave true)
+          	{counter-name (conj(pop((keyword counter-name) reglas))
+              (merge  TablaSalida {clave (incrementar cero_inicial argFN)}))}
+            {counter-name (conj(pop((keyword counter-name) reglas))
+              (merge  TablaSalida {clave (incrementar (TablaSalida clave) argFN)}))}
+          )
+          {counter-name (conj(pop((keyword counter-name) reglas)) TablaSalida)}
+       		 )
+     )
 )
 
-(defn actualizar_Sennales [nameSennales valor]
-  (let [clave (keyword nameSennales)]
-	(def sennales (merge  sennales { clave (conj  valor)}))
+(defn incrementar_Contador [counter-name new-data argFN state]
+   (let [parametros (first((keyword counter-name) (:Contadores state)))]
+      (if (= (count parametros) 0)
+		      (incrementar_Contador_simple counter-name argFN (:Contadores state))
+		      (incrementar_Contador_mapa counter-name new-data argFN (:Contadores state))
+      )
+   )
+)
+
+(defn incrementarContadorStep [counter-name new-data argFN state]
+   (let [parametros (second((keyword counter-name) (:ContadorSteps state)))]
+      (if (= (count parametros) 0)
+		      (incrementar_Contador_simple counter-name argFN (:ContadorSteps state))
+		      (incrementar_Contador_mapa counter-name new-data argFN (:ContadorSteps state))
+      )
+   )
+)
+
+(defn validarContador [clave_contador new-data state]
+  (let [condiciones (second((keyword clave_contador) (:Contadores state)))]
+	 (if (= (validarCondiciones condiciones new-data state) true)
+		(incrementar_Contador clave_contador new-data 1 state)
+		{clave_contador ((keyword clave_contador) (:Contadores state))})
   )
 )
 
-(defn identificar-reglas [rules]
-  ;se reinician todas las colecciones de reglas a vacias para reprocesamiento
-  ;sucede en los test.
-  (def contadores {})
-  (def sennales {})
-  (map #(let [[ a nombre parametros condicion & resto] %]
-             (if (= (str a) "define-counter")
-                 (do
-                     (if (= (count parametros) 0)
-						(actualizar_Contadores (str nombre) [parametros condicion cero_inicial])
-						(actualizar_Contadores (str nombre) [parametros condicion {}])))
-                 (do
-                     (actualizar_Sennales (first (keys nombre)) [(first (vals nombre)) parametros]))))
-
-        rules)
-    );;map
-
-
-(defn initialize-processor [rules]
-
-  (def estado [valor_cero])
-
-  (let [  etapa1 (identificar-reglas rules)
-          etapa2  (if (> (count etapa1) valor_cero)
-                    (first estado)
-                    nil)]
-          ;let externo
-       etapa2))
-;end-defn
-
-(defn validarCondiciones [clave_contador new-data]
-	(def condiciones (second((keyword clave_contador) contadores)))
-	(def flag true)
-	(def claves (keys new-data))
-	(def tipo "nada")
-	(mapv (fn [x]
-		(if (= (str tipo) "current")
-			(if (= (get new-data x) true) () (def flag false)))
-		(if (= (str x) "current") (def tipo "current") (def tipo "nada"))
-	) condiciones)
-	(if (= flag true)
-		(incrementar_Contador clave_contador new-data inc)
-		(incrementar_Contador clave_contador new-data +))
-)
-
-(defn validarContador [clave_contador new-data]
-	(def condiciones (second((keyword clave_contador) contadores)))
-	(if (= condiciones true)
-		(incrementar_Contador clave_contador new-data inc)
-		(validarCondiciones clave_contador new-data))
-)
-
-
-(defn aplicar-reglas-Contador [new-data]
-  (def claves_de_count (keys contadores))
+(defn aplicar-reglas-Contador [state new-data]
   (mapv (fn [x]
-         (validarContador x new-data) ) claves_de_count
+         (validarContador x new-data state) ) (keys (:Contadores state))
   )
 )
 
-(defn ejecutar [fn A B]
-	(def funciones2 #{ "counter-value"})
-	(def RSalida nil)
-	(if (= "counter-value" (str fn)) (def RSalida (counter-value A B)))
-	(if (= "current" (str fn)) (def RSalida (current A)))
-	(if (= "past" (str fn)) (def RSalida (past A)))
-	(if (= "=" (str fn)) (def RSalida (= A B)))
-	(if (= "/" (str fn))
-		(if (= B 0)
-			(println "divide por cero")
-			(def RSalida(/ A B))
-		)
-	)
-	RSalida
+(defn validarContadorSteps [clave_contador new-data state]
+  (let [condiciones (get((keyword clave_contador) (:ContadorSteps state))2)
+        step (first((keyword clave_contador) (:ContadorSteps state)))]
+ (println "step")
+	 (if (= (validarCondiciones condiciones new-data state) true)
+    (if (number? step)
+		  (incrementarContadorStep clave_contador new-data step state)
+		  (incrementarContadorStep clave_contador new-data (ejecutarFuncionRecursiva step state nil new-data) state))
+		{clave_contador ((keyword clave_contador) (:ContadorSteps state))})
+  )
 )
 
-(defn ejecutarFuncionRecursiva
-  "SOBRECARGA de parametros"
-  ([funcion]
-    ;******************************
-    ;DERIVANDO A LA SOBRECARGA CON MAPA PARA RESOLVER
-    (ejecutarFuncionRecursiva funcion contadores "nuevoDato" "viejoDato")
-    ;******************************
-
-
-  ;  (def funciones #{"/" "counter-value" "=" "current" "past"})
-	;   (if (= (contains? funciones (str (first funcion))) true)
-  ;    		(def salida
-  ;          (ejecutar (first funcion)
-  ;          (ejecutarFuncionRecursiva (second funcion))
-  ;          (ejecutarFuncionRecursiva (last funcion))))
-	;	      (def salida funcion))
-  ;salida
-);end-sobrecarga-un-argumento-funcion
-
-;*************************SOLICITADO******************************
- ([funcion mapContadores nuevoDato viejoDato]
-   ;el resto de los argumentos son mapa de contadores,nuevo dato y dato viejo
-  (println "Esto se ejecuta derivado de ejecutarFuncionRecursiva [funcion]")
-
-(let
-[ op_calculable      funcion
-  cont_struct        {:funcion 0 :contadores {} :nuevoDato 0 :viejoDato 0}
-  contador_map       mapContadores
-  n_Dato             nuevoDato
-  v_Dato             viejoDato
-  cont_contadores    (assoc-in cont_struct[:contadores] contador_map)
-  cont_nuevoDato     (assoc-in cont_contadores[:nuevoDato] n_Dato)
-  cont_funcion       (assoc-in cont_nuevoDato[:funcion] op_calculable)
-  contenedor         (assoc-in cont_funcion[:viejoDato] v_Dato)
-  ]
-
-    (println "Contenedor:." contenedor)
-    (println "Extrayendo funcion" (get-in contenedor [:funcion]))
-    ;****************************************************
-      ;(resolver_operacion (get-in contenedor [:funcion]))
-
-     ;antigua manera(resolver_operacion funcion) No se puede aplicar hasta
-     ;;resolver la dependencia ciclica, esto es cuando no haya mas def, del que dependan las funciones counter y otras. Asi se ajustan
-     ;los require
-    ;**********************************************************
-     (def funciones #{"/" "counter-value" "=" "current" "past"})
-   	 (if (= (contains? funciones (str (first funcion))) true)
-   		  (def salida
-         (ejecutar (first funcion)
-          (ejecutarFuncionRecursiva (second funcion)) (ejecutarFuncionRecursiva (last funcion))))
-   		  (def salida funcion))
-   	salida
-    );end-let
-  );end-sobrecarga-un-argumento-funcion
-);end-defn
-
-
-
-
-(defn ejecutarSenneal [clave_Sennales new-data]
-	(def parametros (first((keyword clave_Sennales) sennales)))
-	(def newData new-data)
-	(def salida (ejecutarFuncionRecursiva parametros))
-	(if (= salida nil)
-		()
-		(def salidaSennales (merge  salidaSennales {(name clave_Sennales) salida}))
-	)
-
-	salidaSennales
+(defn aplicarReglasContadorSteps [state new-data]
+  (mapv (fn [x]
+         (validarContadorSteps x new-data state) ) (keys (:ContadorSteps state))
+  )
 )
 
-(defn validarCondicionesSennales [clave_Sennales new-data]
-	(def funcion (second(clave_Sennales sennales)))
-	(def flag false)
-	(def claves_past (keys listaPast))
-	(def newData new-data)
+
+(defn ejecutarSenneal [clave_Sennales new-data state]
+	(let [parametros (first((keyword clave_Sennales) (:Sennales state)))
+	      salida (ejecutarFuncionRecursiva parametros state nil new-data)]
+        (if (= salida nil)
+		      ()
+          {(name clave_Sennales) salida}
+	      )
+  )
+)
+
+(defn validarSennales [clave_Sennales new-data state]
+	(let [condiciones (second((keyword clave_Sennales) (:Sennales state)))]
+	   (if (= (validarCondiciones condiciones new-data state) true)
+		   (ejecutarSenneal clave_Sennales new-data state)
+	   )
+  )
+)
+
+(defn aplicar-reglas-Sennales [state new-data]
 	(mapv (fn [x]
-		(def LaX x)
-		(if (ejecutarFuncionRecursiva funcion)
-		(def flag true))
-	) claves_past)
-
-	(if (= flag true)
-		(ejecutarSenneal clave_Sennales new-data)
-	)
-)
-
-(defn validarSennales [clave_Sennales new-data]
-	(def condiciones (second((keyword clave_Sennales) sennales)))
-	(if (= condiciones true)
-		(ejecutarSenneal clave_Sennales new-data)
-		(validarCondicionesSennales clave_Sennales new-data)
-	)
-)
-
-(defn aplicar-reglas-Sennales [new-data]
-	(def salidaSennales {})
-	(def claves_de_Sennales (keys sennales))
-	(mapv (fn [x]
-		(validarSennales x new-data) ) claves_de_Sennales)
+		(validarSennales x new-data state) ) (keys (:Sennales state)))
 )
 
 (defn process-data [state new-data]
-  ;;se incrementa el estado por cada ejecución
-	(actualizar_Estado)
-	(aplicar-reglas-Sennales new-data)
-	(if (empty? new-data)
-		[(last estado) '()] ;porque hay un signal-skip-on-error-test
-		(do
-			(aplicar-reglas-Contador new-data)
-			(CargarPast new-data)
-		))
-	(if (= (count salidaSennales) 0)
-		(def salida [contadores []])
-		(def salida [contadores [salidaSennales]])
-	)
-	salida
+     ;(println "entrada" state)
+  (let [salidaNueva (first (aplicar-reglas-Sennales state new-data))
+        salidaContadores (aplicar-reglas-Contador state new-data)
+        salidaContadoresSteps (aplicarReglasContadorSteps state new-data)
+        pasado (CargarPast new-data (:DatosPasados state))]
+
+  (let [salida {:Contadores (into (sorted-map) salidaContadores),
+                :ContadorSteps (into (sorted-map) salidaContadoresSteps),
+                :Sennales (:Sennales state),
+                :DatosPasados pasado}]
+   (println "salida" salida)
+   (if (= (count salidaNueva) 0)
+		[salida []]
+		[salida [salidaNueva]]))
+  )
 )
 
-;end-defn;;[nil []])
+(defn query-counter [state counter-name counter-args]
+  (let [operador               'counter-value
+     nombre_contador        counter-name
+     argumentos_contador    counter-args
+     estado                 state
+     expresion              (list operador nombre_contador argumentos_contador estado)
+     ;retorno                (resolver_operacion expresion)
+     ]
+     ;(println " Esta es la expresion :"expresion"*****************")
+     (resolver_operacion expresion)
+  );end-let
+      ;(counter-value counter-name counter-args state)
+);end-defn
 
-  ;;retorna el valor numerico almacenado en ese contador para esos argumentos
-  ;;aun no se sabe que argumentos son y que calculo hacer sobre ellos, por lo tanto se aplica funcion que retorna 0.
-  ;;fn [state counter-name counter-args]
-  ;;por lo pronto puedo retornar el estado actual de ese contador ignorando el resto de los argumentos
-  ;;el estado correspondería con el indice del vector que tiene valor para esa clave.
-
-(defn query-counter [state counter-name  counter-args]
-  (def salida ((keyword counter-name) contadores))
-  (if (= salida nil)
-	(def salida 0)
-	(if (= (count (first salida)) 0)
-	    (def salida (last(last salida)))
-	    (def salida (last(get (last salida) counter-args))))
-   )
-  salida
+(defn identificarReglas [rules]
+      (let [listaContadores (map #(let [[ a nombre parametros condicion & resto] %]
+                 (if (= (str a) "define-counter")
+                      (if (= (count parametros) 0)
+            						{(keyword nombre) [parametros condicion cero_inicial]}
+            						{(keyword nombre) [parametros condicion {}]})))rules)
+            listaContadoresSteps (map #(let [[ a nombre step parametros condicion & resto] %]
+                  (if (= (str a) "define-step-counter")
+                      (if (= (count parametros) 0)
+                        {(keyword nombre) [step parametros condicion cero_inicial]}
+                        {(keyword nombre) [step parametros condicion {}]})))rules)
+            listaSennals (map #(let [[ a nombre parametros & resto] %]
+                 (if (= (str a) "define-signal")
+                          {(keyword (first (keys nombre))) [(first (vals nombre)) parametros]})
+                         )rules)
+                  ]
+          {:Contadores (into (sorted-map)listaContadores),
+           :ContadorSteps (into (sorted-map)listaContadoresSteps),
+           :Sennales (into (sorted-map)listaSennals),
+           :DatosPasados {}}
+        )
 )
+
+(defn initialize-processor [rules]
+  (let [salida (identificarReglas rules)]
+    salida)
+  )
