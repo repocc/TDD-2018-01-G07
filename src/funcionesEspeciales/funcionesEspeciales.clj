@@ -36,13 +36,12 @@
 )
 
 (defn counter-value [counter-name counter-args state]
-
   (let [contador ((keyword counter-name) (:Contadores state))]
     (if (= contador nil)
-        (let [contadorStep ((keyword counter-name) (:ContadoresSteps state))]
+        (let [contadorStep ((keyword counter-name) (:ContadorSteps state))]
           (if (= contadorStep nil)
             0
-            (if (= (count (first contadorStep)) 0)
+            (if (= (count (second contadorStep)) 0)
                 (last(last contadorStep))
                 (last(get (last contadorStep) counter-args)))
           )

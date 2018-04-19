@@ -1,6 +1,7 @@
 (ns data-processor
   (:require [clojure.core :refer :all]
     :require [utiles.operacionesRecursivas :refer :all]
+    :require [funcionesEspeciales.funcionesEspeciales :refer :all]
  ))
 
 
@@ -9,9 +10,6 @@
 
 
 (defn ejecutarFuncionRecursiva [funcion state pasdo actual]
-  ;(println "?" funcion)
-  ;(println "dato_pasado" pasdo)
-  ;(println "dato_actual" actual)
   (resolver_operacion (list funcion {:estado state :dato_pasado pasdo :dato_actual actual}))
 
 )
@@ -108,7 +106,6 @@
 (defn validarContadorSteps [clave_contador new-data state]
   (let [condiciones (get((keyword clave_contador) (:ContadorSteps state))2)
         step (first((keyword clave_contador) (:ContadorSteps state)))]
- (println "step")
 	 (if (= (validarCondiciones condiciones new-data state) true)
     (if (number? step)
 		  (incrementarContadorStep clave_contador new-data step state)
@@ -148,7 +145,6 @@
 )
 
 (defn process-data [state new-data]
-     ;(println "entrada" state)
   (let [salidaNueva (first (aplicar-reglas-Sennales state new-data))
         salidaContadores (aplicar-reglas-Contador state new-data)
         salidaContadoresSteps (aplicarReglasContadorSteps state new-data)
@@ -158,7 +154,6 @@
                 :ContadorSteps (into (sorted-map) salidaContadoresSteps),
                 :Sennales (:Sennales state),
                 :DatosPasados pasado}]
-   ;(println "salida" salida)
    (if (= (count salidaNueva) 0)
 		[salida []]
 		[salida [salidaNueva]]))
@@ -166,25 +161,8 @@
 )
 
 (defn query-counter [state counter-name counter-args]
-
-
-  (let [operador               'counter-value
-        nombre_contador        counter-name
-        argumentos_contador    counter-args
-        estado                 state
-        expresion              (list (list operador
-                                    nombre_contador
-                                    argumentos_contador)
-                                    {:estado state
-                                    :dato_pasado nil
-                                    :dato_actual nil} )
-
-     ]
-
-     (resolver_operacion expresion)
-  );end-let
-      ;(counter-value counter-name counter-args state)
-);end-defn
+  (counter-value counter-name counter-args state)
+)
 
 (defn identificarReglas [rules]
       (let [listaContadores (map #(let [[ a nombre parametros condicion & resto] %]
