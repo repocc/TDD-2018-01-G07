@@ -16,6 +16,8 @@
 (defn process-data-dropping-signals [state new-data]
   (first (process-data state new-data)))
 
+
+;************************************************************
 (deftest initial-state-test
   (testing "Query counter from initial state"
     (is (= 0
