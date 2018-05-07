@@ -1,13 +1,20 @@
 package dashboard
 
 class Tablero {
+    int mockGrails
   	String nombre
 	  List<Instrumento> aparatos
+    MotorDeDatos datos
 
-    void agregarInstrumento(Instrumento nuevoInsturmento){
+    public void agregarInstrumento(Instrumento nuevoInsturmento){
+      datos.agragarListener(nuevoInsturmento)
       aparatos.add(nuevoInsturmento)
     }
 
+    public void texxt(){
+      datos.tomarDatos()
+      mockGrails++
+    }
     static constraints = {
 				nombre display: true
     }

@@ -3,9 +3,9 @@ package dashboard
 import grails.test.mixin.*
 import spock.lang.*
 
-@TestFor(TableroController)
-@Mock(Tablero)
-class TableroControllerSpec extends Specification {
+@TestFor(BaseDeDatosController)
+@Mock(BaseDeDatos)
+class BaseDeDatosControllerSpec extends Specification {
 
     def populateValidParams(params) {
         assert params != null
@@ -21,8 +21,8 @@ class TableroControllerSpec extends Specification {
             controller.index()
 
         then:"The model is correct"
-            !model.tableroList
-            model.tableroCount == 0
+            !model.baseDeDatosList
+            model.baseDeDatosCount == 0
     }
 
     void "Test the create action returns the correct model"() {
@@ -30,7 +30,7 @@ class TableroControllerSpec extends Specification {
             controller.create()
 
         then:"The model is correctly created"
-            model.tablero!= null
+            model.baseDeDatos!= null
     }
 
     void "Test the save action correctly persists an instance"() {
@@ -38,25 +38,25 @@ class TableroControllerSpec extends Specification {
         when:"The save action is executed with an invalid instance"
             request.contentType = FORM_CONTENT_TYPE
             request.method = 'POST'
-            def tablero = new Tablero()
-            tablero.validate()
-            controller.save(tablero)
+            def baseDeDatos = new BaseDeDatos()
+            baseDeDatos.validate()
+            controller.save(baseDeDatos)
 
         then:"The create view is rendered again with the correct model"
-            model.tablero!= null
+            model.baseDeDatos!= null
             view == 'create'
 
         when:"The save action is executed with a valid instance"
             response.reset()
             populateValidParams(params)
-            tablero = new Tablero(params)
+            baseDeDatos = new BaseDeDatos(params)
 
-            controller.save(tablero)
+            controller.save(baseDeDatos)
 
         then:"A redirect is issued to the show action"
-            response.redirectedUrl == '/tablero/show/1'
+            response.redirectedUrl == '/baseDeDatos/show/1'
             controller.flash.message != null
-            Tablero.count() == 1
+            BaseDeDatos.count() == 1
     }
 
     void "Test that the show action returns the correct model"() {
@@ -68,11 +68,11 @@ class TableroControllerSpec extends Specification {
 
         when:"A domain instance is passed to the show action"
             populateValidParams(params)
-            def tablero = new Tablero(params)
-            controller.show(tablero)
+            def baseDeDatos = new BaseDeDatos(params)
+            controller.show(baseDeDatos)
 
         then:"A model is populated containing the domain instance"
-            model.tablero == tablero
+            model.baseDeDatos == baseDeDatos
     }
 
     void "Test that the edit action returns the correct model"() {
@@ -84,11 +84,11 @@ class TableroControllerSpec extends Specification {
 
         when:"A domain instance is passed to the edit action"
             populateValidParams(params)
-            def tablero = new Tablero(params)
-            controller.edit(tablero)
+            def baseDeDatos = new BaseDeDatos(params)
+            controller.edit(baseDeDatos)
 
         then:"A model is populated containing the domain instance"
-            model.tablero == tablero
+            model.baseDeDatos == baseDeDatos
     }
 
     void "Test the update action performs an update on a valid domain instance"() {
@@ -98,28 +98,28 @@ class TableroControllerSpec extends Specification {
             controller.update(null)
 
         then:"A 404 error is returned"
-            response.redirectedUrl == '/tablero/index'
+            response.redirectedUrl == '/baseDeDatos/index'
             flash.message != null
 
         when:"An invalid domain instance is passed to the update action"
             response.reset()
-            def tablero = new Tablero()
-            tablero.validate()
-            controller.update(tablero)
+            def baseDeDatos = new BaseDeDatos()
+            baseDeDatos.validate()
+            controller.update(baseDeDatos)
 
         then:"The edit view is rendered again with the invalid instance"
             view == 'edit'
-            model.tablero == tablero
+            model.baseDeDatos == baseDeDatos
 
         when:"A valid domain instance is passed to the update action"
             response.reset()
             populateValidParams(params)
-            tablero = new Tablero(params).save(flush: true)
-            controller.update(tablero)
+            baseDeDatos = new BaseDeDatos(params).save(flush: true)
+            controller.update(baseDeDatos)
 
         then:"A redirect is issued to the show action"
-            tablero != null
-            response.redirectedUrl == "/tablero/show/$tablero.id"
+            baseDeDatos != null
+            response.redirectedUrl == "/baseDeDatos/show/$baseDeDatos.id"
             flash.message != null
     }
 
@@ -130,23 +130,23 @@ class TableroControllerSpec extends Specification {
             controller.delete(null)
 
         then:"A 404 is returned"
-            response.redirectedUrl == '/tablero/index'
+            response.redirectedUrl == '/baseDeDatos/index'
             flash.message != null
 
         when:"A domain instance is created"
             response.reset()
             populateValidParams(params)
-            def tablero = new Tablero(params).save(flush: true)
+            def baseDeDatos = new BaseDeDatos(params).save(flush: true)
 
         then:"It exists"
-            Tablero.count() == 1
+            BaseDeDatos.count() == 1
 
         when:"The domain instance is passed to the delete action"
-            controller.delete(tablero)
+            controller.delete(baseDeDatos)
 
         then:"The instance is deleted"
-            Tablero.count() == 0
-            response.redirectedUrl == '/tablero/index'
+            BaseDeDatos.count() == 0
+            response.redirectedUrl == '/baseDeDatos/index'
             flash.message != null
     }
 }

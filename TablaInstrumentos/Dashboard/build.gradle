@@ -1,17 +1,26 @@
 buildscript {
     repositories {
         mavenLocal()
+        mavenCentral()
         maven { url "https://repo.grails.org/grails/core" }
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
         classpath "org.grails.plugins:hibernate5:${gormVersion-".RELEASE"}"
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.14.2"
+        "classpath:motor.clj"
+        "classpath:../recursos/motor.clj"
+        "classpath:./src/main/resources/fiuba/materia7510/aplicacion/generador/motor.clj"
+        "classpath:.src/main/resources/fiuba/materia7510/aplicacion/generador/motor.clj"
+        "classpath:${projectDir}/src/main/resources/fiuba/materia7510/aplicacion/generador/motor.clj"
+		
+		
     }
 }
 
+
 version "0.1"
-group "dashboard"
+group "monitorapi"
 
 apply plugin:"eclipse"
 apply plugin:"idea"
@@ -57,6 +66,9 @@ dependencies {
     testCompile "org.grails:grails-web-testing-support"
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
     testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
+    compile "org.clojure:clojure:1.10.0-alpha4"
+    
+    //compile: "<your_group_id> : <your_artifact_id> : <version>""
 }
 
 bootRun {
@@ -69,3 +81,6 @@ assets {
     minifyJs = true
     minifyCss = true
 }
+
+ext {
+File configFile = file("${rootDir}/src/main/resources/fiuba/materia7510/aplicacion/generador/motor.clj")}

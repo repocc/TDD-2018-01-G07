@@ -118,13 +118,42 @@ class TableroController {
     		   tablero.save flush:true
 
            request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.deleted.message', args: [message(code: 'tablero.label', default: 'Tablero'), tablero.id])
-                redirect action:"index", method:"GET"
-            }
-            '*'{ render status: NO_CONTENT }
-          }
+               form multipartForm {
+                   flash.message = message(code: 'default.updated.message', args: [message(code: 'tablero.label', default: 'Tablero'), tablero.id])
+                   redirect tablero
+               }
+               '*'{ respond tablero, [status: OK] }
+           }
       }
+
+      @Transactional
+      	def RecibirDato(Tablero tablero) {
+              if (tablero == null) {
+                  transactionStatus.setRollbackOnly()
+                  notFound()
+                  return
+              }
+
+             tablero.datos.tomarDatos()
+             tablero.texxt()
+             tablero.datos.moke++
+
+             for(Instrumento listener : tablero.datos.listeners) {
+               listener.moke++
+             }
+
+      		  println(tablero.save(flush:true))
+             tablero.datos.save(flush:true)
+
+             request.withFormat {
+                 form multipartForm {
+                     flash.message = message(code: 'default.updated.message', args: [message(code: 'tablero.label', default: 'Tablero'), tablero.id])
+                     redirect tablero
+                 }
+                 '*'{ respond tablero, [status: OK] }
+             }
+              println(tablero.datos.getErrors())
+        }
 
       protected void notFound() {
           request.withFormat {

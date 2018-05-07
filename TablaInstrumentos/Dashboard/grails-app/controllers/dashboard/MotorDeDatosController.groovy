@@ -76,26 +76,6 @@ class MotorDeDatosController {
     }
 
     @Transactional
-    def delete(MotorDeDatos motorDeDatos) {
-
-        if (motorDeDatos == null) {
-            transactionStatus.setRollbackOnly()
-            notFound()
-            return
-        }
-
-        motorDeDatos.delete flush:true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.deleted.message', args: [message(code: 'motorDeDatos.label', default: 'MotorDeDatos'), motorDeDatos.id])
-                redirect action:"index", method:"GET"
-            }
-            '*'{ render status: NO_CONTENT }
-        }
-    }
-
-    @Transactional
     	def RecibirDato(MotorDeDatos motorDeDatos) {
           if (motorDeDatos == null) {
               transactionStatus.setRollbackOnly()
@@ -103,18 +83,19 @@ class MotorDeDatosController {
               return
           }
 
-           motorDeDatos.tomarDatos(params.DatoNuevo)
+           motorDeDatos.tomarDatos()
 
-    		   motorDeDatos.save flush:true
+    		   motorDeDatos.save (flush:true)
 
            request.withFormat {
                form multipartForm {
-                   flash.message = message(code: 'default.deleted.message', args: [message(code: 'motorDeDatos.label', default: 'MotorDeDatos'), motorDeDatos.id])
-                   redirect action:"index", method:"GET"
+                   flash.message = message(code: "dato cargado: " + motorDeDatos.numero, args: [message(code: 'motorDeDatos.label', default: 'MotorDeDatos'), motorDeDatos.id])
+                   redirect motorDeDatos
                }
-               '*'{ render status: NO_CONTENT }
+               '*'{ respond motorDeDatos, [status: OK] }
            }
       }
+
 
     protected void notFound() {
         request.withFormat {
