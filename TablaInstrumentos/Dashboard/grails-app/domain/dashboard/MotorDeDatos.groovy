@@ -1,4 +1,6 @@
 package dashboard
+import fiuba.materia7510.aplicacion
+
 
 class MotorDeDatos{
     int moke = 0
@@ -15,6 +17,9 @@ class MotorDeDatos{
   			listener.informar(this)
   		}
   	}
+
+    public MotorDeDatos(){
+    }
 
     public void tomarDatos(){
       numero++

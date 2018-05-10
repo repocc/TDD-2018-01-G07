@@ -1,4 +1,6 @@
 package dashboard
+package fiuba.materia7510.aplicacion
+
 
 import grails.testing.gorm.DomainUnitTest
 import spock.lang.Specification
