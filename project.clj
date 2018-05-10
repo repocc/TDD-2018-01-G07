@@ -6,4 +6,5 @@
   :dependencies [[org.clojure/clojure "1.8.0"]]
   :main ^skip-aot motor
   :profiles {:uberjar {:aot :all}}
+  
   )

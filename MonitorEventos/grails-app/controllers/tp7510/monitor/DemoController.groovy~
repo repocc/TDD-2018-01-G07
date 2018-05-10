@@ -1,8 +1,0 @@
-package tp7510.monitor
-
-class DemoController {
-
-    def index() {
-    render "Hola soy el índice. 
-    Bienvenidos dicen Fontana y Rodríguez." }
-}
