@@ -1,6 +1,4 @@
 package dashboard
-import fiuba.materia7510.aplicacion
-
 
 class MotorDeDatos{
     int moke = 0
