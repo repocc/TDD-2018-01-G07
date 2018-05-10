@@ -19,13 +19,18 @@ class MotorService {
 	
 	static def cargar_Recursos_para_ejecucion (String ns,String funcion_invocada){
 	 		
-     final def estado  = ClojureProcesador.requerir_libreria ("clojure.core","require", ns)
-	
-     final def ns_IFn 	= ClojureProcesador.cargarClojureNamespace(ns)
-     
-     final def fn  		= ns_IFn?	ClojureProcesador.obtenerFuncion (ns_IFn,funcion_invocada):null
+      def estado  = ClojureProcesador.requerir_libreria ("clojure.core","require", ns)
 		
-	 fn		
+		//println "REQUERIR LIBRERIA*****************************${estado}"
+		
+	  def ns_IFn 	= ClojureProcesador.cargarClojureNamespace(ns)
+		
+		//println "NAMESPACE*********************************${ns_IFn}"
+     
+      def fn  		= ns_IFn?	ClojureProcesador.obtenerFuncion (ns_IFn,funcion_invocada):null
+		
+		//println "FUNCION INVOCADA*********************************${fn}"
+	  return fn		
 	}
 	static def inicializar_procesador (def rules){
 		
@@ -41,7 +46,7 @@ class MotorService {
 
 	}
 	
-	static def consultar_contador(def state, def nombre_Contador, String[] argumento){
+	static def consultar_contador(def state, def nombre_Contador, def argumento){
 		ClojureProcesador.invocar (cargar_Recursos_para_ejecucion(ns,consultar_contador_fn), state, nombre_Contador, argumento)
 
 	}
