@@ -1,0 +1,6 @@
+#Thu, 10 May 2018 17:39:25 -0300
+
+info.app.version=0.1
+info.app.name=Dashboard
+grails.env=production
+info.app.grailsVersion=3.3.0
