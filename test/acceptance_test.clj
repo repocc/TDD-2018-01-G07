@@ -30,6 +30,20 @@
     (is (= 2
            (query-counter st2 "email-count" [])))))
 
+
+(deftest conditional-counter-test-DESGLOSADO
+  (testing "Count incoming data by current condition"
+    (testing "when repeated DESGLOSADO"
+      (let [st0 (initialize-processor rules)
+            st1 (process-data-dropping-signals st0 {"spam" true})
+            st2 (process-data-dropping-signals st1 {"spam" true})
+            st3 (process-data-dropping-signals st2 {"spam" true})]
+            ;(println "RESPUESTA estado salida" st3)
+        (is (= 3
+               (query-counter st3 "spam-count" [])))))))
+               
+               
+               
 (deftest conditional-counter-test
   (testing "Count incoming data by current condition"
     (testing "when repeated"
@@ -37,6 +51,7 @@
             st1 (process-data-dropping-signals st0 {"spam" true})
             st2 (process-data-dropping-signals st1 {"spam" true})
             st3 (process-data-dropping-signals st2 {"spam" true})]
+            (println "RESPUESTA estado salida" st3)
         (is (= 3
                (query-counter st3 "spam-count" [])))))
     (testing "when ignored field varies"

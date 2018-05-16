@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	...
+	<!--// OPTIONAL & CONDITIONAL CSS FILES //-->   
+	<!-- date picker css -->
+	<link rel="stylesheet" href="css/datepicker.css?v=1">
+	<!-- full calander css -->
+	<link rel="stylesheet" href="css/fullcalendar.css?v=1">
+	<!-- data tables extended CSS -->
+	...
+  </head>
+  <body>
+		...
+	</aside>
+	<!-- aside end -->
+	<!-- main content -->
+	<div id="contenido_pagina">
+	</div>
+	<!-- end main content -->
+	<!-- aside right on high res -->
+	<aside class="right">
+		...
+	<script src="js/include/jquery.flot.cust.min.js"></script>			
+	<script src="js/include/jquery.flot.resize.min.js"></script>		
+	<script src="js/include/jquery.flot.tooltip.min.js"></script>		
+	<script src="js/include/jquery.flot.orderBar.min.js"></script> 	
+	<script src="js/include/jquery.flot.fillbetween.min.js"></script>	
+	<script src="js/include/jquery.flot.pie.min.js"></script> 	 
+  </body>
+</html>
+

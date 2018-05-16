@@ -1,8 +1,6 @@
 (ns utiles.operacionesRecursivas
-  (:require [clojure.core :refer :all]
-  :require [definiciones.definiciones :refer :all]
-  ;:require [funcionesEspeciales.funcionesEspeciales :refer [operar_con_AND operar_con_OR counter-value current past]]
-  ))
+  (:require [definiciones.definiciones :refer :all]
+    ))
 
 (declare ejecutar_operacion )
 
@@ -170,6 +168,31 @@
     );end-let
    );end-if
 );end-funcion
+;****************************************************************
+(defn iniciar_recursion_en_operaciones_strings
+	"Ocurre la recursion de la funcion."
+	[coleccion estado_condicionado]
+  (if (empty? coleccion) ()
+    (let [
+        	primer_operando      (first coleccion)
+        	resto_coleccion      (rest coleccion)
+			resultado_recursion  (list(iniciar_recursion_en_operaciones_strings
+										resto_coleccion estado_condicionado))
+      	  ]
+      
+          	 (list
+          		   (if (coll? primer_operando)
+          			       (ejecutar_operacion primer_operando estado_condicionado)
+          			        primer_operando
+          		    );end-if
+          		      resultado_recursion
+          	  );end-first-list
+        
+    );end-let
+  );end-if
+);end-funcion
+
+
 ;*********************Funciones de desestructuracion************************
 
 (defn desestructurar
@@ -297,6 +320,21 @@
         );end-cond
   );end-let
 );end-funcion
+
+(defn desestructurar_coleccion_y_calcular_funciones_strings
+  "Desestructura la coleccion en operador, operandos y resto de la coleccion."
+  [coleccion estado_condicionado]
+ (let [	desestructurada         (desestructurar coleccion estado_condicionado)
+        resto_coleccion 	      (:resto_coleccion desestructurada)
+        operador_var		        (:operador_var desestructurada)
+    		resultado_recursion	(flatten
+          (iniciar_recursion_en_operaciones_strings resto_coleccion estado_condicionado))
+      ]
+
+			(apply operador_var resultado_recursion	);end-apply
+		;);end-if
+  );end-let
+);end-funcion
 ;************************************************************************
 ;************************MULTIMETODO*************************************
 ;************************************************************************
@@ -391,7 +429,20 @@
   ;"Funciones requeridas para strings. Abarca: includes?, starts-with?, ends-with?"
    [coleccion estado_condicionado]
 
-     ((get diccionario_op_strings (first coleccion)) (rest coleccion))
+      (let [ colec                 coleccion
+          operador_symbol       (first colec)
+          operador              (get diccionario_op_strings operador_symbol)
+          primer_arg		    (if (empty? (second colec)) "" (second colec))
+          segundo_arg			(if (empty? (second (rest colec))) "" (second (rest colec)))
+          todos_args_de_fn		(if (empty? (rest colec)) "" (rest colec))
+
+          argumentos_map        estado_condicionado
+
+          estado                (:estado argumentos_map)
+			]
+	(desestructurar_coleccion_y_calcular_funciones_strings
+     coleccion estado_condicionado)
+     );end-let
  )
 (defmethod ejecutar_operacion :Coleccion_Vacia retornar_coleccion_Vacia [coleccion estado_condicionado]
   ;"Funcion para cuando se recibe una coleccion sin elementos. retorna ()."
@@ -447,7 +498,7 @@
      (println "Argumento invalido para la operacion que se intenta realizar.")
      nil)
      (catch NullPointerException e
-       (println "Debido a valor nil por operacion imposible de manejar este argumento.")
+       ;(println "Debido a valor nil por operacion imposible de manejar este argumento.")
      nil)
    (catch Exception e
      (println "Alguna otra excepcion no capturada ...")
