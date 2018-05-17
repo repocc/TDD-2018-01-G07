@@ -9,6 +9,7 @@ import grails.converters.JSON
 //@Transactional(readOnly = true)
 
 class PublicadorController  {
+	//static defaultAction = "publicacion"
 
     /*
      * Alternativa a render
@@ -60,5 +61,6 @@ json([1,2,3]) { n it } == '[{"n":1},{"n":2},{"n":3}]'
 		respond un_dato_json
 					
 		}
+	
  
  }

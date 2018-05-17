@@ -1,12 +1,12 @@
 package fiuba.materia7510.aplicacion.proveedor
 
 
-class Ticket{
+class Ticket {
 
 	
 	Estado 	estado
 	
-	Integer 	codigo
+	Long 	codigo
 	
 	String 		titulo
 	String 		propietario

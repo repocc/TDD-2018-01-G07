@@ -1,6 +1,10 @@
-var datos=[];
+var doughnutData=[];
 function dibujarDona(selector) {
 	
+	if (selector == 'dona_2'){
+		doughnutData =[];
+		
+		}
 
     var doughnutData = [
         {
@@ -25,6 +29,7 @@ function dibujarDona(selector) {
         }
 
     ];
+    
     
    new Chart(document.getElementById(selector).getContext("2d")).Doughnut(doughnutData);
     

@@ -1,16 +1,12 @@
 <!doctype html>
 <html>
 <head>
-    <meta name="layout" content="tema_graficos"/>
+    <meta name="layout" content="main"/>
     <title>Welcome to Grails</title>
 
     <asset:link rel="icon" href="favicon.ico" type="image/x-ico" />
-    
 </head>
 <body>
-	Dentro de boy grails start
-	
-
     <content tag="nav">
         <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Application Status <span class="caret"></span></a>

@@ -5,7 +5,8 @@ import grails.rest.*
 @Resource(uri='/reglas')
 class Regla {
 	
-	String reglas
+	static String reglamento = null
+	String regla
 	
     static constraints = {
 		reglas	blank: false, nullable: false 

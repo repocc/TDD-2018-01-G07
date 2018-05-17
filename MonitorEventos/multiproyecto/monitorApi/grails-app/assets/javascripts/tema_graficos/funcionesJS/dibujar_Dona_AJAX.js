@@ -1,32 +1,33 @@
-
-
 var mi_grafico_Dona = null;
 window.mi_grafico_Dona = mi_grafico_Dona;
 
-var selector ="dona_3"
+var selector ="dona_3";
 
 //en milisegundos.
 var configuracion_update = {
 	duration: 800, 
     easing: 'easeOutBounce'
-}
+};
 //dato nulo al inicio si no hay datos correctos.
 var dato_nulo = [{
             value: 0,
             color:"#1abc9c"
-        }] 
+        }]; 
 
 var default_colors = ['#3366CC','#DC3912','#FF9900','#109618','#990099','#3B3EAC','#0099C6','#DD4477','#66AA00','#B82E2E','#316395','#994499','#22AA99','#AAAA11','#6633CC','#E67300','#8B0707','#329262','#5574A6','#3B3EAC'];
 
-var nombre_Colores_basicos = [
-						window.chartColors.red,
-						window.chartColors.orange,
-						window.chartColors.yellow,
-						window.chartColors.green,
-						window.chartColors.blue,
-					];
 /*******************************************************/
 /*Cartilla de colores*/
+window.chartColors = {
+	red: 'rgb(255, 99, 132)',
+	orange: 'rgb(255, 159, 64)',
+	yellow: 'rgb(255, 205, 86)',
+	green: 'rgb(75, 192, 192)',
+	blue: 'rgb(54, 162, 235)',
+	purple: 'rgb(153, 102, 255)',
+	grey: 'rgb(201, 203, 207)'
+};
+/*El objeto esta definido en la libreria utilidad_constantes_colores_meses.js*/
 var nombre_Colores = Object.keys(window.chartColors);
 /******************************************************/
 var datos_reservados = [
@@ -98,6 +99,7 @@ $(document).on("click","a",function(e){
 */
 /******************************************************/
 
+
 function agregarDato(dato) {
 	//el dato agregado es un numero. Tambien se considera en esta prueba que no llega etiqueta.Sino se modifica.	
 			if (configuracion.data.datasets.length > 0) {
@@ -119,6 +121,30 @@ function agregarDato(dato) {
 
 				window.mi_grafico_Dona.update(configuracion_update);
 			}
+};
+
+
+function dibujar_Dona_Ajax(dato_json) {
+	
+		if (mi_grafico_Dona != null){
+			//agregar dato nuevo
+			var valor = dato_json.value; //segun seteado prueba en controlador publicar.
+			
+			agregarDato(objeto_grafico_de_window,dato_json.value);
+			 
+			}
+		else{
+			
+			//no existe objeto grafico, primera vez 
+			var ctx = document.getElementById(selector).getContext('2d');
+			//se crea un objeto de tipo propiedad ,javascript, a la pagina (alias "window"") 
+			//se crea el objeto grafico y se asigna a la propiedad.
+			window.mi_grafico_Dona = new Chart(ctx, configuracion);
+			
+			};
+				
+};
+
 /******************************************************/
 /**
  * The following properties are supported:
@@ -174,23 +200,3 @@ x = myObj.cars[0];
 
 
 /*******************************************************/
-function dibujar_Dona_Ajax(dato_json) {
-	
-		if (mi_grafico_Dona != null){
-			//agregar dato nuevo
-			var valor = dato_json.value; //segun seteado prueba en controlador publicar.
-			
-			agregarDato(objeto_grafico_de_window,dato_json.value);
-			 
-			}
-		else{
-			
-			//no existe objeto grafico, primera vez 
-			var ctx = document.getElementById(selector).getContext('2d');
-			//se crea un objeto de tipo propiedad ,javascript, a la pagina (alias "window"") 
-			//se crea el objeto grafico y se asigna a la propiedad.
-			window.mi_grafico_Dona = new Chart(ctx, configuracion);
-			
-			};
-				
-};

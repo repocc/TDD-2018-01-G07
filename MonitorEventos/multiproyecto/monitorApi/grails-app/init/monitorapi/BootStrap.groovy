@@ -1,6 +1,9 @@
 package monitorapi
 
 import fiuba.materia7510.aplicacion.proveedor.*
+import fiuba.materia7510.aplicacion.generador.Regla
+import fiuba.materia7510.aplicacion.generador.Estadio
+import fiuba.materia7510.aplicacion.MotorService
 
 enum Colores{ VERDE("VERDE_COLOR"), AMARILLO("AMARILLO_COLOR"), ROJO("ROJO_COLOR")
 	String nombre
@@ -33,9 +36,26 @@ class BootStrap {
     
     def init = { servletContext ->
 		
+		/***Creacion de regla y se inicializa motor-procesador***/
+		def reglamento = '((define-counter "email-count" [] true)(define-counter "spam-count" [] (current "spam")) (define-signal {"spam-fraction" (/ (counter-value "spam-count" [])(counter-value "email-count" []))}true)(define-counter "spam-important-table" [(current "spam")(current "important")]true))'
+			Regla.reglamento = reglamento
+		//new Regla (reglas: reglamento).save(failOnError:true, flush:true)
 		
 		
+		//'((define-counter "Ticket-Contador" [] true) (define-counter "Ticket-Contador-Rojo" [] (starts-with? (current "descripcion") "R"))(define-counter "Ticket-Contador-Propietario" [(current "propietario")] true) (define-signal {"Ticket-fraction-Rojo" (/ (counter-value "Ticket-Contador-Rojo" []))').save(failOnError:true, flush:true)
 		
+		//inicializa procesador
+		def estad = MotorService.inicializar_procesador (reglamento)
+		
+		Estadio.estatus = estad
+		
+		println "Estado inicializar procesador... ${estad}"
+		
+		//new Estadio (estadio:estad).save(failOnError:true, flush:true)
+		
+		String tit1	= 	'email-count'
+		String tit2	=	'spam-count'
+		/**********FIN CREACION REGLAS ***************/
 		def f =null
 		def e1 = new Estado (estado:Colores.VERDE.getColor()).save(failOnError:true, flush:true)
 		def e2 = new Estado (estado:Colores.AMARILLO.getColor()).save(failOnError:true, flush:true)
@@ -54,13 +74,13 @@ class BootStrap {
 		
 		f?.save(failOnError:true, flush:true)
 		
-		new TicketMock(estado:e1, flujo:f, codigo:1, titulo:"A", descripcion:"MockA", propietario:"AA").save(failOnError:true, flush:true)
+		new TicketMock(estado:e1, flujo:f, codigo:1, titulo:tit1, descripcion:"MockA", propietario:"AA").save(failOnError:true, flush:true)
         
 		
-		new TicketMock(estado:e2, flujo:f,codigo:2, titulo:"B", descripcion:"MockB", propietario:"BB").save(failOnError:true, flush:true)
+		new TicketMock(estado:e2, flujo:f,codigo:2, titulo:tit1, descripcion:"MockB", propietario:"BB").save(failOnError:true, flush:true)
         
          
-		new TicketMock(estado:e3,flujo:f, codigo:3, titulo:"C", descripcion:"MockC", propietario:"CC").save(failOnError:true, flush:true)
+		new TicketMock(estado:e3,flujo:f, codigo:3, titulo:tit1, descripcion:"MockC", propietario:"CC").save(failOnError:true, flush:true)
         
         f =	new Flujo()
         
@@ -73,14 +93,17 @@ class BootStrap {
 		f?.save(failOnError:true, flush:true)
 			
 		
-		new TicketMock(estado:e4, flujo:f, codigo:4, titulo:"D", descripcion:"MockD", propietario:"DD").save(failOnError:true, flush:true)
+		new TicketMock(estado:e4, flujo:f, codigo:4, titulo: tit2, descripcion:"MockD", propietario:"DD").save(failOnError:true, flush:true)
         
 		 
-		new TicketMock(estado:e5, flujo:f, codigo:5, titulo:"E", descripcion:"MockE", propietario:"EE").save(failOnError:true, flush:true)
+		new TicketMock(estado:e5, flujo:f, codigo:5, titulo: tit2, descripcion:"MockE", propietario:"EE").save(failOnError:true, flush:true)
         
          
-		new TicketMock(estado:e6, flujo:f, codigo:6, titulo:"F", descripcion:"MockF", propietario:"FF").save(failOnError:true, flush:true)
+		new TicketMock(estado:e6, flujo:f, codigo:6, titulo: tit2, descripcion:"MockF", propietario:"FF").save(failOnError:true, flush:true)
         
+        
+		
+		
     }
     def destroy = {
     }
