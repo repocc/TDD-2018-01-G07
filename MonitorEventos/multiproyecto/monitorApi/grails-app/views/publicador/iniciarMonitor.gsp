@@ -30,6 +30,7 @@
 		padding: 20px;
 		background-size: cover;
 	}
+	</style>
 </head>
 
 	
