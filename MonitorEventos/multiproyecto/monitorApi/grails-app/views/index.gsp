@@ -74,6 +74,10 @@
             </div>
         </section>
     </div>
-
+	<div id ="derivacion">
+	<g:form name="miForm" url="[action:'iniciar',controller:'publicador']">
+				<g:actionSubmit value="Sigueme" />
+	</g:form>
+	</div>
 </body>
 </html>

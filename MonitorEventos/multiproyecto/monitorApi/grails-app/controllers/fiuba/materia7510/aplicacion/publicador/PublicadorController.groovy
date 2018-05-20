@@ -5,12 +5,35 @@ import grails.validation.ValidationException
 import static org.springframework.http.HttpStatus.*
 import static org.springframework.http.HttpMethod.*
 import grails.converters.JSON
+import fiuba.materia7510.aplicacion.generador.Regla
 
 //@Transactional(readOnly = true)
 
 class PublicadorController  {
 	//static defaultAction = "publicacion"
-
+	
+	def iniciar(){
+		render (view:'iniciarMonitor')
+	}
+	def derivar_inicioGrails(){ 
+		redirect (uri: '/' )
+		}
+	def derivar_Reglas(){
+		render (Regla.reglamento)
+	}	
+    def derivar_estrategia_1(){ 
+		redirect (controller:"estratega", action:"renderizar_estrategia1" )
+		}
+	def derivar_estrategia_2(){ 
+		redirect (controller:"estratega", action:"renderizar_estrategia2")
+		}
+	def derivar_TicketController(){
+		redirect (controller:"ticket", action:"renderizar_Tickets")
+		}		
+    def derivar_TicketShow(){
+		flash.message = "Agrege un id para visualizar un ticket específico.(En el campo de direcciones del navegador)"
+		redirect (controller:"ticket", action:"index")
+		}
     /*
      * Alternativa a render
      * render(contentType: 'application/json'){
@@ -33,9 +56,9 @@ class PublicadorController  {
 		* 
 		* More example usages:
 
-json(1,2,3) == "[1,2,3]"
-json { name "Bob" } == '{"name":"Bob"}'
-json([1,2,3]) { n it } == '[{"n":1},{"n":2},{"n":3}]'
+		json(1,2,3) == "[1,2,3]"
+		json { name "Bob" } == '{"name":"Bob"}'
+		json([1,2,3]) { n it } == '[{"n":1},{"n":2},{"n":3}]'
 	****************************************/
 	static responseFormats = ['json']
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]

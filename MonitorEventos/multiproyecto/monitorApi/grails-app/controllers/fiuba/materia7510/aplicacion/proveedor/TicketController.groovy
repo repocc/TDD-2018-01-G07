@@ -49,6 +49,7 @@ class TicketController {
             //forward controller: "motor", action: "procesar", params: ticket.properties
          
             //redirect(controller:"motor", action: "sampleAction")
+            
         } catch (ValidationException e) {
             respond ticket.errors, view:'create'
             return
@@ -128,16 +129,32 @@ class TicketController {
 	 * */
 	 def procesar(){
 		
+		//ticket_mock = chainModel.ticket
 		
 		println "Procesar invocado..."
-		if ((ticket_mock == null) && TicketMock.count())
+		
+		boolean procesado = false
+		
+		ticket_mock = TicketMock.first()
+		
+		if (ticket_mock == null) 
 		{ 
+			/**Se envía mensaje pero sino tomar de la base de datos conviene, e ir borrando*/
+			flash.message = "EL objeto ticket mock es NULL. Se cancela petición. ERROR 204:"
+			render(status: 204, text: 'No hay tickets.')
 			
-			ticket_mock = TicketMock.first()
+			/**
+			204 No Content:La petición se ha completado con éxito,
+			pero su respuesta no tiene ningún contenido, 
+			aunque los encabezados pueden ser útiles. 
+			El agente de usuario puede actualizar sus encabezados en caché, 
+			para este recurso con los nuevos valores.
+
+			*/
 			 
 		}
-		
-		if ((Regla.reglamento != null) && (ticket_mock != null)){
+		else (Regla.reglamento != null){
+			/**************PROCESAMIENTO**************************/
 			def contadorTotal = 0
 			def ct= 0
 			def cr= 0
@@ -146,11 +163,9 @@ class TicketController {
 			def nombre_contador1		= 'spam-count'
 			def dato 			= ticket_mock.titulo		
 			def arg		= '[]'
-       
-			
-			
 			
 			def st0 = Estadio.estatus
+			
 			def retorno=	MotorService.inicializar_procesador (Regla.reglamento)?:null
 			
 			def st1 = MotorService.process_data_dropping_signals( st0 ,dato)?:null
@@ -166,33 +181,42 @@ class TicketController {
 				
 				println "Enviando ...: ${ticket_mock}"
 				
-				ticket_mock?.delete(flush:true)
+				
 				
 				Estadio.estatus = st1
-				def cuenta = 1
 				
-					println "Enviando ...: ${contadorTotal}"				
-					render(view: "graficos", model:	[value: contadorTotal])
-					println "durmiento........."
-					sleep (1000)
+				
+				println "Enviando ...: ${contadorTotal}"				
+				
+				render( model:	[valor: contadorTotal, etiqueta: nombre_contadorTotal ])
+				
+				
+				println "durmiento........."
+				
+				sleep (1000)
+				
+				procesado = true
 				}
+			/**********************FIN PROCESAMIENTO*******************/	
 			}
-			else{
-				println "No hay TICKET. "
-			}
-	}
-	def dibujar (){
+			println("Eliminando ticket de la base de datos")
+			
+			procesado?ticket_mock?.delete(flush:true):false
+}
+	
+	def renderizar_Tickets(){
 		
 		render view: "graficos"
 		}
 		
 		
 	def enviar(){
-			println "solicitado dato Action enviar..."								
+			println "solicitado dato Action enviar..."
+											
+			render ([valor: 10, etiqueta:"contadorTotal" ], status: 200)
 			//render ([value: 10] as JSON)
-			respond ([value: 10], status:200)
-			println "Enviado dato Action enviar."
-			sleep (1000)		
+			//respond ([value: 10], status:200)
+			sleep (2000)		
 	}
 		
 }
