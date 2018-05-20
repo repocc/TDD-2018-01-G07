@@ -1,11 +1,14 @@
 package monitorapi
 
 class ExtrategiaConteo {
-  public ExtrategiaConteo (){
+  String datoAcontar
+
+  public ExtrategiaConteo (String datoAcontar){
+    this.datoAcontar = datoAcontar
   }
 
   public int tomarDatos (MotorDeDatos baseDeDatos){
-    return baseDeDatos.tomarContador()
+    return baseDeDatos.tomarContador(datoAcontar)
   }
 
   static constraints = {

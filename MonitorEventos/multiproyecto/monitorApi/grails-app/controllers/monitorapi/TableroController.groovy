@@ -102,9 +102,20 @@ class TableroController {
                				tablero.errors.add "Tipo no valido"
                				respond tablero.errors, view:'edit'
                				return
-               		}
+              }
+              ExtrategiaConteo EdConteo;
+              switch(params.TiposDeConteo) {
+                   case     "SoloSpam": EdConteo = new ExtrategiaConteo('spam-count'); break;
+                   case "TodoLosMails": EdConteo = new ExtrategiaConteo('email-count'); break;
+                   default:
+                     tablero.errors.add "Tipo no valido"
+                     respond tablero.errors, view:'edit'
+                     return
+              }
 
-               tablero.agregarInstrumento(new Instrumento (EdVisualizacion))
+
+
+               tablero.agregarInstrumento(new Instrumento (EdVisualizacion, EdConteo))
 
         		   tablero.save flush:true
 
@@ -117,15 +128,22 @@ class TableroController {
                }
           }
 
-          	def RecibirDato(Tablero tablero) {
+    def RecibirSpam (Tablero tablero){
+      RecibirDato (tablero, '{"spam" true}')
+    }
+
+    def RecibirNoSpam (Tablero tablero){
+      RecibirDato (tablero, '{"spam" false}')
+    }
+
+    def RecibirDato(Tablero tablero, String dato) {
                   if (tablero == null) {
                       transactionStatus.setRollbackOnly()
                       notFound()
                       return
                   }
 
-                 tablero.datos.tomarDatos()
-                 tablero.texxt()
+                 tablero.datos.tomarDatos(dato)
                  tablero.datos.moke++
 
                  for(Instrumento listener : tablero.datos.listeners) {

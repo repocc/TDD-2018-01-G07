@@ -12,8 +12,8 @@ class Instrumento {
     falsoGrafico = "nada"
   }
 
-  public Instrumento (ExtrategiaVisualización EV){
-    conteo = new ExtrategiaConteo()
+  public Instrumento (ExtrategiaVisualización EV, ExtrategiaConteo EC){
+    conteo = EC
     visualización = EV
     falsoGrafico = "nada"
   }

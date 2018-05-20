@@ -36,12 +36,12 @@
                   <div style="border-style:solid;border-color:black;border-width:1px;background-color:#E0FFFF;width:350px;text-align:center">
                     <table width="300" >
                       <tr>
-                        <td>DatoNuevo:</td>
-                        <td><g:textField name="DatoNuevo" value="" /></td>
+                        <td> &nbsp; </td>
+                        <td><g:actionSubmit action="RecibirSpam" value="spam"/></td>
                       </tr>
                       <tr>
                         <td> &nbsp; </td>
-                        <td><g:actionSubmit action="RecibirDato" value="Cargar"/></td>
+                        <td><g:actionSubmit action="RecibirNoSpam" value="noSpam"/></td>
                       </tr>
                     </table>
                   </div>
@@ -60,8 +60,10 @@
                             </tr>
                             <tr>
                               <td>TiposDeConteo:</td>
+                              <td>
+                                <g:select name="TiposDeConteo" from="${['SoloSpam', 'TodoLosMails']}" />
+                              </td>
                             </tr>
-
                             <tr>
                               <td> &nbsp; </td>
                               <td><g:actionSubmit action="agregarTablero" value="Crear"/></td>
