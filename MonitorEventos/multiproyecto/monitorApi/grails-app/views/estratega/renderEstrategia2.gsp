@@ -38,7 +38,7 @@
 	<div class="contenedor">
 <!------------------CONTENEDOR----------------------------->		
 		<div class"contenedor"id="imagen_fondo">
-			<g:img dir="images/imagenes/body_fondo_lisos" file="blog-2.jpg" />
+			<asset:image src="imagenes/body_fondo_lisos/blog-2.jpg" absolute="true"/>
 		</div><!--Fin imagen_fondo-->
 		
 		<div class="contenido">
@@ -50,18 +50,15 @@
 	
 	
 			<div class="boton" id ="derivacion_botones">
-				<g:form name="miForm_1" url="[action:'iniciar',controller:'publicador' ]" id="form_1">
+				<g:form name="miForm_1" controller="estratega" id="form_1">
 					
-					<g:actionSubmit value="volver"/>
+					<g:actionSubmit value="volver" action="derivar_IniciarMonitor"/>
 					
-				</g:form>
-				<g:form name="miForm_2" url="[action:'derivar_inicioGrails',controller:'publicador']" id="form_2">
 				
-					<g:actionSubmit value="Inicio Grails"/>
+					<g:actionSubmit value="Inicio Grails" action='derivar_InicioGrails'/>
 				
 				</g:form>
 			</div><!--Fin derivacion_botones-->
-		
 <!------------------CONTENIDO FIN----------------------------->	
 		</div><!--Fin contenido-->
  <!------------------CONTENEDOR FIN-----------------------------> 

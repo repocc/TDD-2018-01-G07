@@ -15,23 +15,30 @@ class PublicadorController  {
 	def iniciar(){
 		render (view:'iniciarMonitor')
 	}
-	def derivar_inicioGrails(){ 
+	def derivar_Iniciar(){
+		redirect (action:"iniciar")
+	}
+	def derivar_InicioGrails(){ 
 		redirect (uri: '/' )
 		}
 	def derivar_Reglas(){
 		render (Regla.reglamento)
 	}	
     def derivar_estrategia_1(){ 
-		redirect (controller:"estratega", action:"renderizar_estrategia1" )
+		redirect (controller:"estratega", action:"derivar_estrategia_1" )
 		}
 	def derivar_estrategia_2(){ 
-		redirect (controller:"estratega", action:"renderizar_estrategia2")
+		redirect (controller:"estratega", action:"derivar_estrategia_2")
 		}
 	def derivar_TicketController(){
 		redirect (controller:"ticket", action:"renderizar_Tickets")
-		}		
-    def derivar_TicketShow(){
+		}
+	def derivar_TicketShow(){
 		flash.message = "Agrege un id para visualizar un ticket específico.(En el campo de direcciones del navegador)"
+		redirect (uri:'/ticketsmock')
+	}			
+    def derivar_AgregarTicket(){
+		
 		redirect (controller:"ticket", action:"index")
 		}
     /*

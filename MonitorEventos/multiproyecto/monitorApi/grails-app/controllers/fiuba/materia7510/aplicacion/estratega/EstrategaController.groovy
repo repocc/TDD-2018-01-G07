@@ -13,8 +13,13 @@ static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def index() {
 		flash.message ="Aqui crear indice. Se retorna al inicio."
-		redirect(uri:'/')
-			
+		redirect(uri:'/')		
+	}
+	def derivar_IniciarMonitor(){
+		redirect (controller:"publicador", action:"derivar_Iniciar" )
+	}
+	def derivar_InicioGrails(){
+		redirect (uri:'/')
 	}
 	def derivar_estrategia_1(){ 
 		render (view: "renderEstrategia1") 

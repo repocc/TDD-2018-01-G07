@@ -10,8 +10,8 @@
 	* {
     box-sizing: border-box;	
 	
-	body #imagen_fondo {
-		margin: 1%;
+	body {
+		margin: 10%;
 		font-family: Arial;
 		font-size: 17px;		
 		<!--background-image: url("img_tree.gif");-->
@@ -19,11 +19,12 @@
 		background-attachment: fixed;
 		background-size:100%;
 	}
-	.contenedor img {vertical-align: middle;} <!--colocar img junto con body y verificar-->
+	.contenedor, #imagen_fondo  {vertical-align: middle;} <!--colocar img junto con body y verificar-->
 
 	.contenido {
+		text-align: center;
 		position:absolute;
-		bottom: 10%;
+		bottom: 1%;
 		background: rgba(0, 0, 0, 0.5); /* Black background with transparency */
 		color: #f1f1f1;
 		width: 100%;
@@ -31,6 +32,7 @@
 		background-size: cover;
 	}
 	</style>
+	
 </head>
 
 	
@@ -38,7 +40,7 @@
 	<div class="contenedor">
 <!------------------CONTENEDOR----------------------------->		
 		<div class"contenedor"id="imagen_fondo">
-			<g:img dir="images/imagenes/body_fondo" file="body1.jpg" />
+			<asset:image src="imagenes/body_fondo/body1.jpg" absolute="true" />
 		</div><!--Fin imagen_fondo-->
 		
 		<div class="contenido">
@@ -53,11 +55,14 @@
 				<g:form name="miForm" controller="publicador">
 					<g:actionSubmit value="Estrategia_1" action="derivar_estrategia_1" />
 					<g:actionSubmit value="Estrategia_2" action="derivar_estrategia_2"/>
+					<g:actionSubmit value="Agregar Ticket" action="derivar_AgregarTicket"/>
 					<g:actionSubmit value="Tickets_Test" action="derivar_TicketController"/>
 					<g:actionSubmit value="Tickets_JSON" action="derivar_TicketShow"/>
-					<g:actionSubmit value="Inicio Grails" action="derivar_Reglas"/>
-					<g:actionSubmit value="Inicio Grails" action="derivar_inicioGrails"/>
+					
+					<g:actionSubmit value="Reglas" action="derivar_Reglas"/>
+					<g:actionSubmit value="Inicio Grails" action="derivar_InicioGrails"/>
 				</g:form>
+				
 			</div><!--Fin derivacion_botones-->
 		
 <!------------------CONTENIDO FIN----------------------------->	

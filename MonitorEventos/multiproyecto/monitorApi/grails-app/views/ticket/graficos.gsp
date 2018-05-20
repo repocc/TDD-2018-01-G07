@@ -12,7 +12,7 @@
 	sino se usa la ultima actualizada------------>
 	<asset:javascript src="libreria_grafica/js/jquery_canvas/jquery.canvasjs.min.js"/>
 	<asset:javascript src="libreria_grafica/js/jquery_canvas/canvasjs.min.js"/>
-	<asset:javascript src="libreria_grafica/js/chartjs/Chart.js"/>
+	<asset:javascript src="libreria_grafica/js/chartjs/Chart.bundle.js"/>
 	
 	<style>
 	
@@ -53,31 +53,34 @@ $('#boton_poll_dona_1').one('submit', function() {
 });
 
 /****************************************/
-
+/*
 $(‘.clickme’).dblclick(function() {
 	alert(‘You double-clicked on something.’);
 });
+*/
+/*
 $(‘#textbox2’).focus(function() {
 alert(‘textbox2 has focus’);
 });
+*/
 /* EVENTOS HOVER*/
+/*
 $(‘#mouseoverme’).hover(
-function() {
-$(‘#outputdiv’).text(‘You moused over the image.’);
-},
-function(){
-$(‘#outputdiv’).text(‘You moused out of the image.’);
-});
-
+	function() {
+		$(‘#outputdiv’).text(‘You moused over the image.’);},
+		function(){
+			$(‘#outputdiv’).text(‘You moused out of the image.’);
+		});
+*/
 function remplazarTexto (selector,texto){
 /**Remplaza todos los div*/
 	$(selector).text(texto) ;
 };
-
+/*
 $(‘div’).append(‘ Lynn’);
 $(“p”).replaceWith(“<div>I am a div</div>”) ;
 $(“p”).replaceWith('<div style=background-color:#aaaaaa>' + $(“p”).html() + “</div>”) ;
-
+*/
 	</script>
 	<script>
 	
@@ -108,16 +111,20 @@ xmlhttp.send();
 }
 	
 function solicitar_datos_y_dibujar(url_origen, selector, funcion_callback) {
-		    
+	var sel = selector;
+			    
   $.ajax({
-		url: url_origen,		//"${createLink(controller:'chart', action:'toppings')}",
+		url: url_origen,
+		contexto: sel,					//"${createLink(controller:'chart', action:'toppings')}",
 		dataType: "json",
-		async: true,
+		async: true,			//por default es true, lo pongo por aclaración: asincrónico.
 		})
-		.done(function(selector, jsonData) {
-			alert('Datos llegando...FALTA APLICAR FUNCION');
-			console.log (mensaje_estandard);
-			funcion_callback(selector,jsonData);
+		.done(function(jsonData,textStatus) {
+			console.log('Datos llegando de Servidor status...' + textStatus);
+			
+			console.log ("AJAX dato selector: " + this.contexto );
+			console.log ("AJAX dato json: " + jsonData.etiqueta );
+			funcion_callback(this.contexto,jsonData);
 		})
 		
 		.fail(function() {
@@ -128,6 +135,7 @@ function solicitar_datos_y_dibujar(url_origen, selector, funcion_callback) {
 	</script>
 	
 	<script>
+	/*
 		var nota = "Nota:";
 		nota += " In JavaScript, keys can be strings, numbers, or identifier names:";
 		nota += "---In JSON, values must be one of the following data types: a string,a number, an object (JSON object),an array, boolean o null.";
@@ -153,9 +161,12 @@ function solicitar_datos_y_dibujar(url_origen, selector, funcion_callback) {
 		nota6 += "You access the array values by using the index number: x = myObj.cars[0]";
 		alert (nota6);
 		var nota7 = "Variante array de array en JSON: ";
-		nota7 += 'myObj = {"name":"John","age":30,"cars": [{ "name":"Ford", "models":[ "Fiesta", "Focus", "Mustang" ] },{ "name":"BMW", "models":[ "320", "X3", "X5" ] },{ "name":"Fiat", "models":[ "500", "Panda" ] }]}";
+		nota7 += 'myObj = {"name":"John","age":30,"cars": [{ "name":"Ford", "models":[ "Fiesta", "Focus", "Mustang" ] },{ "name":"BMW", "models":[ "320", "X3", "X5" ] },{ "name":"Fiat", "models":[ "500", "Panda" ] }]}';
 		alert (nota7);
+	
+	*/
 	</script>
+	
 	<script>
 	
 	/**Nota importante:
@@ -192,25 +203,29 @@ function poll_Jquery(servidor,selector,funcion_callback) {
 			jsonpCallback	Specifies a name for the callback function in a jsonp request.
 			error(xhr,status,error)	A function to run if the request fails.
 			*/
+			
+			var sel = selector; //sin esta variable no pasa directo de los parametros.
 			setTimeout(function() {
 			
 				$.ajax({ 
 					url			: servidor, 	//Specifies the URL to send the request to. Default is the current page.
 					type		: "GET",		//Specifies the type of request. (GET or POST)
+					contexto	: sel,
 					success		: function (data) {
 					
-					alert(data);
-					console.log (data);
-					funcion_callback(selector,data);},
+					
+					console.log (data.valor);
+					console.log (data.etiqueta);
+					funcion_callback(this.contexto,data);},
 					
 					error: function(xhr){
 								alert("Un error ha ocurrido: " + xhr.status + " " + xhr.statusText);},
 								 
 					dataType	: "json", 		//dataType	The data type expected of the server response.
-					complete	: poll_Jquery,
-					timeout		: 2000			//The local timeout (in milliseconds) for the request
+					//complete	: poll_Jquery,
+					timeout		: 10000			//The local timeout (in milliseconds) for the request
 		 });
-	}, 10000);/*Fin setTimeout*/
+	}, 20000);/*Fin setTimeout*/
 };
 
 	
@@ -228,8 +243,9 @@ function poll_Jquery(servidor,selector,funcion_callback) {
 		  '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'];
 		  
 	function color_Random (){
-	var rand = colorArray[Math.floor(Math.random() * colorArray.length)];
-	rand;
+		var rand = colorArray[Math.floor(Math.random() * colorArray.length)];
+		
+		return rand;
 	}
 	</script>
 	<script>
@@ -259,14 +275,27 @@ var contador = 0;
 
  /*************************************************/
  function iniciar_Configuracion_Dona(){
-	
-			{ 
-			type: 'doughnut', //podria ser tambien 'pie', la misma estructura.
+				//type: podria ser tambien 'pie', la misma estructura.
+				//labels:esto son las etiquetas por valor 
+		 
+	var	 config = { 
+			type: 'doughnut', 
+						
 			data: {
-				datasets: [{data: [],backgroundColor: [],label: 'SET DE DATOS #1 solo uno'}],
-				labels: [] //esto son las etiquetas por valor 
+				datasets: [{
+					
+					data: [], 
+				
+				backgroundColor: [color_Random()], 
+				
+				
+				label: 'SET DE DATOS #1 solo uno'}],
+				
+				
+				labels	:[]
 			},
-			options: {
+			options:
+				{
 				responsive: true,
 				legend: {
 					position: 'top',
@@ -279,79 +308,100 @@ var contador = 0;
 					animateScale: true,
 					animateRotate: true
 				}
-			}
+				}
 		};
+		return config;
 };
 
-/**********************************************************/
+	/**********************************************************/
  
- /**
- Silent failures on $.getJSON calls: 
- This might happen if, e.g., jsoncallback=json1234 has been used, 
- while the function json1234() does not exist. 
- In such cases the $.getJSON will silently error. 
- We should therefore always use jsoncallback=? 
- to let jQuery automatically handle the initial callback.
- ERRORES posibles:
- We have to make sure that the JSON returned by the server 
- is in the correct format with the correct MIME-type being used.
-We can try to use $.get instead of $.getJSON as it might be that
- our server returns invalid JSON. 
- Also if JSON.parse() fails on the returned text we immediately 
- know that the JSON is to blame.
-We can check the data that is being returned by logging it to the console. 
-This should then be the input for further investigations.
- 
- */
- var configuracion_dona_chartjs = null;
+	 /**
+	 Silent failures on $.getJSON calls: 
+	 This might happen if, e.g., jsoncallback=json1234 has been used, 
+	 while the function json1234() does not exist. 
+	 In such cases the $.getJSON will silently error. 
+	 We should therefore always use jsoncallback=? 
+	 to let jQuery automatically handle the initial callback.
+	 ERRORES posibles:
+	 We have to make sure that the JSON returned by the server 
+	 is in the correct format with the correct MIME-type being used.
+	We can try to use $.get instead of $.getJSON as it might be that
+	 our server returns invalid JSON. 
+	 Also if JSON.parse() fails on the returned text we immediately 
+	 know that the JSON is to blame.
+	We can check the data that is being returned by logging it to the console. 
+	This should then be the input for further investigations.
+	 
+	 */
+var configuracion_dona_chartjs = null;
  
 var dibujar_Dona_chartjs = function dibujarDona(selector,dato_json) {
    /*LIBRERIA CHART.JS*/ 
    /*http://www.chartjs.org/samples/latest/charts/doughnut.html*/
+   console.log(dato_json.etiqueta);
+   console.log (dato_json.valor);
+   console.log(dona_grafico);
+   console.log(selector);
+   
    if (dona_grafico == null){
 			/**Dibuja un dona sin datos pero configurado el "dataset"*/
 		   configuracion_dona_chartjs = iniciar_Configuracion_Dona();
-		   function() {
-					var ctx = document.getElementById(selector).getContext('2d');
-					torta_grafico = new Chart(ctx, configuracion_dona_chartjs);
+		   console.log(configuracion_dona_chartjs);
+	
+	
+		var graficar =	function(selector,dato_json,configuracion_dona_chartjs) {
+								
+								console.log(selector);
+								var ctx = document.getElementById(selector).getContext('2d');
+								console.log("Valor de ctx " + ctx);
+								dona_grafico = new Chart(ctx, configuracion_dona_chartjs);
+								//agrego atributo a window , que es un objeto global de JS y es la ventana del navegador tambien
+								console.log(dona_grafico);
+								
+								if (dato_json != null){
+									
+									agregarDato_torta(configuracion_dona_chartjs,selector,dato_json);
+								};	
 					
-					if (dato_json != null){
-						
-						agregarDato_torta(torta_grafico,selector,dato_json);
-					}
-					grafico.update(); 
-					return;
-	};
+						};//fin funcion interna
+					graficar(selector,dato_json,configuracion_dona_chartjs);
+					dona_grafico.update(); 
 	}else{
 		/*agregar datos*/
+		console.log("Agrega dato");
+		agregarDato_torta(configuracion_dona_chartjs,selector, dato_json);
 		
-		agregarDato_torta(torta_grafico,selector, dato_json);
-		
-			grafico.update();
+			dona_grafico.update();
 			return; 
 		}
 	
-	
+	console.log("SALIENDO.");
 };
 
 
-function agregarDato_torta(grafico,selector,dato_json){
-	if(grafico == null){
-		grafico = dibujarDona (selector,dato_json)	;
-	}else{
-			
-			contador += contador;
-			var cero = 0;
-			var etiqueta = "Dato #" + contador;
-			var color = color_Random();
-			grafico.data.datasets[cero].data.push(dato_json.valor);
-			
-			grafico.data.datasets[cero].backgroundColor.push(color);
-			
-			grafico.data.labels.push(etiqueta);
-			
+function agregarDato_torta(config, selector,dato_json){
+	/*Se agregan al la configuracion los datos por separado.
+	No forman parte del objeto graficador*/
+	
+	if (dona_grafico == null){
+		var ctx = document.getElementById(selector).getContext('2d');
+		console.log("Valor de ctx en agregar dato() " + ctx);
+		dona_grafico = new Chart(ctx, iniciar_Configuracion_Dona());
+								
+	}
+	
+	contador += contador;
+	var cero = 0;
+	var etiqueta = "Dato #" + contador;
+	var color_rnd = color_Random();
+	console.log
+	config.data.datasets[cero].data.push(dato_json.valor);
+	config.data.datasets[cero].backgroundColor.push(color_rnd);
+	
+	config.data.labels.push(dato_json.etiqueta);
+
 			      
-}};
+};
 
 	</script>
 </head>
@@ -360,9 +410,10 @@ function agregarDato_torta(grafico,selector,dato_json){
 	
 	
  <div class="contenedor">
+			 <h1>Gráficos</h1>	
 			 <div id="eventos_test">
-				 <img src=”images/home.gif” id=”mouseoverme”>
-				 <div id=”outputdiv”>Este texto cambiará.</div>
+				 <asset:image src="imagenes/body_fondo/body2.jpg" absolute="true"/>
+				 <div id=”mouseoverme”>Este texto cambiará.</div>
 			 </div>	
   <!--<img src="/w3images/notebook.jpg" alt="Notebook" style="width:100%;hight:100%">-->
   <div class="contenido">
@@ -386,13 +437,13 @@ function agregarDato_torta(grafico,selector,dato_json){
 						
 						<div type="submit" class="btn_dona" id="botones_dona_1">
 							<button type="button" class="btn_dona" id="boton_dona_1"
-							onClick="dibujar_Dona_chartjs('#dona_1',{ valor: 25, etiqueta: 'valorSimuladoFijo'})">Agregar Datos Simulando</button>
+							onClick="dibujar_Dona_chartjs('dona_1',{ valor: 25, etiqueta: 'valorSimuladoFijo'})">Agregar Datos Simulando</button>
 							
 							<button type="button" class="btn_dona" id="boton_GetOnlyOne_dona_1"
-							onClick="solicitar_datos_y_dibujar('localhost:8080/ticket/enviar','#dona_1',dibujar_Dona_chartjs)">solicitar Datos Uno a la vez-</button>
+							onClick="solicitar_datos_y_dibujar('http://localhost:8080/ticket/enviar','dona_1',dibujar_Dona_chartjs)">solicitar Datos Uno a la vez-</button>
 							
 							<button type="button" class="btn_dona" id="boton_poll_dona_1"
-							onClick="poll_Jquery('localhost:8080/ticket/enviar','#dona_1',dibujar_Dona_chartjs)">solicitar Datos indiscriminadamente POLLING-Deshabilitara sendos botones-</button>
+							onClick="poll_Jquery('http://localhost:8080/ticket/enviar','dona_1',dibujar_Dona_chartjs)">solicitar Datos indiscriminadamente POLLING-Deshabilitara sendos botones-</button>
 						
 						</div><!--botones_dona_1-->
 
@@ -407,9 +458,9 @@ function agregarDato_torta(grafico,selector,dato_json){
 	</div><!--contenedor_Grafico-->
 	
 <!-------------Fin CONTENEDOR Graficos-------------------------------------------->	
-    <h1>Monitor Eventos</h1>
+    <h3>Monitor Eventos</h3>
     
-    <h2>Tickets-Testeo Comunicacion-Callback-Polling-JS-GRAILS: THE WEB LAYER (fuente principal)-</h2>
+    <h4>Tickets-Testeo Comunicacion-Callback-Polling-JS-GRAILS: THE WEB LAYER (fuente principal)-</h4>
 	
 	<div class="boton" id ="derivacion_botones">
 		<g:form name="miForm_1" url="[action:'iniciar',controller:'publicador' ]" id="form_1">

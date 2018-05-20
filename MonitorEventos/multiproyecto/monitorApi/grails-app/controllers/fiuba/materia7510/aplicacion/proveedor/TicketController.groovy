@@ -212,11 +212,13 @@ class TicketController {
 		
 	def enviar(){
 			println "solicitado dato Action enviar..."
-											
-			render ([valor: 10, etiqueta:"contadorTotal" ], status: 200)
+				sleep (2000)
+				render ([valor: 10, etiqueta:"contadorTotal" ] as JSON)
+				
+			//render ([valor: 10, etiqueta:"contadorTotal" ], status: 200)
 			//render ([value: 10] as JSON)
 			//respond ([value: 10], status:200)
-			sleep (2000)		
+					
 	}
 		
 }
