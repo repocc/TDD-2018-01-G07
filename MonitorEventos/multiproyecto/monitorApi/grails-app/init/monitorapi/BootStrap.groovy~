@@ -1,9 +1,6 @@
 package monitorapi
 
-import fiuba.materia7510.aplicacion.proveedor.Estado
-import fiuba.materia7510.aplicacion.proveedor.Flujo
-import fiuba.materia7510.aplicacion.proveedor.Ticket
-import fiuba.materia7510.aplicacion.proveedor.TicketMock
+import fiuba.materia7510.aplicacion.proveedor.E
 import fiuba.materia7510.aplicacion.generador.Regla
 import fiuba.materia7510.aplicacion.generador.Estadio
 import fiuba.materia7510.aplicacion.MotorService
