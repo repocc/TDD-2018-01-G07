@@ -128,7 +128,8 @@ class TicketController {
 	 * 
 	 * */
 	 def procesar(){
-		
+		def reglamento = null
+		reglamento = Regla.first()
 		//ticket_mock = chainModel.ticket
 		
 		println "Procesar invocado..."
@@ -153,20 +154,22 @@ class TicketController {
 			*/
 			 
 		}
-		else (Regla.reglamento != null){
+		else (reglamento != null){
 			/**************PROCESAMIENTO**************************/
 			def contadorTotal = 0
 			def ct= 0
 			def cr= 0
-			def reglas           = Regla.reglamento
+			def reglas           = reglamento
 			def nombre_contadorTotal 	= 'email-count'
 			def nombre_contador1		= 'spam-count'
 			def dato 			= ticket_mock.titulo		
 			def arg		= '[]'
 			
-			def st0 = Estadio.estatus
+			def estatus = Estadio.first()
 			
-			def retorno=	MotorService.inicializar_procesador (Regla.reglamento)?:null
+			def st0 = estatus.estadio
+			
+			def retorno=	MotorService.inicializar_procesador (reglas)?:null
 			
 			def st1 = MotorService.process_data_dropping_signals( st0 ,dato)?:null
         
@@ -182,9 +185,9 @@ class TicketController {
 				println "Enviando ...: ${ticket_mock}"
 				
 				
-				
-				Estadio.estatus = st1
-				
+				 //actualizacion estado , 
+				estatus.estadio = st1
+				estatus.save(flush:true)
 				
 				println "Enviando ...: ${contadorTotal}"				
 				
@@ -193,7 +196,7 @@ class TicketController {
 				
 				println "durmiento........."
 				
-				sleep (1000)
+				sleep (500)
 				
 				procesado = true
 				}
@@ -212,7 +215,7 @@ class TicketController {
 		
 	def enviar(){
 			println "solicitado dato Action enviar..."
-				sleep (2000)
+				sleep (1000)
 				render ([valor: 10, etiqueta:"contadorTotal" ] as JSON)
 				
 			//render ([valor: 10, etiqueta:"contadorTotal" ], status: 200)

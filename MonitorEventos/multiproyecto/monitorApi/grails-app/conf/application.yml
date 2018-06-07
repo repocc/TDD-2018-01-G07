@@ -86,6 +86,10 @@ endpoints:
         unique-names: true
 
 ---
+grails:
+    cors:
+        enabled: true
+---
 hibernate:
     cache:
         queries: false

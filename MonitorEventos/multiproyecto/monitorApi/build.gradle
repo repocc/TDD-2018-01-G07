@@ -14,7 +14,8 @@ buildscript {
 		"classpath:resources/definiciones/definiciones.clj"
 		"classpath:resources/funcionesEspeciales/funcionesEspeciales.clj"
 		"classpath:resources/utiles/operacionesRecursivas.clj"
-    
+		"classpath:resources/cheshire/core.clj"
+		
     }
 }
 
