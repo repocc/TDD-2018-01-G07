@@ -1,7 +1,7 @@
 package monitorapi
 
 class UrlMappings {
-
+	/*"/"(uri: '/static/webapp/tema_graficos/chartjs.html')*/
     static mappings = {
         "/$controller/$action?/$id?(.$format)?"{
             constraints {
@@ -12,5 +12,6 @@ class UrlMappings {
         "/"(view:"/index")
         "500"(view:'/error')
         "404"(view:'/notFound')
+        
     }
 }

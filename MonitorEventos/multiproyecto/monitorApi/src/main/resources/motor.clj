@@ -1,5 +1,6 @@
 (ns motor
-  (:require [data-processor :refer :all]))
+  (:require 	[data-processor :refer :all]
+				[cheshire.core :refer :all]))
 
 (defn saludar []
 	(println "Hola Mundo. Soy el motor-clojure.")
@@ -30,6 +31,80 @@
  
  (query-counter state nombreContador [])
 )
+
+;;***************************************************************
+;; procesar_datos y recuperar sennales
+(defn procesar_datos_recuperar_sennales [state new-data]
+(second (procesar_datos state new-data))
+
+) 
+
+;;***************************************************************
+;;Convertir Dato en formato JSON a formato soportado por proyecto:api clojure
+;;keyFormato: true (:foo) o false ()
+
+(defn decodificar_JsonFormato_a_MapFormatoClojure [datoJSON keyFormato]
+	(if (keyFormato)
+		(parse-string datoJSON true)
+		(parse-string datoJSON))
+)
+(defn codificar_MapFormatoClojure_a_JsonFormato [datoMapFormatoClojure]
+	
+		(generate-string datoMapFormatoClojure)
+		
+)
+
+;;***************************************************************
+;; Dar Formato para graficar a :contadores :sennales de ESTADO(state)
+ (defn vectorizar [ mapaEstado]
+ 	
+ (let [	coleccion mapaEstado
+	resto_coleccion		(rest coleccion)
+ 	par_clave_valor 	 (first coleccion) 		
+ 	clave 		 (first par_clave_valor)
+ 	valor  (last (last par_clave_valor))
+ 	 ]
+ 	 (println "_______________")
+ 	 (println "Coleccion actual: " coleccion)
+ 	 (println "_______________")
+ 	 (println "clave: " clave)
+ 	 (println "_______________")
+ 	 (println "valor_final:" valor)
+ 	 (println "_______________")
+ 	 (println "_______________")
+ 	
+ 	(if-not (empty? resto_coleccion)	
+
+	 	(if (= (type valor) (type []))
+	 		(conj	[clave (last valor)] (vectorizar resto_coleccion))		
+	 		
+	 		(conj 
+		 		(apply vector(flatten (map vector 
+		 		(apply vector (map keyword (map #(str (name clave) % ) (keys valor))))
+		 		(into [](flatten (vals valor))))))
+		 		(vectorizar resto_coleccion)))
+		(if (= (type valor) (type []))
+	 		[clave (last valor)]		
+	 			 		 
+	 		(apply vector(flatten (map vector 
+	 		(apply vector (map keyword (map #(str (name clave) % ) (keys valor))))
+	 		(into [](flatten (vals valor)))))))	 		
+	 );end if-not
+))
+ 
+ ;/*******************************************/
+ ;;se pasa por parametro por ejemplo diccionario de contadores de Estado(state)
+ (defn mapear_aplanar_resultados_del_Estado [mapa]
+ (if (empty? mapa)
+ 	{}
+ (let [
+	coleccion 			 mapa
+ 	
+ 	resultado 			 (apply hash-map (flatten(vectorizar coleccion ))) ] 
+    resultado )))
+
+;;***********EJEMPLO SALIDA ESTADO*********************************
+; {:Contadores {:Ticket-Contador [[] true [6]], :Ticket-Contador-Emisor [[(current EMISOR)] true {[AUGUSTO] [5], [Euriterco] [1]}], :Ticket-Contador-Rojo [[] (starts-with? (current ESTADIO) R) [3]], :enviado-por [[(current EMISOR)] (and (= (current EMISOR) (past EMISOR)) (includes? (past tema) (current tema))) {[AUGUSTO] [4]}]}, :ContadorSteps {}, :Sennales {:Ticket-fraction-Rojo [(/ (counter-value Ticket-Contador-Rojo []) (counter-value Ticket-Contador [])) true]}, :DatosPasados {{Ticket 12345, EMISOR AUGUSTO, RECEPTOR Propiedad de Arevalo, ESTADIO Rojo, tema colores} true, {Ticket 54321, EMISOR AUGUSTO, RECEPTOR Propiedad de Arevalo, ESTADIO Azul, tema colores} true, {Ticket 111, EMISOR Euriterco, RECEPTOR Propiedad de Arevalo, ESTADIO Verde, tema colores} true}}
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;(defn iniciar_test [rules]		
@@ -106,3 +181,4 @@
 								dato))
 		
  )))
+ 

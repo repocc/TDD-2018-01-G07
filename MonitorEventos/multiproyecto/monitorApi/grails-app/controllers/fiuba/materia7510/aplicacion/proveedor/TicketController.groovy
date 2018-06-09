@@ -3,10 +3,20 @@ package fiuba.materia7510.aplicacion.proveedor
 import grails.validation.ValidationException
 import static org.springframework.http.HttpStatus.*
 
+import grails.converters.JSON
+
+import fiuba.materia7510.aplicacion.generador.Estadio
+import fiuba.materia7510.aplicacion.generador.Regla
+
+import fiuba.materia7510.aplicacion.MotorService
+
+
 class TicketController {
 
     TicketService ticketService
-
+	
+	TicketMock ticket_mock = null
+    
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def index(Integer max) {
@@ -29,7 +39,17 @@ class TicketController {
         }
 
         try {
-            ticketService.save(ticket)
+			
+			Ticket tic = ticketService.save(ticket)
+            
+            
+            //chain(action: "procesar", model: [ticket: tic])
+            
+            //forward para ir a otro lugar sin un request Http.
+            //forward controller: "motor", action: "procesar", params: ticket.properties
+         
+            //redirect(controller:"motor", action: "sampleAction")
+            
         } catch (ValidationException e) {
             respond ticket.errors, view:'create'
             return
@@ -96,4 +116,131 @@ class TicketController {
             '*'{ render status: NOT_FOUND }
         }
     }
+
+	/**NOTA IMPORTANTE 
+	 * 
+	 * Due to the way Groovy works, 
+	 * while responding with a Map and arguments 
+	 * it is important to respond in this manner 
+	 * respond([:], status: 200) instead of this manner 
+	 * respond([:], [status: 200]). 
+	 * Failure to do so will result in the arguments being reversed.
+	 * 
+	 * */
+	 def procesar(){
+		def reglamento = null
+		reglamento = Regla.first()
+		//ticket_mock = chainModel.ticket
+		
+		println "Procesar invocado..."
+		
+		boolean procesado = false
+		
+		ticket_mock = TicketMock.first()
+		
+		if (ticket_mock == null) 
+		{ 
+			/**Se envía mensaje pero sino tomar de la base de datos conviene, e ir borrando*/
+			flash.message = "EL objeto ticket mock es NULL. Se cancela petición. ERROR 204:"
+			render(status: 204, text: 'No hay tickets.')
+			
+			/**
+			204 No Content:La petición se ha completado con éxito,
+			pero su respuesta no tiene ningún contenido, 
+			aunque los encabezados pueden ser útiles. 
+			El agente de usuario puede actualizar sus encabezados en caché, 
+			para este recurso con los nuevos valores.
+
+			*/
+			 
+		}
+		else (reglamento != null){
+			/**************PROCESAMIENTO**************************/
+			def contadorTotal = 0
+			def ct= 0
+			def cr= 0
+			def reglas           = reglamento
+			def nombre_contadorTotal 	= 'email-count'
+			def nombre_contador1		= 'spam-count'
+			def dato 			= ticket_mock.titulo		
+			def arg		= '[]'
+			
+			def estatus = Estadio.first()
+			
+			def st0 = estatus.estadio
+			
+			def retorno=	MotorService.inicializar_procesador (reglas)?:null
+			
+			def st1 = MotorService.process_data_dropping_signals( st0 ,dato)?:null
+        
+			 contadorTotal = MotorService.consultar_contador( st1, nombre_contadorTotal,arg)?:null
+			
+			//def contador1 	  =	MotorService.consultar_contador( st2, nombre_contador1,arg)?:null
+			
+			 println "Contador Total: ${contadorTotal}"
+			 
+			
+			if ((st1 != null) && (contadorTotal != null))	{
+				
+				println "Enviando ...: ${ticket_mock}"
+				
+				
+				 //actualizacion estado , 
+				estatus.estadio = st1
+				estatus.save(flush:true)
+				
+				println "Enviando ...: ${contadorTotal}"				
+				
+				render( model:	[valor: contadorTotal, etiqueta: nombre_contadorTotal ])
+				
+				
+				println "durmiento........."
+				
+				sleep (500)
+				
+				procesado = true
+				}
+			/**********************FIN PROCESAMIENTO*******************/	
+			}
+			println("Eliminando ticket de la base de datos")
+			
+			procesado?ticket_mock?.delete(flush:true):false
 }
+	
+	def renderizar_Tickets(){
+		
+		render view: "graficos"
+		}
+		
+		
+	def enviar(){
+			println "solicitado dato Action enviar..."
+				sleep (1000)
+				render ([valor: 10, etiqueta:"contadorTotal" ] as JSON)
+				
+			//render ([valor: 10, etiqueta:"contadorTotal" ], status: 200)
+			//render ([value: 10] as JSON)
+			//respond ([value: 10], status:200)
+					
+	}
+		
+}
+
+
+
+
+
+
+
+
+			/*
+			render(view: "graficos", 	model: 	[consulta:	[contadorTotal: ct, contador1: cr],
+										dato: 	[ticket:	ticket_mock]])
+			
+			*/
+										
+										
+			/*respond(	[consulta:	[contadorTotal: ct, contador1: cr],
+							dato: 	[ticket:ticket_mock]] , status: 200) 
+			*/
+			

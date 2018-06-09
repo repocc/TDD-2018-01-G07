@@ -73,6 +73,7 @@ class TicketController {
                return
         }
         ticket.estado = ticket.estadoCompleto.nombre
+        ticket.mensaje = "{" + ticket.estado + " true }"
 
 
         ticket.save flush:true

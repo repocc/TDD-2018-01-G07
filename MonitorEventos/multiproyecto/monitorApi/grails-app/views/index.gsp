@@ -74,6 +74,10 @@
             </div>
         </section>
     </div>
-
+	<div id ="derivacion" style="font-family: Arial, Helvetica, sans-serif;font-size:20px;text-align:center;text-shadow: 2px 2px green; background-color: rgba(255, 0, 0, 0.3)">
+			
+			<g:link controller="publicador" action="derivar_Iniciar">"SÍGUEME - ES POR AQUÍ - "</g:link>
+					
+	</div>
 </body>
 </html>

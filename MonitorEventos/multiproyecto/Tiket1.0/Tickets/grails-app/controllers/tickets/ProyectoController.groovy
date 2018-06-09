@@ -129,6 +129,7 @@ class ProyectoController {
                return
         }
         nuevoTicket.estado = nuevoTicket.estadoCompleto.nombre
+        nuevoTicket.mensaje = "{" + "ticket " + nuevoTicket.nombre +  ", estado " + nuevoTicket.estado + "}"
         proyecto.lTickets.add(nuevoTicket)
 
         proyecto.save flush:true

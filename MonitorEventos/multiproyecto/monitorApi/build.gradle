@@ -14,7 +14,8 @@ buildscript {
 		"classpath:resources/definiciones/definiciones.clj"
 		"classpath:resources/funcionesEspeciales/funcionesEspeciales.clj"
 		"classpath:resources/utiles/operacionesRecursivas.clj"
-    
+		"classpath:resources/cheshire/core.clj"
+		
     }
 }
 
@@ -67,9 +68,15 @@ dependencies {
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
     testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
     
+    //***************Deploy Servidor Heroku*********************
+    
+    compile 'com.github.jsimone:webapp-runner:8.5.11.3'
+    
     //*********PARA CLOJURE*************************************   
+    
     compile "org.clojure:clojure:1.10.0-alpha4"
     compile "org.clojure:spec.alpha:0.1.143"
+    compile 'cheshire:cheshire:5.8.0' //Codificador-Decodificador-JSON-Clojure-Encoding-Decoding
     
     //*******************************************************************
     //INFO spec: is a Clojure library to describe the structure of data 
@@ -117,8 +124,43 @@ assets {
     minifyCss = true
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = gradleWrapperVersion
+}
 
-//***********Alternativas para lo mismo
+//***********************************************************************
+/*Heroku deploy: https://devcenter.heroku.com/articles/deploying-gradle-apps-on-heroku#using-webapp-runner-to-deploy-war-files*/
+//PROCFILE:web: cd build ; java -Dgrails.env=prod -jar ../build/server/webapp-runner-*.jar --expand-war --port $PORT libs/*.war
+
+task stage() {
+    dependsOn clean, war
+}
+
+tasks.stage.doLast() {
+    delete fileTree(dir: "build/distributions")
+    delete fileTree(dir: "build/assetCompile")
+    delete fileTree(dir: "build/distributions")
+    delete fileTree(dir: "build/libs", exclude: "*.war")
+}
+
+war.mustRunAfter clean
+
+
+task copyToLib(type: Copy) {
+    into "$buildDir/server"
+    from(configurations.compile) {
+        include "webapp-runner*"
+    }
+}
+
+stage.dependsOn(copyToLib)
+
+//************************************************************
+
+
+
+
+//***********Alternativas para lo mismo*********************************
 task printBuildScriptClasspath {
 
 doLast {
