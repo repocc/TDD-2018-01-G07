@@ -22,7 +22,7 @@ class PublicadorController  {
 		redirect (uri: '/' )
 		}
 	def derivar_Reglas(){
-		render (Regla.reglamento)
+		render view:"seleccionarReglaMaestraVista", model: [reglas:Regla.list()]
 	}	
     def derivar_estrategia_1(){ 
 		redirect (controller:"estratega", action:"derivar_estrategia_1" )
@@ -41,32 +41,8 @@ class PublicadorController  {
 		
 		redirect (controller:"ticket", action:"index")
 		}
-    /*
-     * Alternativa a render
-     * render(contentType: 'application/json'){
-        [
-           'status' : "ok"
-        ]
-		}
-		* 
-		* 
-		* Using the built-in Grails JSON converter makes this easier
-
-			import grails.converters.JSON
-
-		class BookController {
-		def save = {
-		def book = new Book(JSON.parse(yourJson))
-		book.save(flush:true)
-		}
-		}
-		* 
-		* More example usages:
-
-		json(1,2,3) == "[1,2,3]"
-		json { name "Bob" } == '{"name":"Bob"}'
-		json([1,2,3]) { n it } == '[{"n":1},{"n":2},{"n":3}]'
-	****************************************/
+   
+	
 	static responseFormats = ['json']
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 

@@ -1,8 +1,8 @@
 package fiuba.materia7510.aplicacion.generador
 
-import grails.rest.*
+//import grails.rest.*
 
-@Resource(uri='/reglas')
+//@Resource(uri='/reglas')
 class Regla {
 	
 	String nombre
@@ -20,4 +20,7 @@ class Regla {
     	 (text es un caso particular de clob), usar instancia.refresh()
     	 */
     }
+    String toString(){
+			nombre
+	}
 }

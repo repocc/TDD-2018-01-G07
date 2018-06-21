@@ -47,6 +47,7 @@
 )
 
 (defn incrementar_Contador_mapa [counter-name new-data argFN reglas]
+		
 		(let [condicion (second((keyword counter-name) reglas))
           parametros (first((keyword counter-name) reglas))
 		      TablaSalida (last((keyword counter-name) reglas))
@@ -144,15 +145,20 @@
 )
 
 (defn process-data [state new-data]
+	
   (let [salidaNueva (first (aplicar-reglas-Sennales state new-data))
         salidaContadores (aplicar-reglas-Contador state new-data)
         salidaContadoresSteps (aplicarReglasContadorSteps state new-data)
-        pasado (CargarPast new-data (:DatosPasados state))]
-
+        ;;pasado (CargarPast new-data (:DatosPasados state))
+        pasado 	{:almacenamiento "cancelado"}
+        ]
+        
+	
   (let [salida {:Contadores (into (sorted-map) salidaContadores),
                 :ContadorSteps (into (sorted-map) salidaContadoresSteps),
                 :Sennales (:Sennales state),
-                :DatosPasados pasado}]
+                :DatosPasados pasado 
+                }]
    (if (= (count salidaNueva) 0)
 		[salida []]
 		[salida [salidaNueva]]))

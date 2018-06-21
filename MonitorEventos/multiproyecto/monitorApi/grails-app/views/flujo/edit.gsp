@@ -29,12 +29,29 @@
             <g:form resource="${this.flujo}" method="PUT">
                 <g:hiddenField name="version" value="${this.flujo?.version}" />
                 <fieldset class="form">
-                    <f:all bean="flujo"/>
+                  <!-- <f:all bean="flujo"/>-->
+                    
+                    <f:all except="estados" bean="flujo"/>                
+          
                 </fieldset>
-                <fieldset class="buttons">
-                    <input class="save" type="submit" value="${message(code: 'default.button.update.label', default: 'Update')}" />
-                </fieldset>
+        <!--       
+        	<fieldset class="form">
+                 <div style="background-color:lightgrey; width: 50vw;margin:10vw">
+                    
+                    <label for="estados">Cambiar Estado</label>
+                    <g:select name="estado"from="${estados}"	size="5"  optionKey="id" 														multiple="false"	value="${flujo?.estados}" />
+       						</div>	             
+					</fieldset>
+          -->
+          <fieldset class="buttons">
+                    <input class="save" type="submit" 
+                    value="${message(code:'default.button.update.label', default: 'Update')}" />
+           </fieldset>
+           <fieldset class="buttons">
+                    <g:actionSubmit value="Agregar Estado" action="agregarEstado"/>
+           </fieldset>
             </g:form>
+     
         </div>
     </body>
 </html>

@@ -46,6 +46,7 @@ class MotorService {
 	}
 
 	static def process_data_dropping_signals(def state, def dato){
+		
 		ClojureProcesador.invocar (cargar_Recursos_para_ejecucion(ns,process_data_dropping_signals_fn), state, dato)
 
 	}
@@ -60,7 +61,8 @@ class MotorService {
 
 	}
 	
-	static def decodificar_JsonFormato_a_MapFormatoClojure (datoJSON, boolean keyFormato){
+	static def decodificar_JsonFormato_a_MapFormatoClojure (def datoJSON, def keyFormato){
+		
 		ClojureProcesador.invocar (cargar_Recursos_para_ejecucion(ns, decodificar_JsonFormato_a_MapFormatoClojure_fn), datoJSON, keyFormato)
 
 		}
@@ -71,8 +73,10 @@ class MotorService {
 
 		}
 	
-	static def mapear_aplanar_resultados_del_Estado (def diccionarioEspecificoDeEstado){
-		ClojureProcesador.invocar (cargar_Recursos_para_ejecucion(ns, mapear_aplanar_resultados_del_Estado_fn), diccionarioEspecificoDeEstado)
+	static def mapear_aplanar_resultados_del_Estado (def estado, def clave){
+		
+		
+		ClojureProcesador.invocar (cargar_Recursos_para_ejecucion(ns, mapear_aplanar_resultados_del_Estado_fn), estado, clave)
 
 		}	
  

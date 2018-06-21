@@ -92,10 +92,21 @@ class ClojureProcesador extends Procesador {
 		imprimir (arg)					
 			(fn && arg)?fn.invoke(arg):null
 		}
-	static Object invocar(IFn fn, Object arg, Object arg2){						
-			(fn && arg && arg )?fn.invoke(arg, arg2):null
+	
+	
+	/**PRINCIPAL PARA PROCESAMIENTO **/
+	static Object invocar(IFn fn, Object arg, String arg2){						
+			
+			(fn && arg && arg2 )?fn.invoke(arg, Clojure.read(arg2)):null
 		}
-	static Object invocar(IFn fn, Object arg, Object arg2, Object arg3){						
+	
+	static Object invocar(IFn fn, Object arg, Object arg2){						
+			
+			
+			(fn && arg && arg2 )?fn.invoke(arg, arg2):null
+		}	
+	static Object invocar(IFn fn, Object arg, Object arg2, Object arg3){
+						
 			(fn && arg && arg2 && arg3 )?fn.invoke(arg, arg2, arg3):null
 		}
 	static Object invocar(IFn fn, Object arg, Object arg2, Object arg3,Object arg4){						
@@ -107,8 +118,9 @@ class ClojureProcesador extends Procesador {
 	static Object invocar(IFn fn, String arg){						
 			(fn && arg )?fn.invoke(Clojure.read(arg)):null
 		}
-	static Object invocar(IFn fn, String arg, String arg2){						
-			(fn && arg && arg )?fn.invoke(Clojure.read(arg), Clojure.read(arg2)):null
+	static Object invocar(IFn fn, String arg, String arg2){
+							
+			(fn && arg && arg2 )?fn.invoke(Clojure.read(arg), Clojure.read(arg2)):null
 		}
 	static Object invocar(IFn fn, String arg, String arg2, String arg3){						
 			(fn && arg && arg2 && arg3 )?fn.invoke(Clojure.read(arg), Clojure.read(arg2),Clojure.read(arg3)):null

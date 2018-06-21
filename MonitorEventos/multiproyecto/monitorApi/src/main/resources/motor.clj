@@ -22,7 +22,9 @@
 	
 		(process-data state new-data)	
 )
+
 (defn process_data_dropping_signals [state new-data]
+
 (first (procesar_datos state new-data))
 	
 )
@@ -44,7 +46,9 @@
 ;;keyFormato: true (:foo) o false ()
 
 (defn decodificar_JsonFormato_a_MapFormatoClojure [datoJSON keyFormato]
-	(if (keyFormato)
+	
+	
+	(if (= keyFormato  "true")
 		(parse-string datoJSON true)
 		(parse-string datoJSON))
 )
@@ -55,7 +59,9 @@
 )
 
 ;;***************************************************************
-;; Dar Formato para graficar a :contadores :sennales de ESTADO(state)
+;; Dar Formato para graficar a :contadores :sennales de ESTADO-state-
+ 
+ 
  (defn vectorizar [ mapaEstado]
  	
  (let [	coleccion mapaEstado
@@ -64,14 +70,14 @@
  	clave 		 (first par_clave_valor)
  	valor  (last (last par_clave_valor))
  	 ]
- 	 (println "_______________")
- 	 (println "Coleccion actual: " coleccion)
- 	 (println "_______________")
- 	 (println "clave: " clave)
- 	 (println "_______________")
- 	 (println "valor_final:" valor)
- 	 (println "_______________")
- 	 (println "_______________")
+ 	 ;(println "_______________")
+ 	 ;(println "Coleccion actual: " coleccion)
+ 	 ;(println "_______________")
+ 	 ;(println "clave: " clave)
+ 	 ;(println "_______________")
+ 	 ;(println "valor_final:" valor)
+ 	 ;(println "_______________")
+ 	 ;(println "_______________")
  	
  	(if-not (empty? resto_coleccion)	
 
@@ -92,19 +98,21 @@
 	 );end if-not
 ))
  
- ;/*******************************************/
- ;;se pasa por parametro por ejemplo diccionario de contadores de Estado(state)
- (defn mapear_aplanar_resultados_del_Estado [mapa]
- (if (empty? mapa)
- 	{}
- (let [
-	coleccion 			 mapa
+ ;;
+ ;;por parametro por ejemplo diccionario de contadores de Estado-state-
+ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 
+ (defn mapear_aplanar_resultados_del_Estado [mapa clave]
+ 	 
+ (let [	coleccion 			 (get mapa clave)
  	
- 	resultado 			 (apply hash-map (flatten(vectorizar coleccion ))) ] 
-    resultado )))
+		resultado 			 (apply hash-map (flatten(vectorizar coleccion ))) 
+		]
+ 	
+    resultado ))
 
 ;;***********EJEMPLO SALIDA ESTADO*********************************
-; {:Contadores {:Ticket-Contador [[] true [6]], :Ticket-Contador-Emisor [[(current EMISOR)] true {[AUGUSTO] [5], [Euriterco] [1]}], :Ticket-Contador-Rojo [[] (starts-with? (current ESTADIO) R) [3]], :enviado-por [[(current EMISOR)] (and (= (current EMISOR) (past EMISOR)) (includes? (past tema) (current tema))) {[AUGUSTO] [4]}]}, :ContadorSteps {}, :Sennales {:Ticket-fraction-Rojo [(/ (counter-value Ticket-Contador-Rojo []) (counter-value Ticket-Contador [])) true]}, :DatosPasados {{Ticket 12345, EMISOR AUGUSTO, RECEPTOR Propiedad de Arevalo, ESTADIO Rojo, tema colores} true, {Ticket 54321, EMISOR AUGUSTO, RECEPTOR Propiedad de Arevalo, ESTADIO Azul, tema colores} true, {Ticket 111, EMISOR Euriterco, RECEPTOR Propiedad de Arevalo, ESTADIO Verde, tema colores} true}}
+;; '{:Contadores {:Ticket-Contador [[] true [6]], :Ticket-Contador-Emisor [[(current EMISOR)] true {[AUGUSTO] [5], [Euriterco] [1]}], :Ticket-Contador-Rojo [[] (starts-with? (current ESTADIO) R) [3]], :enviado-por [[(current EMISOR)] (and (= (current EMISOR) (past EMISOR)) (includes? (past tema) (current tema))) {[AUGUSTO] [4]}]}, :ContadorSteps {}, :Sennales {:Ticket-fraction-Rojo [(/ (counter-value Ticket-Contador-Rojo []) (counter-value Ticket-Contador [])) true]}, :DatosPasados {{Ticket 12345, EMISOR AUGUSTO, RECEPTOR Propiedad de Arevalo, ESTADIO Rojo, tema colores} true, {Ticket 54321, EMISOR AUGUSTO, RECEPTOR Propiedad de Arevalo, ESTADIO Azul, tema colores} true, {Ticket 111, EMISOR Euriterco, RECEPTOR Propiedad de Arevalo, ESTADIO Verde, tema colores} true}}'
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;(defn iniciar_test [rules]		
@@ -116,8 +124,9 @@
 ;;		(println rules)
 ;;		(println "Imprimiendo estado 0" st0)
 ;;		(println "Imprimiendo estado 1" st1)
-		
+;;		
 ;; retorno))			
+;;;;;;;;;;;
 
 (defn agregar_reglas_procesar_datos_emitir_sennales [ rules datos]
  (let [	st0 		(iniciar rules)
@@ -153,9 +162,7 @@
 
 	
 (defn principal
-  "Motor Clojure Para Monitorizar Eventos.[PROBANDO-TESTING].
-  Se recibe un map formato:
-  {:reglas '(reglas aqui) :nombreContador 'SIN NOMBRE':dato {'spam' true}}."
+  "Motor Clojure Para Monitorizar Eventos.[PROBANDO-TESTING].  Se recibe un map formato:  {:reglas '(reglas aqui) :nombreContador 'SIN NOMBRE':dato {'spam' true}}."
   ([]
 	(principal "NADA QUE ACOTAR")
   )

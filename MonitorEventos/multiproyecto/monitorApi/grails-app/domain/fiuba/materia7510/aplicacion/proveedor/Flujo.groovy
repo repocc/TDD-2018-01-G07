@@ -1,8 +1,8 @@
 package fiuba.materia7510.aplicacion.proveedor
 
-import grails.rest.*
 
-@Resource(uri='/flujos')
+import fiuba.materia7510.aplicacion.proveedor.Trayectoria
+
 class Flujo {
 
 	/*
@@ -13,12 +13,23 @@ class Flujo {
 	 *  to the many side, but if the many side has belongsTo,
 	 *  then deletes also cascade in that direction..
 	 * */
-	Date	dateCreated
+	String nombre 
+	
+	String descripcion
+	
+	
+	
 	static hasMany 		=	[ estados: 	Estado]
 	
-    static mapping = {
-    autoTimestamp true //por default es true
-	estados cascade: 'all-delete-orphan'
+	static constraints ={
+		
+		nombre 		blank:false, maxSize:50, unique:true
+		descripcion blank:false, maxSize:240 , nullable:true
+		
+	}
+	
+	String toString(){
+		nombre
 	}
 }
 

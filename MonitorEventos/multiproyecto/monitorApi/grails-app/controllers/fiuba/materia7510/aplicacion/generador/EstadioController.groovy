@@ -4,7 +4,8 @@ import grails.validation.ValidationException
 import static org.springframework.http.HttpStatus.*
 
 class EstadioController {
-
+	
+	
     EstadioService estadioService
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
@@ -19,10 +20,17 @@ class EstadioController {
     }
 
     def create() {
-        respond new Estadio(params)
+		
+		redirect action: "index"
+        //respond new Estadio(params)
     }
 
     def save(Estadio estadio) {
+        
+        redirect action: "index"
+        
+        return
+    /***    
         if (estadio == null) {
             notFound()
             return
@@ -42,13 +50,21 @@ class EstadioController {
             }
             '*' { respond estadio, [status: CREATED] }
         }
+    ***/
     }
 
     def edit(Long id) {
-        respond estadioService.get(id)
+		
+		redirect action: "index"
+		
+        //respond estadioService.get(id)
     }
 
     def update(Estadio estadio) {
+		
+		redirect action: "index"
+		return
+	/****	
         if (estadio == null) {
             notFound()
             return
@@ -68,9 +84,13 @@ class EstadioController {
             }
             '*'{ respond estadio, [status: OK] }
         }
+     *****/ 
     }
 
     def delete(Long id) {
+		redirect action: "index"
+		return
+	/***			
         if (id == null) {
             notFound()
             return
@@ -85,6 +105,7 @@ class EstadioController {
             }
             '*'{ render status: NO_CONTENT }
         }
+     ****/ 
     }
 
     protected void notFound() {
@@ -96,4 +117,5 @@ class EstadioController {
             '*'{ render status: NOT_FOUND }
         }
     }
-}
+  
+}//fin clase

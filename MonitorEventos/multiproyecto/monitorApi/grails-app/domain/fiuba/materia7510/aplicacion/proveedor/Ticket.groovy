@@ -1,21 +1,23 @@
 package fiuba.materia7510.aplicacion.proveedor
 
 
-class Ticket {
+import fiuba.materia7510.aplicacion.proveedor.Dato
+import fiuba.materia7510.aplicacion.proveedor.Flujo
+import fiuba.materia7510.aplicacion.proveedor.Estado
+
+
+class Ticket extends Dato {
 
 	
-	Estado 	estado
+	Estado 	estado //estado actual
 	
-	Long 	codigo
+	String 		codigo 
 	
 	String 		titulo
 	String 		propietario
 	String 		descripcion
-	
-	Date		dateCreated
-	Date		lastUpdated
-	
-	
+
+		
 	 /* Ejemplo
 	  * If the foreign key exists on the address table,
 	  *  then that address can only have one person.
@@ -26,12 +28,18 @@ class Ticket {
 	Flujo flujo
     
     static constraints = {
-		estado 			blank: false, nullable: false 
 		
-		codigo 			unique:true
 		
-		propietario		maxSize: 50, 	blank: false, nullable: false
-		titulo 			maxSize: 50 ,	blank: false, nullable: false
-        descripcion 	maxSize: 140 ,	blank: false, nullable: false
+		titulo 			maxSize: 50,	blank: false
+		propietario		maxSize: 50, 	blank: false
+        descripcion 	maxSize: 140,	blank: false
+        codigo 			unique:true
+        flujo()			
+        estado() 
     }
+    String toString(){ "Ticket de $propietario " }
+    
+	def validarEstadoPerteneceFlujo() {
+		 flujo?.estados.find{ it.estado == estado.estado }
+	}
 }

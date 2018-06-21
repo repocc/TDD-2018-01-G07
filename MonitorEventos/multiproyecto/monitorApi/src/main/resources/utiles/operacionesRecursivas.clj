@@ -374,8 +374,21 @@
     coleccion estado_condicionado));end-metodo
 (defmethod ejecutar_operacion :Aritmetica resolver_operacion_aritmetica [coleccion estado_condicionado]
 
-	(desestructurar_coleccion_y_calcular_funciones_aritmeticas
-    coleccion estado_condicionado));end-metodo
+	;;(* 1.0 (/  (Math/round  (*  1000.0 (/ 260775  1000)))  1000 ))
+	
+	;;Se redondea a tres digitos para lidiar en otro entorno con herramientas simples, para finalizar con dos digitos(objetivo)
+	;;Con conocimiento de no ser recomendado por falencias en el resultado de este método.De alli tomar 3 dígitos; más que suficiente
+	;;para la precisión necesaria.
+	;;Otras opciones investigadas: cl-format, que está adaptado de Lisp y otra es with-precision. 
+	;;Complicaciones en Grails/Groovy por quedar expresado racional (ejemplo 1/8). Conflictos con herramientas parser.
+	;;Se busca evitar la problemática de conversiones de Strings a racionales en Grails/Groovy/Java.
+	;;Version original: (Los tests han de ser adaptados o fallarán. (Ejemplo: (/ 10 2) != (/ 10 2.0) ==> 5 != 5.0 )
+	;;(desestructurar_coleccion_y_calcular_funciones_aritmeticas coleccion estado_condicionado)
+    
+    (* 1.0 (/  (Math/round  (*  1000.0 (desestructurar_coleccion_y_calcular_funciones_aritmeticas
+    coleccion estado_condicionado)))  1000 ))
+    
+    );end-metodo
 (defmethod ejecutar_operacion :Comparativa resolver_operacion_comparativa [coleccion estado_condicionado]
 
 	(desestructurar_coleccion_y_calcular_funciones_comparativas

@@ -101,7 +101,21 @@ dataSource:
     driverClassName: org.h2.Driver
     username: sa
     password: ''
-
+############################################
+#environments:
+#    production:
+#        dbconsole:
+#            enabled: true
+#            urlRoot: '/admin/dbconsole'
+# Habilitando DataBaseConsole en produccion
+# Que viene por defecto deshabilitada
+# en production environment.
+############################################
+# Nota personal:
+#          No se admite tabulacion en YAML
+#
+#
+############################################
 environments:
     development:
         dataSource:
@@ -112,6 +126,9 @@ environments:
             dbCreate: update
             url: jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
     production:
+        dbconsole:
+             enabled: true
+             urlRoot: '/administrador/dbconsole'
         dataSource:
             dbCreate: update
             url: jdbc:h2:./prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE

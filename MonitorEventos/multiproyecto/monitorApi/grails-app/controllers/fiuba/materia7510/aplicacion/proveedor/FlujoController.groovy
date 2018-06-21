@@ -2,6 +2,8 @@ package fiuba.materia7510.aplicacion.proveedor
 
 import grails.validation.ValidationException
 import static org.springframework.http.HttpStatus.*
+import fiuba.materia7510.aplicacion.proveedor.Estado
+import fiuba.materia7510.aplicacion.utilidad.Impresor
 
 class FlujoController {
 
@@ -19,7 +21,8 @@ class FlujoController {
     }
 
     def create() {
-        respond new Flujo(params)
+        //respond new Flujo(params)
+        [flujo: new Flujo(params), estado: Estado.list() ]
     }
 
     def save(Flujo flujo) {
@@ -45,15 +48,42 @@ class FlujoController {
     }
 
     def edit(Long id) {
-        respond flujoService.get(id)
+       // respond flujoService.get(id)
+       [flujo: flujoService.get(id), estados: Estado.list() ]
     }
-
+    def actualizarFlujo(){
+		
+		Impresor.instance.consola( "[ActualizandoFlujo]...[parametros:${params}]",true)
+		
+		def encontrado_estado 	= null
+		def encontrado_flujo	= null
+		encontrado_estado 		= Estado.get(params.estado) //params retorna el id 
+		encontrado_flujo		= Flujo.get(params.id_flujo)
+		def agregado			= null
+		agregado = (encontrado_estado && encontrado_flujo)?encontrado_flujo?.addToEstados(encontrado_estado):null
+		 
+		 agregado?update(encontrado_flujo):update(null)
+			
+		
+		
+		}
+	def agregarEstado(Flujo flujo, Estado estado){
+		
+		Impresor.instance.consola( "Derivando [agregarEstadoVista]...[parametros: ${params}]",true)
+		render view:'agregarEstadoVista', model:[flujo:flujo,estados:Estado.list()]
+		
+		
+		
+	}
     def update(Flujo flujo) {
         if (flujo == null) {
             notFound()
             return
         }
-
+		
+		println "Estoy en update:*******************"
+		println flujo.dump()
+		
         try {
             flujoService.save(flujo)
         } catch (ValidationException e) {
