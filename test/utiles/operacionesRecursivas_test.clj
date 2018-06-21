@@ -318,7 +318,7 @@
 
 (deftest funcionesRecursivas-UNO-test
   (testing "Argumento sencillo a funcionesRecursivas aritmEtica."
-        (is (= 8 (resolver_operacion test1)))))
+        (is (= 8 (resolver_operacion '(/ 3 8))))))
 
 (deftest funcionesRecursivas-DOS-test
   (testing "Argumento sencillo a funcionesRecursivas aritmEtica."

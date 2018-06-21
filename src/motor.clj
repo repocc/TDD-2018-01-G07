@@ -44,6 +44,7 @@
 ;;keyFormato: true (:foo) o false ()
 
 (defn decodificar_JsonFormato_a_MapFormatoClojure [datoJSON keyFormato]
+	(println datoJSON)
 	(if (keyFormato)
 		(parse-string datoJSON true)
 		(parse-string datoJSON))

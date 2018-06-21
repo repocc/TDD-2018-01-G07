@@ -8,49 +8,69 @@
   <link rel="stylesheet" href="theme.css" type="text/css">
   <title>Cliente</title>
   <style>
+	@keyframes efectoTransicion {
+  0% {
+    transform: scale(0.1);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+/*
   #imagen_fondo_2, #imagen_fondo_1{
-	  transition-timing-function: ease;
-	  }
-  
+
+    transition-timing-function: ease-in-out;
+  }
+*/
   </style>
   <script src="assets/js/jquery_canvas/jquery-2.2.4.js"></script>
   <script>
-    
 	
-	$( window ).on('load', function() {
-				setInterval (function () {
-				var imagenes = ["f1.jpg","f2.gif","f3.jpg","f4.jpg","f5.jpg","f6.jpg","f7.jpg","f8.jpg","f9.jpg","f10.jpg","wallpaper-stained-glass-02-1366x768.jpg"];
-				var indice = Math.floor(Math.random() * imagenes.length );
-				var imagen = "url(assets/imagenes/miscelaneo/" + imagenes[indice] +")"; 
-				document.getElementById("imagen_fondo_2").style.backgroundImage = imagen;
-				document.getElementById("imagen_fondo_1").style.backgroundImage = imagen;
-				
-				},5000);
-	});
-   
-	
-	
+   $( window ).on('load', function() {
+            setInterval (function () {
+            var imagenes = ["f1.jpg","f2.gif","f3.jpg","f4.jpg","f5.jpg","f6.jpg","f7.jpg","f8.jpg","f9.jpg","f10.jpg","wallpaper-stained-glass-02-1366x768.jpg"];
+            var indice = Math.floor(Math.random() * imagenes.length );
+            var imagen = "url(assets/imagenes/miscelaneo/" + imagenes[indice] +")"; 
+            document.getElementById("imagen_fondo_2").style.backgroundImage = imagen;
+            document.getElementById("imagen_fondo_2").style.backgroundSize = "100% 100%";
+            
+			document.getElementById("imagen_fondo_1").style.backgroundImage = imagen;
+			document.getElementById("imagen_fondo_2").style.animation="efectoTransicion 8s ease infinite";
+            document.getElementById("imagen_fondo_1").style.animation="efectoTransicion 3s ease-in-out";
+            },10000);
+   });
+
     /*Obtener los datos ingresados en un campo*/
-  	function myFunction() {
-  		var x = document.getElementById("myText").value;
-  		document.getElementById("demo").innerHTML = x;
-  	}
+   function myFunction() {
+      var x = document.getElementById("myText").value;
+      document.getElementById("demo").innerHTML = x;
+   }
   </script>
   <script>
+	function ocultar(selector) {
+    	document.getElementById(selector).style.visibility = "hidden";
+	}
+
     /*Obtener datos con Jquery con evento click. combinando ingreso con boton*/
-      $(document).ready(function() {
+/***************************************     
+ $(document).ready(function() {
           var lolz = $('#lolz');
           var kk = $('#kk');
           kk.click(function() {
               alert(lolz.val());
           });
       });
-      /*
-  	<body>
+      
+   <body>
       <input type="text" name="enter" class="enter" value="" id="lolz"/>
       <input type="button" value="click" id="kk" />
-      
-      */
+
+ *****************************************/
   </script>
   <script>
     /*Pasando valores entre paginas. Para URL fundamentalmente.
@@ -118,7 +138,7 @@
                   <input type="password" class="form-control form-control-sm" name="Clave de acceso" placeholder="Contraseña"> </div>
                 <button type="submit" class="btn btn-secondary bg-gradient text-dark">Enviar
                   <br> </button>
-              </form>
+<!--              </form>-->
             </div>
           </div>
           <form class="form-inline">
@@ -131,10 +151,9 @@
           </form>
         </div>
       </div>
-      <div class="row bg-primary text-dark">
-        <div class=""> </div>
+      <div id="id_msg_bienvenida" class="row bg-primary text-dark">
         <div class="col-md-12 filter-dark p-2">
-          <button type="button" class="close text-capitalize d-flex border border-dark bg-light p-1 text-danger justify-content-center flex-row" data-dismiss="alert">×</button>
+          <button type="button" onclick=ocultar("id_msg_bienvenida") class="close text-capitalize d-flex border border-dark bg-light p-1 text-danger justify-content-center flex-row" data-dismiss="alert">cerrar</button>
           <div class="alert d-flex justify-content-start flex-row align-items-center align-self-center bg-gradient text-white" role="alert">
             <h3>¡Bienvenidos!</h3>
             <p class="mx-auto lead">Espero que la estadía sea de su agrado.</p>

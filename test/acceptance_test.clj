@@ -19,7 +19,7 @@
 (define-signal {"spam-fraction" (/ (counter-value "spam-count" [])(counter-value "email-count" []))}true) 
 (define-counter "spam-important-table" [(current "spam")(current "important")]true) 
 (define-counter "Ticket-Contador" [] true) 
-(define-counter "Ticket-Contador-Titulo" [current "titulo"] true) 
+(define-counter "Ticket-Contador-Titulo" [(current "titulo")] true) 
 (define-counter "Ticket-Contador-Rojo" [] (starts-with? (current "descripcion") "R"))
 (define-counter "Ticket-Contador-Propietario" [(current "propietario")] true) 
 (define-signal {"Ticket-fraction-Rojo" (/ (counter-value "Ticket-Contador-Rojo" [])(counter-value "Ticket-Contador" []))}true)))

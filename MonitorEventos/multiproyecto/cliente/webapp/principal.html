@@ -88,9 +88,9 @@
 				
 				success		: function (data) {
 								
-								console.log (data.valor);
-								console.log (data.etiqueta);
-								console.log (data.contadores);
+								console.log ("POLLING (AJAX) dato json arribado: ");				
+								console.log (JSON.stringify(data))
+				
 								funcion_callback(data);
 				},
 				
@@ -137,10 +137,12 @@
 			})
 			.done(function(jsonData,textStatus) {
 				console.log('Datos llegando de Servidor status...' + textStatus);
-				
-				console.log ("AJAX dato selector: " + this.contexto );
-				console.log ("AJAX dato json: " + jsonData.etiqueta );
-				funcion_callback(this.contexto,jsonData);
+				console.log ("AJAX dato json arribado: ");				
+				console.log (JSON.stringify(jsonData))
+																
+				window.dato_arribado_especifico = jsonData;
+				 
+				funcion_callback(jsonData);
 			})
 			
 			.fail(function() {
@@ -169,7 +171,7 @@
 
 		  } else if (jqXHR.status == 500) {
 
-			alert('Internal Server Error [500].');
+			alert('Error del Servidor Interno [500].');
 
 		  } else if (textStatus === 'parsererror') {
 
@@ -195,6 +197,8 @@
   </script>
   <!--CONSTANTES COLORES, MESES, FUNCIONES AUXILIARES-->
   <script>
+    /**Se establece un valor global para las fuentes de los gráficos*/
+    Chart.defaults.global.defaultFontColor = 'white';
     /*Contador con variable local IIEF*/
     		
     		var adicionar = (function () {
@@ -406,7 +410,7 @@
     						backgroundColor: color_Random(),
     						borderColor: color_Random(),
     						borderWidth: 1,
-    						data: [] //valores
+    						data: [0] //valores
     					}]
     
     			};
@@ -529,12 +533,26 @@
     			/*acumula al mes que le corresponde*/
     			/*se envian anno, dia, mes, hora, minutos como elementos separados del dato_json desde el servidor*/			
     			/*formato numerico: [{fecha:{annio: __, mes:__, dia:__, hora:__,minutos:__ }*/
-    			var mes 			= datoJson.fecha.mes;
-    			var indice 			= mes - 1;
-    			var valor			= var_barras.data.datasets[0].data[indice];
+    			var CERO 		= 0;
+    			var nro_meses	= 12;
+    			var UNO			= 1;
+    			
+    			if (var_barras.data.datasets[CERO].data.length < nro_meses){
+					//falta inicializar a 12 elementos.Uno por mes.
+					for (var index = CERO; index < nro_meses; ++index) {
+						var_barras.data.datasets[CERO].data.push(CERO);
+    				};
+						
+				}
+				var longitud 		= datoJson.fecha.mes.length;
+    			var mes 			= datoJson.fecha.mes[longitud - UNO];
+    			var indice 			= mes - UNO;    			
+    			var valor			= CERO;
+				valor				= var_barras.data.datasets[CERO].data[indice];
     			valor++;			
-    			var_barras.data.datasets[0].data.splice(indice,1,valor);
-    			};
+    			var_barras.data.datasets[CERO].data.splice(indice,UNO,valor);
+    		};
+    		
     		function actualizarHora(var_barras,datoJson){
     			/*se renueva el set de datos*/
     			/*vacio el array .También serviría drop()*/
@@ -550,18 +568,31 @@
     			/*******************************************/
     			
     					 			
-    			};	
+    		};	
+    		
     		function actualizarHoraUNSOLOTICKETPORPETICION(var_barras,datoJson){
-    			/*acumula al mes que le corresponde*/
+    			/*acumula a la hora que le corresponde*/
     			/*se envian anno, dia, mes, hora, minutos como elementos separados del dato_json desde el servidor*/			
     			/*formato numerico: [{fecha:{annio: __, mes:__, dia:__, hora:__,minutos:__ }*/
-    			var hora 			= datoJson.fecha.hora;
-    			var indice 			= hora - 1;
+    			var CERO 		= 0;
+    			
+    			var UNO			= 1;
+    			if (var_barras.data.datasets[CERO].data.length < 25){
+					
+					/*25 intervalos de hora*/		
+					for (var index = 0; index < 25; ++index) {
+						var_barras.data.datasets[CERO].data.push(CERO);
+    				};
+						
+				}
+    			var longitud		= datoJson.fecha.hora.length;
+    			var hora 			= datoJson.fecha.hora[longitud - UNO];
+    			var indice 			= hora - UNO;
     			var valor			= var_barras.data.datasets[0].data[indice];
     			valor++;			
     			var_barras.data.datasets[0].data.splice(indice,1,valor);			 			
     			};
-    		function renderizar_Grafico_Barras(selector_padre,selector,var_barras,titulo, datoJson, tipo_ejeX){
+    		function renderizar_Grafico_Barras(selector_padre,selector,var_barras,titulo, datoJson, tipo_ejeX, nro_peticiones){
     			
     			/*Limpieza canvas*/
     			//resetCanvas(selector_padre, selector);no parece hacer falta si no se recrea el objeto ""ctx"", la instancia.
@@ -588,10 +619,13 @@
     					actualizarContadores(var_barras, datoJson);						
     					break;						
     				case tipo_ejeX_barras[0]:
-    					actualizarMes(var_barras, datoJson);
+    				   if(nro_peticiones == 1){ actualizarMesUNSOLOTICKETPORPETICION(var_barras, datoJson);}
+    				   else {actualizarMes(var_barras, datoJson);};
     					break;
     				case tipo_ejeX_barras[2]:
-    					actualizarHora(var_barras, datoJson);
+						if(nro_peticiones == 1){ 
+							actualizarHoraUNSOLOTICKETPORPETICION(var_barras, datoJson);}
+						else{ actualizarHora(var_barras, datoJson);};
     					break;
     				default:
     					alert (mensaje_Error + m_parametros);
@@ -702,6 +736,35 @@
   <!--FIN Grafico Lineas-->
   <!--Grafico Dona acumulador-->
   <script>
+	function renderizar_Grafico_Medialuna (selector,var_grafico,titulo, dato_numerico, etiqueta_dato)	{
+			
+		var valor;
+	   if (var_grafico == null){
+			valor = 0;
+			var conf = iniciar_Configuracion_Dona();						
+			var ctx = document.getElementById(selector).getContext('2d');
+			var_grafico = new Chart(ctx, conf);
+			var_grafico.data.datasets[0].data.push(valor);
+			var_grafico.options.title.text = titulo;
+		};	
+		
+			var cero = 0;
+			//valor = var_grafico.data.datasets[0].data[0];
+			//valor++;
+			var_grafico.data.datasets[cero].data.splice(cero,1,dato_numerico);
+			
+			var etiqueta =  dato_numerico.toString() + etiqueta_dato;
+			
+			var color_rnd = color_Random();
+			
+			var_grafico.data.datasets[cero].backgroundColor.splice(cero,1,color_rnd);
+		
+			var_grafico.data.labels.splice(cero,1,etiqueta);
+			  
+		var_grafico.update();
+		return var_grafico;
+	}
+	
 	window.grafico_Dona_Total_Datos 	= null;
 
 	function renderizar_Grafico_Dona_Total_Datos(selector,var_grafico, titulo){
@@ -764,7 +827,7 @@
     				valor 			= Math.round(valor * 1000) / 1000;
     				
     				/*reset valores previos*/
-    				console.log(var_grafico.data.datasets[cero].data.length);
+    				console.log(var_grafico.data.datasets[0].data.length);
     				var c_datos		=	var_grafico.data.datasets[cero].data.length;
     				var c_etiquetas	= 	var_grafico.data.labels.length; 
     				var c_bcolor	=	var_grafico.data.datasets[cero].backgroundColor.length;
@@ -858,7 +921,7 @@
 				},
 		 ticket:{id: 1,codigo: 4,tipo: "ROJO", descripcion:"Soy yo",propietario: "Eustaquio",estado:"Abierto" },
 		 fecha:{annio: 2018, mes: 6, dia: 27, hora: 14, minutos: 3, segundos: 2},
-		 calculados:{ promedioTicketsPorHora:10.3, mes:[],hora:[]}
+		 calculados:{ promedioTicketsPorHora:10.3,promedioTiempoProcesamientoTicket:33, mes:[],hora:[]}
 		 };
 		 
 		 for (var index = 0; index < 12; ++index) {
@@ -888,13 +951,17 @@
 
 		window.grafico_Dona_Tickets_Promedio_Por_Hora = null;
 		
+		window.grafico_medialuna_promedio_procesar_milisegundos= null;
+		
 		/**Funcion para test/ simulacion*/
 		function renderizar () {
 			
 			var dato_simulado = window.dato_json_simulado_onload; 
 
 			var dato_simulado_prom_ticket_hora = null;
-
+			
+			var dato_simulado_prom_procesamiento_milisegundos = null;
+			
 			var grafico_dona_acumula_peticiones = null;
 			
 			var grafico_Barras_Tickets_Mensual	= null;
@@ -920,6 +987,16 @@
 				window.grafico_Dona_Tickets_Promedio_Por_Hora = grafico_Dona_PromTickHora;
 			};
 			/****************************************************************/
+			valor_rn = Math.round((Math.random() * 100) *1000) / 1000; ///redondeo a 3 decimales
+			dato_simulado.calculados.promedioTiempoProcesamientoTicket = valor_rn;
+			
+			grafico_medialuna_promedio_procesar_milisegundos = renderizar_Grafico_Medialuna("medialuna_3",window.grafico_medialuna_promedio_procesar_milisegundos, "Procesamiento[PROMEDIO]", valor_rn, "milisegundos");
+
+			 if(window.grafico_medialuna_promedio_procesar_milisegundos == null){
+				window.grafico_medialuna_promedio_procesar_milisegundos = grafico_medialuna_promedio_procesar_milisegundos;
+			};
+			/****************************************************************/
+			
 			/*alert ("renderizar grafico barras por Total/mes");*/
 			dato_simulado.calculados.mes	=[];
 			dato_simulado.calculados.hora	=[];
@@ -934,7 +1011,7 @@
 
     			};	
 			
-			grafico_Barras_Tickets_Mensual = renderizar_Grafico_Barras ("contenedor_canvas_4","barras_4",window.grafico_Barras_Mensual,"Tickets por mes",dato_simulado,'mes');
+			grafico_Barras_Tickets_Mensual = renderizar_Grafico_Barras ("contenedor_canvas_4","barras_4",window.grafico_Barras_Mensual,"Tickets por mes",dato_simulado,'mes',31);
 			
 			if(window.grafico_Barras_Mensual == null){
 				window.grafico_Barras_Mensual = grafico_Barras_Tickets_Mensual;
@@ -942,7 +1019,7 @@
 			};
 			/*alert ("renderizar grafico barras por Total/hora");*/
 			
-			grafico_Barras_Tickets_Horas_Por_Dia = renderizar_Grafico_Barras ("contenedor_canvas_5","barras_5",window.grafico_Barras_Hora,"Tickets por hora",dato_simulado,'hora');
+			grafico_Barras_Tickets_Horas_Por_Dia = renderizar_Grafico_Barras ("contenedor_canvas_5","barras_5",window.grafico_Barras_Hora,"Tickets por hora",dato_simulado,'hora',24);
 			
 			if(window.grafico_Barras_Hora == null){
 				
@@ -984,9 +1061,10 @@
 		 Requiere investigación y tiempo.
 		 */
 		function renderizar_multiples_graficos(dato_json){
+			
 			var sel_1 = "dona_1" ;
 			var sel_2 = "dona_2";
-			var sel_3 = "lineas_3";
+			var sel_3 = "medialuna_3";
 			var sel_4 = "barras_4";
 			var sel_5 = "barras_5";
 			var sel_6 = "barras_6";
@@ -1015,10 +1093,17 @@
 				window.grafico_Dona_Tickets_Promedio_Por_Hora = grafico_Dona_PromTickHora;
 			};
 			/****************************************************************/
+			var dato_promedio_milisegundos = dato_json.calculados.promedioTiempoProcesamientoTicket;
+			var etiqueta_dato = " milisegundos"	;		
+			grafico_medialuna_promedio_procesar_milisegundos = renderizar_Grafico_Medialuna(sel_3,window.grafico_medialuna_promedio_procesar_milisegundos, "Procesamiento[PROMEDIO]",dato_promedio_milisegundos, etiqueta_dato); 
+			 if(window.grafico_medialuna_promedio_procesar_milisegundos == null){
+				window.grafico_medialuna_promedio_procesar_milisegundos = grafico_medialuna_promedio_procesar_milisegundos;
+			};
+			/****************************************************************/			
 			/*alert ("renderizar grafico barras por Total/mes");*/
 			
 			
-			grafico_Barras_Tickets_Mensual = renderizar_Grafico_Barras ("contenedor_canvas_4",sel_4,window.grafico_Barras_Mensual,"Tickets por mes",dato_json,'mes');
+			grafico_Barras_Tickets_Mensual = renderizar_Grafico_Barras ("contenedor_canvas_4",sel_4,window.grafico_Barras_Mensual,"Tickets por mes",dato_json,'mes', 1);
 			
 			if(window.grafico_Barras_Mensual == null){
 				window.grafico_Barras_Mensual = grafico_Barras_Tickets_Mensual;
@@ -1026,7 +1111,7 @@
 			};
 			/*alert ("renderizar grafico barras por Total/hora");*/
 			
-			grafico_Barras_Tickets_Horas_Por_Dia = renderizar_Grafico_Barras ("contenedor_canvas_5",sel_5,window.grafico_Barras_Hora,"Tickets por hora",dato_json,'hora');
+			grafico_Barras_Tickets_Horas_Por_Dia = renderizar_Grafico_Barras ("contenedor_canvas_5",sel_5,window.grafico_Barras_Hora,"Tickets por hora",dato_json,'hora',1);
 			
 			if(window.grafico_Barras_Hora == null){
 				
@@ -1122,7 +1207,7 @@
   <div class="py-5 mx-2">
     <!---------------Graficos 1---------------------------------------------->
     <div class="container" id="grafico_1">
-      <div id="contenedor_canvas_1" style="position: relative; height:80vh; width:80vw" >
+      <div id="contenedor_canvas_1" style="position: relative; height:40vh; width:40vw; left:20vw" >
         <canvas id="dona_1"></canvas>
       </div>
       <!--contenedor_canvas_1-->
@@ -1140,8 +1225,8 @@
     <!---------------Graficos 2 FIN---------------------------------------->
     <!---------------Graficos 3---------------------------------------------->
     <div class="container" id="grafico_3">
-      <div id="contenedor_canvas_3" style="position: relative; height:80vh; width:80vw" class="filter-fade-in">
-        <canvas id="lineas_3"></canvas>
+      <div id="contenedor_canvas_3" style="position: relative; height:40vh; width:40vw; left:20vw">
+        <canvas id="medialuna_3"></canvas>
       </div>
       <!--contenedor_canvas_3-->
     </div>
@@ -1197,13 +1282,11 @@
     </div>
   </div>
   <div class="py-5">
-    <div class="container"><p style="color:Yellow">- <span>FIUBA - Técnicas de diseño 75.10 - Primer Cuatrimestre - Grupo 7 - <script> new Date()</script> </span></p></div>
+    <div class="container"><p style="color:Yellow; position:relative; left:10vw"><span>FIUBA - Técnicas de diseño 75.10 - Primer Cuatrimestre 2018- Grupo 7 - <script> new Date()</script> </span></p></div>
   </div>
   <script src="assets/js/popper.js"></script>
   <script src="assets/js/bootstrap.js"></script>
-  <pingendo onclick="window.open('https://pingendo.com/', '_blank')" style="cursor:pointer;position: fixed;bottom: 10px;right:10px;padding:4px;background-color: #00b0eb;border-radius: 8px; width:250px;display:flex;flex-direction:row;align-items:center;justify-content:center;font-size:14px;color:white">Made with Pingendo Free&nbsp;&nbsp;
-    <img src="https://pingendo.com/site-assets/Pingendo_logo_big.png" class="d-block" alt="Pingendo logo" height="16">
-  </pingendo>
+  
 </body>
 
 </html>
