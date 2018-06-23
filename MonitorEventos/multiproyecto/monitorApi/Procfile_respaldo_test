@@ -1,0 +1,2 @@
+web: cd build ; java -Xms64m -Xmx256m -XX:PermSize=64m -XX:MaxPermSize=128m -Dgrails.env=prod -jar ../build/server/webapp-runner-*.jar --expand-war --port $PORT libs/*.war
+
