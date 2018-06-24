@@ -412,57 +412,74 @@ class ProcesadorTicketService {
 
 		
 		def tiempo_clase_Date= Date.parse(formato_arg, fecha)
-		/**
-		 * NOTA: IMPORTANTE
-		 * import static java.util.Calendar.
-		 * def date = new Date()
-		 * date.set year: 2010, month: 11, date: 16
-		 * def calendar = date.toCalendar()
-		 * assert calendar[YEAR] == 2010
-		 * assert calendar[MONTH] == Calendar.DECEMBER
-		 * assert calendar[DATE] == 16
-		 * assert calendar.format('dd-MM-yyyy') == '16-12-2010'
-		 * assert calendar in Calendar
-		 * ********************************************************
-		 * EJECUTANDO EJEMPLO:
-		 * 
-		 *  String formato_runtime     = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-		 * 
-		 *  String inp ='2018-06-16T23:54:18.312Z'
-		 * ​​​​​​​​​Date d = Date.parse (formato_runtime,inp)
-		 * println d ----> Sat Jun 16 23:54:18 UTC 2018
-		 * println d[Calendar.YEAR] ----> 2018 //integer
-		 * println d[Calendar.MONTH] ----> 5 // ESTO ES UNA UNIDAD MENOR . ES CORRECTO EL RETORNO.
-		 * println d[Calendar.HOUR] ----> 11 //formato 12 HORAS
-		 * 
-		 * Months in Calendar object start from 0
-		 * 0 = January = Calendar.JANUARY
-		 * 1 = february = Calendar.FEBRUARY
-		 * ********************************************************
-		 * def calendar = d.toCalendar() //class java.util.GregorianCalendar
-		 *	println calendar ---> RETORNO IMPORTANTE INFORMACION
-		 * java.util.GregorianCalendar[time=1529193258312,areFieldsSet=true,areAllFieldsSet=true,lenient=true,zone=sun.util.calendar.ZoneInfo[id="UTC",offset=0,dstSavings=0,useDaylight=false,transitions=0,lastRule=null],firstDayOfWeek=1,minimalDaysInFirstWeek=1,ERA=1,YEAR=2018,MONTH=5,WEEK_OF_YEAR=24,WEEK_OF_MONTH=3,DAY_OF_MONTH=16,DAY_OF_YEAR=167,DAY_OF_WEEK=7,DAY_OF_WEEK_IN_MONTH=3,AM_PM=1,HOUR=11,HOUR_OF_DAY=23,MINUTE=54,SECOND=18,MILLISECOND=312,ZONE_OFFSET=0,DST_OFFSET=0]
-		 *  
-		 * Esto es lo buscado:
-		 * println d[HOUR_OF_DAY]--->23
-		 *  
-		 * 
-		 * */
-		int UNO = 1;
-		int mes = tiempo_clase_Date[Calendar.MONTH] + UNO //Calendar retorna una unidad menor. EMPIEZA DE MES == CERO == ENERO 
-		def descomposicion = [
-								"annio" 	: tiempo_clase_Date[YEAR],
-								"mes" 		: mes,
-								"dia"		: tiempo_clase_Date[DAY_OF_MONTH],
-								"hora"		: tiempo_clase_Date[HOUR_OF_DAY], //":Formato 24 horas"
-								"minutos"	: tiempo_clase_Date[MINUTE],
-								"segundos"	: tiempo_clase_Date[SECOND]
-							]
-			
+			/**
+			 * NOTA: IMPORTANTE
+			 * import static java.util.Calendar.
+			 * def date = new Date()
+			 * date.set year: 2010, month: 11, date: 16
+			 * def calendar = date.toCalendar()
+			 * assert calendar[YEAR] == 2010
+			 * assert calendar[MONTH] == Calendar.DECEMBER
+			 * assert calendar[DATE] == 16
+			 * assert calendar.format('dd-MM-yyyy') == '16-12-2010'
+			 * assert calendar in Calendar
+			 * ********************************************************
+			 * EJECUTANDO EJEMPLO:
+			 * 
+			 *  String formato_runtime     = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+			 * 
+			 *  String inp ='2018-06-16T23:54:18.312Z'
+			 * ​​​​​​​​​Date d = Date.parse (formato_runtime,inp)
+			 * println d ----> Sat Jun 16 23:54:18 UTC 2018
+			 * println d[Calendar.YEAR] ----> 2018 //integer
+			 * println d[Calendar.MONTH] ----> 5 // ESTO ES UNA UNIDAD MENOR . ES CORRECTO EL RETORNO.
+			 * println d[Calendar.HOUR] ----> 11 //formato 12 HORAS
+			 * 
+			 * Months in Calendar object start from 0
+			 * 0 = January = Calendar.JANUARY
+			 * 1 = february = Calendar.FEBRUARY
+			 * ********************************************************
+			 * def calendar = d.toCalendar() //class java.util.GregorianCalendar
+			 *	println calendar ---> RETORNO IMPORTANTE INFORMACION
+			 * java.util.GregorianCalendar[time=1529193258312,areFieldsSet=true,areAllFieldsSet=true,lenient=true,zone=sun.util.calendar.ZoneInfo[id="UTC",offset=0,dstSavings=0,useDaylight=false,transitions=0,lastRule=null],firstDayOfWeek=1,minimalDaysInFirstWeek=1,ERA=1,YEAR=2018,MONTH=5,WEEK_OF_YEAR=24,WEEK_OF_MONTH=3,DAY_OF_MONTH=16,DAY_OF_YEAR=167,DAY_OF_WEEK=7,DAY_OF_WEEK_IN_MONTH=3,AM_PM=1,HOUR=11,HOUR_OF_DAY=23,MINUTE=54,SECOND=18,MILLISECOND=312,ZONE_OFFSET=0,DST_OFFSET=0]
+			 *  
+			 * Esto es lo buscado:
+			 * println d[HOUR_OF_DAY]--->23
+			 *  
+			 * 
+			 * */
+			int UNO = 1;
+			int mes = tiempo_clase_Date[Calendar.MONTH] + UNO //Calendar retorna una unidad menor. EMPIEZA DE MES == CERO == ENERO 
+			def descomposicion = [
+									"annio" 	: tiempo_clase_Date[YEAR],
+									"mes" 		: mes,
+									"dia"		: tiempo_clase_Date[DAY_OF_MONTH],
+									"hora"		: tiempo_clase_Date[HOUR_OF_DAY], //":Formato 24 horas"
+									"minutos"	: tiempo_clase_Date[MINUTE],
+									"segundos"	: tiempo_clase_Date[SECOND]
+								]
+				
 		descomposicion
-		
-	}	
 			
+	}	
+	def calcularDatosPromedioPorHora (def json_patron)	{
+		
+		double promedio = 0
+		def cantidad__de_datos_total = json_patron.fecha.hora.size()
+		if ( cantidad__de_datos_total > 0) { 
+			
+				//conjunto de horas eliminando duplicación
+				Set  set_datos = json_patron.fecha.hora
+		
+				def cantidad_de_datos_por_hora_acumulados = set_datos.collect {  json_patron.fecha.hora.count(it)}​​​​​​​​​​​​​​​​​​​​
+				
+				//para obtener siempre dos decimales multiplico por 1.0 (una unidad tipo decimal)
+				promedio = 1.0 * ( cantidad_de_datos_por_hora_acumulados.sum() / cantidad_de_datos_total )
+			
+		}
+		promedio.round(2)	
+		
+		}	
 	def configurar_Json (groovy.json.internal.LazyMap json_patron,def fecha, def inicio){	
 		
 		/**Calculo de tiempo de procesamiento por ticket**/

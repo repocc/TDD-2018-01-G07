@@ -1,7 +1,25 @@
 package fiuba.materia7510.aplicacion.autenticacion
 
-class Autenticador {
+import fiuba.materia7510.aplicacion.usuario.Usuario
 
-    static constraints = {
-    }
+class Autenticador {
+	//log de inicios y finalizaciones de sesion de usuarios
+	String nombre
+	
+	Usuario usuario
+	
+	Date dateCreated
+	
+	String toString(){
+		
+		"[${nombre}] [Usuario] [${usuario?.toString()}] [${dateCreated}]."
+	}
+	
+	static constraints ={
+		
+		nombre inList:["INICIO", "CIERRE"]
+		
+		usuario()
+		
+		}
 }

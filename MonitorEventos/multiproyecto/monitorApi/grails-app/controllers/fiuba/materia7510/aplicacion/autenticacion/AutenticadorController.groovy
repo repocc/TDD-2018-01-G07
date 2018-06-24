@@ -3,8 +3,11 @@ package fiuba.materia7510.aplicacion.autenticacion
 import grails.validation.ValidationException
 import static org.springframework.http.HttpStatus.*
 
+import fiuba.materia7510.aplicacion.usuario.Usuario
+import fiuba.materia7510.aplicacion.autenticacion.RegistradorService
 class AutenticadorController {
 
+    RegistradorService registradorService
     AutenticadorService autenticadorService
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
@@ -17,83 +20,74 @@ class AutenticadorController {
     def show(Long id) {
         respond autenticadorService.get(id)
     }
+	
+	
+   def iniciarSesion(){
+	   
+	   		
+	   if (session.usuario_id != null){
+		   String mensaje_sesion_iniciada="Ya a iniciado sesion."
+	  
+		   flash.mensaje = mensaje_sesion_iniciada + "usuario: ${session.usuario_id}"
+		   
+		   
+		}else if(!params.nombreID && !params.clave){
+			 
+			 String mensaje	="Bienvenido"
+	  
+			 flash.mensaje 	= mensaje
+			 
+			 
+		}else{
+				
+				
+				Usuario usuario = registradorService.buscarUsuario(params.nombreId, params.clave)
+				
+				
+				if (usuario == null){
+					String mensaje_error_login="No hay nadie registrado con esos datos. Reingrese. "
+					
+					flash.mensaje = mensaje_error_login
+				
+				}else{
+					 String mensaje_sesion_iniciada_correctamente = "Usuario autenticado. Inicio sesión correcto. Bienvenido:"
+	   
+					flash.mensaje = mensaje_sesion_iniciada_correctamente + "${usuario?.toString()}"
+					
+					session.usuario_id = usuario.autenticacionId
+					session.usuario_nombre = usuario.toString() 
+					registradorService.registrar(new Autenticador(nombre:"INICIO",usuario:usuario))	
+				
+				}
+		   
+		}
+		
+			
+		render view:'iniciarSesion'
+	 }
+   
+   
+   
+   def cerrarSesion(){
+	   
+	   String mensaje_sesion_no_iniciada = "No hay sesion iniciada."
+	   
+	   String mensaje_sesion_finalizada = "Sesion Finalizada."
+	   
+	   if(session.usuario_id == null){
+		   
+		   flash.mensaje = mensaje_sesion_no_iniciada
+		
+		}else{
+			Usuario usuario 		= Usuario.findByAutenticacionId(session.usuario_id)
+			session.usuario_id 		= null
+			session.usuario_nombre 	= null
+			flash.mensaje = mensaje_sesion_finalizada
+			registradorService.registrar(new Autenticador(nombre:"CIERRE",usuario:usuario))	
+			
+		}
+	   redirect action:'iniciarSesion'
+	 }
 
-    def create() {
-        respond new Autenticador(params)
-    }
-
-    def save(Autenticador autenticador) {
-        if (autenticador == null) {
-            notFound()
-            return
-        }
-
-        try {
-            autenticadorService.save(autenticador)
-        } catch (ValidationException e) {
-            respond autenticador.errors, view:'create'
-            return
-        }
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.created.message', args: [message(code: 'autenticador.label', default: 'Autenticador'), autenticador.id])
-                redirect autenticador
-            }
-            '*' { respond autenticador, [status: CREATED] }
-        }
-    }
-
-    def edit(Long id) {
-        respond autenticadorService.get(id)
-    }
-
-    def update(Autenticador autenticador) {
-        if (autenticador == null) {
-            notFound()
-            return
-        }
-
-        try {
-            autenticadorService.save(autenticador)
-        } catch (ValidationException e) {
-            respond autenticador.errors, view:'edit'
-            return
-        }
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.updated.message', args: [message(code: 'autenticador.label', default: 'Autenticador'), autenticador.id])
-                redirect autenticador
-            }
-            '*'{ respond autenticador, [status: OK] }
-        }
-    }
-
-    def delete(Long id) {
-        if (id == null) {
-            notFound()
-            return
-        }
-
-        autenticadorService.delete(id)
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.deleted.message', args: [message(code: 'autenticador.label', default: 'Autenticador'), id])
-                redirect action:"index", method:"GET"
-            }
-            '*'{ render status: NO_CONTENT }
-        }
-    }
-
-    protected void notFound() {
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.not.found.message', args: [message(code: 'autenticador.label', default: 'Autenticador'), params.id])
-                redirect action: "index", method: "GET"
-            }
-            '*'{ render status: NOT_FOUND }
-        }
-    }
+    
 }
