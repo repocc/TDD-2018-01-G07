@@ -465,22 +465,41 @@ class ProcesadorTicketService {
 	def calcularDatosPromedioPorHora (def json_patron)	{
 		
 		double promedio = 0
-		def cantidad__de_datos_total = json_patron.fecha.hora.size()
-		if ( cantidad__de_datos_total > 0) { 
+		def cantidad_de_datos_total = json_patron.fecha.hora.size()
+		if ( cantidad_de_datos_total > 0) { 
 			
 				//conjunto de horas eliminando duplicación
+				
 				Set  set_datos = json_patron.fecha.hora
-		
-				def cantidad_de_datos_por_hora_acumulados = set_datos.collect {  json_patron.fecha.hora.count(it)}​​​​​​​​​​​​​​​​​​​​
+				List  listado   = json_patron.fecha.hora.collect {it}
+				
+				def cantidad_de_datos_por_hora_acumulados = []
+				
+				for(item in set_datos){ 
+					
+					cantidad_de_datos_por_hora_acumulados.push(listado.count(item))
+				}
+
+				/* Error totalemente extraño recontra-probado en groovy nullpointerException? y vuelto a probar
+				 * se cambia collect por un bucle for
+				 * y a pesar de todo pruebas con println retorna correcto pero salta excepcion igual.??? 
+				cantidad_de_datos_por_hora_acumulados = set_datos.collect {
+				 json_patron.fecha.hora.count(item) 
+				}​​​​​​​​​​​​​​​​​​​​
+				*/
 				
 				//para obtener siempre dos decimales multiplico por 1.0 (una unidad tipo decimal)
-				promedio = 1.0 * ( cantidad_de_datos_por_hora_acumulados.sum() / cantidad_de_datos_total )
+				//divido por la cantidad de horas diferentes en que se produjeron envio
+				promedio = 1.0 * ( cantidad_de_datos_por_hora_acumulados?.sum() / set_datos.size() )
 			
 		}
 		promedio.round(2)	
 		
 		}	
 	def configurar_Json (groovy.json.internal.LazyMap json_patron,def fecha, def inicio){	
+		/**Calculo de datos promedio por hora**/
+		
+		json_patron.calculados.promedioTicketsPorHora = calcularDatosPromedioPorHora(json_patron)
 		
 		/**Calculo de tiempo de procesamiento por ticket**/
 		def intervalo = calcularTiempoProcesamientoTicket(inicio)

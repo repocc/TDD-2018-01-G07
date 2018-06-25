@@ -6,23 +6,24 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Monitor Eventos</title>
+	<asset:link rel="icon" href="favicon.ico" type="image/x-ico" />
+	
+	<!--<asset:image src="imagenes/body_fondo/body1.jpg" absolute="true" 
+	alt="Imagen Fondo"
+	style="width:25%;position:absolute:text-align:start" />
+	-->
 	<style>
-	
-	* {
-    box-sizing: border-box;	
-	
-	body,html 	{
+	 h1, h2, h3, h4	, message{
 		
 		margin: 10%;
 		font-family: Arial;
-		font-size: 17px;		
-			
-		background-image: url("assets/imagenes/body_fondo/body1.jpg");
-		background-repeat: no-repeat;
-		background-attachment: fixed;
-		background-size: 100% 100%;
+		font-size: 24px;		
+		text-align: center;	
+		position:relative					
+		
+        
     }
-	.contenedor, #imagen_fondo  {vertical-align: middle;} <!--colocar img junto con body y verificar-->
+	.contenedor, <!--#imagen_fondo --> {vertical-align: right;} <!--colocar img junto con body y verificar-->
 
 	.contenido {
 		text-align: center;
@@ -34,14 +35,18 @@
 		padding: 20px;
 		background-size: cover;
 	}
+	
+	
 	</style>
 	
 </head>
 
-<body>
+<body style ="background: linear-gradient(grey, white);position: relative;
+    text-align: center;
+    color: blue;">
 	<asset:stylesheet src="application.css"/>
 
-    <g:layoutHead/>
+    
 	<g:if test="${flash.mensaje}">
 			<div class="message">
 				<h3>${flash.mensaje}</h3>
@@ -54,15 +59,15 @@
       
 	<div class="contenedor">
 <!------------------CONTENEDOR----------------------------->		
-	<!--	<div class"contenedor"id="imagen_fondo">
-				<asset:image src="imagenes/body_fondo/body1.jpg" absolute="true" />
+		
+	<!--	<div  id="imagen_fondo"><asset:image src="imagenes/body_fondo/body1.jpg" absolute="false"  /> 
 	-->
-	<!--	</div>	-->		<!--Fin imagen_fondo-->
+		</div><!--Fin imagen_fondo-->
 		
 		<div class="contenido">
 	
 <!------------------CONTENIDO----------------------------->	 
-			<div class="contenido jumbotron" id="mensaje_inicioMonitor">
+			<div  id="mensaje_inicioMonitor" style ="margin: 10%;font-family: Arial;font-size: 24px;position:relative">
 				<h2>Monitor de eventos-Distribuidor-Consultor</h2>
 				<h3>¡Bienvenido!</h3>
 			</div><!--Fin mensaje_inicioMonitor-->
@@ -115,9 +120,10 @@
 <!--------------------------------------------------------------------->					
 					<div class="message"><h2>Consultor-Generador de reglas-</h2></div>
 					<div class="btn">
-					<g:link controller="regla" action="index"><input type="button" value="Índice" class="btn btn-primary" /></g:link>	
+					<g:link controller="regla" action="index"><input type="button" value="Índice" class="btn btn-primary" /></g:link>
+					<g:link controller="regla" action="create"><input type="button" value="Crear regla" class="btn btn-primary" /></g:link>	
 					<div class="message"><h4>Seleccionar la regla que será utilizada para configurar el Motor-APICLOJURE:</h4></div>			
-					<g:link controller="regla" action="seleccionarRegla"><input type="button" value="Selecionar Regla" class="btn btn-primary" /></g:link>	
+					<g:link controller="publicador" action="derivar_Reglas"><input type="button" value="Selecionar Regla" class="btn btn-primary" /></g:link>	
 					
 					</div>
 <!--------------------------------------------------------------------->
@@ -131,7 +137,7 @@
 					<div class="message"><h2>Regla de prueba</h2></div>
 					
 					<div class="btn-group">
-						<g:link controller="regla" action="show/1"><input type="button" value="Regla de pruebas" class="btn btn-primary" /></g:link>	
+						<g:link controller="regla" action="show"id="1"><input type="button" value="Regla de pruebas" class="btn btn-primary" /></g:link>	
 					</div>
 <!--------------------------------------------------------------------->
 					<div class="message">
@@ -182,10 +188,16 @@
 						</g:link>
 					</div>
 <!--------------------------------------------------------------------->
+					<div class="message jumbotron">
+							<h2>Volver inicio</h2>
+							
+						</div>
 					<div class="btn btn-group btn-warning">
 						<g:actionSubmit value="Inicio Grails" action="derivar_InicioGrails"class="btn btn-primary"/>
+					<!--	
 						<g:actionSubmit value="Estrategia_1" action="derivar_estrategia_1" class="btn btn-primary"/>
 						<g:actionSubmit value="Estrategia_2" action="derivar_estrategia_2"class="btn btn-primary"/>
+					-->
 					</div>
 				</g:form>
 				
