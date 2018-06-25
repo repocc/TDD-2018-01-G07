@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="layout" content="main"/>
-    <title>Welcome to Grails</title>
+    <title>Monitor-[APICLOJURE]</title>
 
     <asset:link rel="icon" href="favicon.ico" type="image/x-ico" />
 </head>
@@ -11,9 +11,9 @@
         <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Application Status <span class="caret"></span></a>
             <ul class="dropdown-menu">
-                <li><a href="#">Environment: ${grails.util.Environment.current.name}</a></li>
-                <li><a href="#">App profile: ${grailsApplication.config.grails?.profile}</a></li>
-                <li><a href="#">App version:
+                <li><a href="#">Entorno: ${grails.util.Environment.current.name}</a></li>
+                <li><a href="#">Perfil de la aplicación: ${grailsApplication.config.grails?.profile}</a></li>
+                <li><a href="#">version de la aplicación:
                     <g:meta name="info.app.version"/></a>
                 </li>
                 <li role="separator" class="divider"></li>
@@ -29,10 +29,10 @@
         <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Artefacts <span class="caret"></span></a>
             <ul class="dropdown-menu">
-                <li><a href="#">Controllers: ${grailsApplication.controllerClasses.size()}</a></li>
-                <li><a href="#">Domains: ${grailsApplication.domainClasses.size()}</a></li>
-                <li><a href="#">Services: ${grailsApplication.serviceClasses.size()}</a></li>
-                <li><a href="#">Tag Libraries: ${grailsApplication.tagLibClasses.size()}</a></li>
+                <li><a href="#">Controladores: ${grailsApplication.controllerClasses.size()}</a></li>
+                <li><a href="#">Dominios: ${grailsApplication.domainClasses.size()}</a></li>
+                <li><a href="#">Servicios: ${grailsApplication.serviceClasses.size()}</a></li>
+                <li><a href="#">Libreria de etiquetas</a>: ${grailsApplication.tagLibClasses.size()}</a></li>
             </ul>
         </li>
         <li class="dropdown">
@@ -53,13 +53,10 @@
 
     <div id="content" role="main">
         <section class="row colset-2-its">
-            <h1>Welcome to Grails</h1>
+            <h1>Bienvenido Monitor de eventos</h1>
 
             <p>
-                Congratulations, you have successfully started your first Grails application! At the moment
-                this is the default page, feel free to modify it to either redirect to a controller or display
-                whatever content you may choose. Below is a list of controllers that are currently deployed in
-                this application, click on each to execute its default action:
+                CONTROLADORES [REDIRIGIENDO A INDICE]:
             </p>
 
             <div id="controllers" role="navigation">
@@ -74,10 +71,13 @@
             </div>
         </section>
     </div>
+    <table style="border:1 px solid black" >
+		<th style="border:1 px solid black" ><h2><span class="label label-default">Pulse para dar inicio a la aplicación</span></h2></th>
 	<div id ="derivacion" style="font-family: Arial, Helvetica, sans-serif;font-size:20px;text-align:center;text-shadow: 2px 2px green; background-color: rgba(255, 0, 0, 0.3)">
-			
-			<g:link controller="publicador" action="derivar_Iniciar">"SÍGUEME - ES POR AQUÍ - "</g:link>
+				
+			<g:link controller="publicador" action="derivar_Iniciar"><input type="button" value="INICIAR APLICACION" class="btn btn-primary" /></g:link>
 					
 	</div>
+	</table
 </body>
 </html>

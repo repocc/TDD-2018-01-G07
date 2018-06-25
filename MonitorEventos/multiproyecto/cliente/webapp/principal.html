@@ -389,15 +389,27 @@
     		window.grafico_Barras_Sennales	= null; 
     		/**Funciones para grAfico de barras*/
     		function configurar_estructura_grafico_barras (titulo, tipo_ejeX){
-    				
+    			var CERO = 0;
+    			var datos_mensual 	= [];
+    			var datos_dia		= [];	
+    			var valores 		= [0];
+    			for (var index = CERO; index < MESES.length; ++index) {
+    				datos_mensual.push(CERO);
+    			};
+    			for (var index = CERO; index < HORAS.length; ++index) {
+    				datos_dia.push(CERO);
+    			};
+    			
     			var ejeX = null;
     			switch(tipo_ejeX) {
     				
     				case "mes":
-    						ejeX = MESES;
+							valores = datos_mensual;
+    						ejeX 	= MESES;
     						break;
     				case "hora":
-    						ejeX = HORAS;
+							valores	= datos_dia;
+    						ejeX 	= HORAS;
     						break;
     					default:
     						ejeX = [];
@@ -410,7 +422,7 @@
     						backgroundColor: color_Random(),
     						borderColor: color_Random(),
     						borderWidth: 1,
-    						data: [0] //valores
+    						data: valores //valores
     					}]
     
     			};
@@ -822,7 +834,7 @@
     				/*Redondeo a tres decimales*/
     				dato_promedio 	= Math.round(dato_promedio * 1000) / 1000;
     				
-    				valor 			= 100 - dato_promedio;
+    				valor 			= dato.fecha.hora.length//100 - dato_promedio;
     				
     				valor 			= Math.round(valor * 1000) / 1000;
     				
@@ -839,7 +851,7 @@
     				
     				/*agrego valores actualizados*/
     				
-    				var etiqueta = valor.toString() + "%";
+    				var etiqueta = valor.toString() + "Total";
     				var color_rnd = color_Random();
 					
 					var_grafico.data.datasets[cero].data.push(valor);
@@ -850,7 +862,7 @@
     				
     				/*agrego dato_json */
     				
-    				etiqueta = dato_promedio.toString() + "% Tickets/Hora";
+    				etiqueta = dato_promedio.toString() + " Tickets/Hora";
     				color_rnd = color_Random();
     				
     				
@@ -919,7 +931,7 @@
 		 sennales:{		claves:["fraccion[Rojos]", "fraccion[Verdes]","propietario[AberdeenAngus]", "fraccion[Estado][Cerrado]"],
 						valores:[5.55, 6 , 6.0 , 0.33]
 				},
-		 ticket:{id: 1,codigo: 4,tipo: "ROJO", descripcion:"Soy yo",propietario: "Eustaquio",estado:"Abierto" },
+		 dato:{id: 1,codigo: 4,tipo: "ROJO", descripcion:"Soy yo",propietario: "Eustaquio",estado:"Abierto" },
 		 fecha:{annio: 2018, mes: 6, dia: 27, hora: 14, minutos: 3, segundos: 2},
 		 calculados:{ promedioTicketsPorHora:10.3,promedioTiempoProcesamientoTicket:33, mes:[],hora:[]}
 		 };
@@ -1186,7 +1198,7 @@
     <div class="container d-flex p-2 ml-auto flex-row align-items-start justify-content-center">
       <div class="row">
         <div class="col-75">
-          <input type="url" id="url_datos_1" size="50%" required="required" class="form-control-sm" value="https://rodriguez-monitor-2018-g7.herokuapp.com/ticket/enviar" placeholder="Ingrese URL-URI-Origen-Datos..." name="campo_url_datos_1"> </div>
+          <input type="url" id="url_datos_1" size="50%" required="required" class="form-control-sm" value="http://localhost:8080/ticket/enviarTicketsMockProcesados" placeholder="Ingrese URL-URI-Origen-Datos..." name="campo_url_datos_1"> </div>
         <button onclick="setURL()"class="btn btn-dark border border-primary d-flex flex-row justify-content-center align-items-center align-self-center text-center btn-sm" onclick="setURL()">URL</button>
       </div>
     </div>
