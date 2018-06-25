@@ -8,7 +8,9 @@ class Autenticador {
 	
 	Usuario usuario
 	
-	Date dateCreated
+	Date fecha_session = new Date() //visualizacion en listado cierre inicio sesión de usuarios:Tema scaffold.
+	
+	Date dateCreated //registro en base de datos
 	
 	String toString(){
 		
@@ -18,6 +20,8 @@ class Autenticador {
 	static constraints ={
 		
 		nombre inList:["INICIO", "CIERRE"]
+		
+		fecha_session nullable:true
 		
 		usuario()
 		
